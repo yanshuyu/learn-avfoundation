@@ -52,6 +52,19 @@
     self.audioPlayers = players;
     self.playing = FALSE;
     [self updatePlayerControlsState];
+    
+    //register to AvAudioSession's AVAudioSessionInterruptionNotification for responsing interruption (phone call, facetime request).
+    NSNotificationCenter* nsnc = [NSNotificationCenter defaultCenter];
+    [nsnc addObserver:self
+             selector:@selector(handleInterruption:)
+                 name:AVAudioSessionInterruptionNotification
+               object:[AVAudioSession sharedInstance]];
+    
+    //register to AvAudioSession's AVAudioSessionInterruptionNotification for responsing route (audio input or output is added or removed).
+    [nsnc addObserver:self
+             selector:@selector(handleRouteChange:)
+                 name:AVAudioSessionRouteChangeNotification
+               object:[AVAudioSession sharedInstance]];
 }
 
 - (IBAction)play:(UIButton *)sender {
@@ -147,6 +160,40 @@
             label.text = [[NSString alloc]initWithFormat:@"vol %.1f", vol];
         }
     }];
+    
+}
+
+
+- (void)handleInterruption:(NSNotification*) notification {
+    NSDictionary* interrupInfo = [notification userInfo];
+    if (interrupInfo) {
+        AVAudioSessionInterruptionType interrupType = [interrupInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+        if (interrupType == AVAudioSessionInterruptionTypeBegan) {
+            [self pause:self.stopButton];
+            
+        } else if (interrupType == AVAudioSessionInterruptionTypeEnded) {
+            AVAudioSessionInterruptionOptions interupOption = [interrupInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+            if (interupOption == AVAudioSessionInterruptionOptionShouldResume) {
+                [self play:self.playButton];
+                
+            }
+        }
+    }
+}
+
+
+- (void)handleRouteChange:(NSNotification*)notification {
+    NSDictionary* rerouteInfo = notification.userInfo;
+    if (rerouteInfo) {
+        AVAudioSessionRouteChangeReason routeReason = [rerouteInfo[AVAudioSessionRouteChangeReasonKey] unsignedIntegerValue];
+        if (routeReason == AVAudioSessionRouteChangeReasonOldDeviceUnavailable) {
+            AVAudioSessionRouteDescription* prevRouteDesc = rerouteInfo[AVAudioSessionRouteChangePreviousRouteKey];
+            AVAudioSessionPortDescription* prevFirstOutputPortDesc = prevRouteDesc.outputs[0];
+            if ([prevFirstOutputPortDesc.portType isEqualToString:AVAudioSessionPortHeadphones]) {
+                [self pause:self.stopButton];
+            }
+        }
+    }
 }
 
 @end

@@ -20,7 +20,7 @@
     // init audio session
     AVAudioSession* shareAudioSession = [AVAudioSession sharedInstance];
     NSError* sessionError;
-    if (![shareAudioSession setCategory:AVAudioSessionCategoryPlayAndRecord error: &sessionError]) {
+    if (![shareAudioSession setCategory:AVAudioSessionCategoryPlayback error: &sessionError]) {
         NSLog(@"AudioSession category init failed, error: %@", sessionError.localizedDescription);
         return FALSE;
     }
