@@ -10,7 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface VideoPrograssBar : UISlider
+IB_DESIGNABLE
+@interface VideoPrograssBar : UIView
+
+@property (strong, nonatomic) UISlider* playbackHeader;
+@property (strong, nonatomic) UIProgressView* cachePrograss;
+
+- (void)setPlayBackProgress:(float)percent;
+- (void)setLoadCacheProgress:(float)percent;
 
 @end
 

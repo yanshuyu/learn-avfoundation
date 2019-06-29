@@ -12,12 +12,12 @@
 
 #define PLAYER_ITEM_STATUS_CONTEXT @"PlayerItemStatusContext"
 #define ROOT_VIEW_FRAME_CHANGE_CONTEXT @"RootViewFrameChangeContext"
-
+#define PLAYER_ITEM_LOAD_RANGE_STATUS_CONTEXT @"PlayerItemLoadRangestatusContext"
 
 
 @interface VideoPlayerController ()
-@property (strong, nonatomic) UIView* rootView;
 
+@property (strong, nonatomic) UIView* view;
 @property (strong, nonatomic) VideoControlView* controlView;
 @property (strong, nonatomic) VideoContentView* contentView;
 
@@ -25,6 +25,9 @@
 @property (strong, nonatomic) AVAsset* asset;
 @property (strong, nonatomic) AVPlayerItem* playerItem;
 @property (strong, nonatomic) AVPlayer* player;
+
+@property (nonatomic) float progressTimeInterval;
+@property (strong, nonatomic) id progressTimer;
 
 @end
 
@@ -36,11 +39,8 @@
 {
     self = [super init];
     if (self) {
-        self.rootView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 640, 320)];
-        [self.rootView addObserver:self
-                        forKeyPath:@"frame"
-                        options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
-                        context:ROOT_VIEW_FRAME_CHANGE_CONTEXT];
+        self.view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 640, 320)];
+        self.progressTimeInterval = 0.5;
     }
     return self;
 }
@@ -66,31 +66,37 @@
 }
 
 
-- (void)setUrl:(NSURL *)url {
-    self.prepared = FALSE;
-    _url = url;
-    [self prepareToPlay];
+- (void)setFrame:(CGRect)frame {
+    self.view.frame = frame;
+    [self layoutSubViews];
 }
 
 
-- (UIView *)view {
-    return self.rootView;
+- (void)layoutSubViews {
+    self.contentView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    self.controlView.frame = self.contentView.frame;
+}
+
+
+
+- (void)setUrl:(NSURL *)url {
+    if (_url == url){
+        return;
+    }
+    self.prepared = FALSE;
+    _url = url;
+    [self prepareToPlay];
+
 }
 
 
 - (void)setPrepared:(BOOL)prepared {
     _prepared = prepared;
     if (prepared) {
-        [self.controlView stopLoadingActivity];
+        [self setupControlView];
     } else {
-        [self.controlView startLoadingActivity];
+        [self resetControlView];
     }
-}
-
-
-- (void)layoutSubViews {
-    self.contentView.frame = CGRectMake(0, 0, self.rootView.frame.size.width, self.rootView.frame.size.height);
-    self.controlView.frame = self.contentView.frame;
 }
 
 
@@ -99,27 +105,21 @@
         return;
     }
     
-    
     NSArray* keys = @[@"duration", @"commonMetadata", @"tracks"];
     self.asset = [AVAsset assetWithURL:self.url];
-    self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset
-                           automaticallyLoadedAssetKeys:keys];
-    [self.playerItem addObserver:self
-                      forKeyPath:@"status"
-                         options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
-                         context:PLAYER_ITEM_STATUS_CONTEXT];
+    self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset automaticallyLoadedAssetKeys:keys];
+    [self addVideoRequestTimer];
     
     self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
     self.controlView = [[[self controlLayerClass] alloc] init];
     self.contentView = [[[self contentLayerClass] alloc] initWithPlayer:self.player];
     if (self.controlView && self.contentView) {
         self.controlView.delegate = self;
-        [self layoutSubViews];
-        [self.rootView removeAllSubViews];
-        [self.rootView addSubview:self.contentView];
-        [self.rootView addSubview:self.controlView];
+        [self.view removeAllSubViews];
+        [self.view addSubview:self.contentView];
+        [self.view addSubview:self.controlView];
+        [self.controlView startLoadingActivity];
     }
-    self.prepared = FALSE;
 }
 
 
@@ -127,40 +127,132 @@
                       ofObject:(id)object
                         change:(NSDictionary<NSKeyValueChangeKey,id> *)change
                        context:(void *)context {
+    //
+    // request asset
+    //
     if (context == PLAYER_ITEM_STATUS_CONTEXT) {
-        [self.playerItem removeObserver:self
-                             forKeyPath:@"status"
-                                context:PLAYER_ITEM_STATUS_CONTEXT];
         if (self.playerItem.status == AVPlayerItemStatusReadyToPlay) { // asset's required properties loaded success.
             NSLog(@"asset:%@ load success, prepare to play.", self.asset);
+            [self removeVideoRequestTimer];
             self.prepared = YES;
         } else {
-            NSLog(@"load asset:%@ failed, unkonw error!", self.asset);
+            NSLog(@"load asset:%@ failed, retry later again!", self.asset);
+            UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Loading error"
+                                                                                     message:@"Try again later"
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                               style:UIAlertActionStyleDestructive
+                                                             handler:^(UIAlertAction * _Nonnull action) {
+                                                                 [alertController dismissViewControllerAnimated:true
+                                                                                                     completion:nil];
+                                                             }];
+            [alertController addAction:okAction];
+            [self.embedViewController presentViewController:alertController
+                                                   animated:TRUE
+                                                 completion:nil];
         }
-    } else if (context == ROOT_VIEW_FRAME_CHANGE_CONTEXT) {
-        NSLog(@"%@:  %@", ROOT_VIEW_FRAME_CHANGE_CONTEXT, change);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self layoutSubViews];
-        });
+    }
+    
+    //
+    // updat cache loading
+    //
+    else if (context == PLAYER_ITEM_LOAD_RANGE_STATUS_CONTEXT) {
+        CMTimeRange cacheRange = [self.playerItem.loadedTimeRanges.firstObject CMTimeRangeValue];
+        int64_t cacheLength= CMTimeGetSeconds(cacheRange.duration);
+        int64_t totalLength = CMTimeGetSeconds(self.playerItem.duration);
+        float percent = (Float64)cacheLength / totalLength;
+        [self.controlView setCacheLoadingProgress:percent];
     }
 }
 
 
-- (void)clenup {
+- (void)setupControlView {
+    // hide loasding indicator
+    [self.controlView stopLoadingActivity];
+    [self.controlView beginAutoPlay];
+    
+    //set title
+    NSArray<AVMetadataItem*>* metadatas = [AVMetadataItem metadataItemsFromArray:self.asset.commonMetadata
+                                                        withKey:AVMetadataCommonKeyTitle
+                                                       keySpace:AVMetadataKeySpaceCommon];
+    NSString* title = [self.url lastPathComponent];
+    if (metadatas.count > 0) {
+        title = metadatas.firstObject.stringValue;
+    }
+    [self.controlView setTitle:title];
+    
+    //playback status timer
+    [self addProgressTimer];
+    
+    //cache loading timer
+    [self addCacheLoadingTimer];
+}
+
+
+- (void)resetControlView {
+    [self.controlView pause];
+    [self.controlView startLoadingActivity];
+    [self.controlView setCurrentTime:kCMTimeZero remainTime:kCMTimeZero];
+    [self removeVideoRequestTimer];
+    [self removeProgressTimer];
+    [self removeCacheLoadingTimer];
+}
+
+
+//
+// MARK: - playback status timer
+//
+- (void)addVideoRequestTimer {
+    [self.playerItem addObserver:self
+                      forKeyPath:@"status"
+                         options:NSKeyValueObservingOptionNew
+                         context:PLAYER_ITEM_STATUS_CONTEXT];
+}
+
+- (void)removeVideoRequestTimer {
     @try {
         [self.playerItem removeObserver:self
                              forKeyPath:@"status"
                                 context:PLAYER_ITEM_STATUS_CONTEXT];
     } @catch (NSException *exception) {
-        
+        //do nothing
     }
-    
+}
+
+- (void)addProgressTimer {
+    CMTime interval = CMTimeMakeWithSeconds(self.progressTimeInterval, NSEC_PER_SEC);
+    __weak VideoPlayerController* weakSelf = self;
+    self.progressTimer = [self.player addPeriodicTimeObserverForInterval:interval
+                                              queue:dispatch_get_main_queue()
+                                         usingBlock:^(CMTime time) {
+                                             CMTime remainTime = CMTimeSubtract(weakSelf.playerItem.duration, time);
+                                             [weakSelf.controlView setCurrentTime:time remainTime:remainTime];
+                                         }];
+}
+
+- (void)removeProgressTimer {
+    if (self.progressTimer) {
+        [self.player removeTimeObserver:self.progressTimer];
+        self.progressTimer = nil;
+    }
+}
+
+
+- (void)addCacheLoadingTimer {
+    [self.playerItem addObserver:self
+                      forKeyPath:@"loadedTimeRanges"
+                         options:NSKeyValueObservingOptionNew
+                         context:PLAYER_ITEM_LOAD_RANGE_STATUS_CONTEXT];
+}
+
+
+- (void)removeCacheLoadingTimer {
     @try {
-        [self.rootView removeObserver:self
-                           forKeyPath:@"frame"
-                              context:ROOT_VIEW_FRAME_CHANGE_CONTEXT];
+        [self.playerItem removeObserver:self
+                             forKeyPath:@"loadedTimeRanges"
+                                context:PLAYER_ITEM_LOAD_RANGE_STATUS_CONTEXT];
     } @catch (NSException *exception) {
-        
+        //do nothing
     }
 }
 
@@ -178,13 +270,14 @@
 }
 
 - (void)doClose {
+    [self resetControlView];
     if (self.embedViewController) {
         [self.embedViewController dismissViewControllerAnimated:TRUE completion:nil];
     }
 }
 
 - (void)doPause {
-    
+    [self.player pause];
 }
 
 - (void)doPlay {
@@ -202,5 +295,6 @@
 - (void)doToggleSubtitle {
     
 }
+    
 
 @end

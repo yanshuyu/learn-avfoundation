@@ -17,6 +17,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    if ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground ) {
+        NSLog(@"Luanching into foreground  state with options: %@", launchOptions);
+    } else {
+        NSLog(@"Luanching to background state with options: %@", launchOptions);
+    }
     return YES;
 }
 

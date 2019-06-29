@@ -11,6 +11,7 @@
 #import "VideoPlayerViewController.h"
 
 
+
 @interface VideoTableViewController ()
 
 @end
@@ -22,6 +23,7 @@
     [self loadVideoData];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+    
 }
 
 
@@ -30,8 +32,13 @@
                                               withExtension:@"m4v"];
     NSURL* video_2 = [[NSBundle mainBundle] URLForResource:@"videoplayback"
                                               withExtension:@"mp4"] ;
-    self.videoURLs = [NSArray arrayWithObjects:video_1,video_2, nil];
+    NSURL* remote_video_1 = [NSURL URLWithString:@"https://wolverine.raywenderlich.com/content/ios/tutorials/video_streaming/foxVillage.m3u8"];
+    NSURL* remote_video_2 = [NSURL URLWithString:@"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"];
+    NSURL* remote_video_3 = [NSURL URLWithString:@"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"];
+    NSURL* remote_video_4 = [NSURL URLWithString:@"http://v3-default.bytecdn.cn/7fe5d85f459756c86d805bd8d0e5455c/5d16daaa/video/m/2201f22ceb1cae64fa087ebace585acd60811627e32d000097a601a8c74c/"];
+    self.videoURLs = [NSArray arrayWithObjects:video_1,video_2, remote_video_1,remote_video_2, remote_video_3, remote_video_4, nil];
     //self.videoURLs = @[video_1, video_2];
+    
 }
 
 
@@ -40,6 +47,7 @@
         VideoPlayerViewController* dstView = (VideoPlayerViewController*)segue.destinationViewController;
         NSIndexPath* indexPath = [self.tableView indexPathForSelectedRow];
         dstView.url = self.videoURLs[indexPath.row];
+        [self.tableView deselectRowAtIndexPath:indexPath animated:FALSE];
     }
 }
 
@@ -58,10 +66,12 @@
     return 1;
 }
 
+
 - (NSInteger)tableView:(nonnull UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section {
     return [self.videoURLs count];
 }
+
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView
                  cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {

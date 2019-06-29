@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VideoPlayerController : NSObject <VideoControlDelegate>
 
+@property (nonatomic) CGRect frame;
 @property (strong, nonatomic, readonly) UIView* view;
 @property (strong, nonatomic, setter=setUrl:) NSURL* url;
 @property (weak, nonatomic, nullable) UIViewController* embedViewController;
@@ -23,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithURL:(NSURL*)url;
 - (Class)controlLayerClass;
 - (Class)contentLayerClass;
-- (void) clenup;
+
 
 
 @end

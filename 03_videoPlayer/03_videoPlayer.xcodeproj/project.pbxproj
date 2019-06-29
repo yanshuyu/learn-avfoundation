@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		111E768F22C5B90100BC37C1 /* VideoPrograssBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 111E768E22C5B90100BC37C1 /* VideoPrograssBar.m */; };
 		1176409E22BB785F005FF178 /* VideoTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1176409D22BB785F005FF178 /* VideoTableViewController.m */; };
 		117640A422BB7A0E005FF178 /* VideoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 117640A322BB7A0E005FF178 /* VideoCell.m */; };
 		117640A722BB7D1A005FF178 /* videoplayback.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 117640A622BB7D1A005FF178 /* videoplayback.mp4 */; };
@@ -22,6 +23,7 @@
 		1176410122BE8F50005FF178 /* VideoContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1176410022BE8F50005FF178 /* VideoContentView.m */; };
 		1176410422BE9387005FF178 /* SYVideoPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1176410322BE9387005FF178 /* SYVideoPlayerController.m */; };
 		1176410622BF0D90005FF178 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1176410522BF0D85005FF178 /* Assets.xcassets */; };
+		1176411C22C4D029005FF178 /* HCYoutubeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1176411A22C4D028005FF178 /* HCYoutubeParser.m */; };
 		11E7E46422BB364300CB6F59 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 11E7E46322BB364300CB6F59 /* AppDelegate.m */; };
 		11E7E46A22BB364300CB6F59 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11E7E46822BB364300CB6F59 /* Main.storyboard */; };
 		11E7E46F22BB364300CB6F59 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11E7E46D22BB364300CB6F59 /* LaunchScreen.storyboard */; };
@@ -29,6 +31,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		111E768D22C5B90100BC37C1 /* VideoPrograssBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoPrograssBar.h; sourceTree = "<group>"; };
+		111E768E22C5B90100BC37C1 /* VideoPrograssBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoPrograssBar.m; sourceTree = "<group>"; };
 		1163604522BB5BE9003B2B28 /* VideoControlDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoControlDelegate.h; sourceTree = "<group>"; };
 		1176409C22BB785F005FF178 /* VideoTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoTableViewController.h; sourceTree = "<group>"; };
 		1176409D22BB785F005FF178 /* VideoTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoTableViewController.m; sourceTree = "<group>"; };
@@ -57,6 +61,8 @@
 		1176410222BE9387005FF178 /* SYVideoPlayerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SYVideoPlayerController.h; sourceTree = "<group>"; };
 		1176410322BE9387005FF178 /* SYVideoPlayerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SYVideoPlayerController.m; sourceTree = "<group>"; };
 		1176410522BF0D85005FF178 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1176411A22C4D028005FF178 /* HCYoutubeParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HCYoutubeParser.m; sourceTree = "<group>"; };
+		1176411B22C4D029005FF178 /* HCYoutubeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HCYoutubeParser.h; sourceTree = "<group>"; };
 		11E7E45F22BB364300CB6F59 /* 03_videoPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 03_videoPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		11E7E46222BB364300CB6F59 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		11E7E46322BB364300CB6F59 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -77,6 +83,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		111E769022C5B91A00BC37C1 /* Supported */ = {
+			isa = PBXGroup;
+			children = (
+				1176411B22C4D029005FF178 /* HCYoutubeParser.h */,
+				1176411A22C4D028005FF178 /* HCYoutubeParser.m */,
+				111E768D22C5B90100BC37C1 /* VideoPrograssBar.h */,
+				111E768E22C5B90100BC37C1 /* VideoPrograssBar.m */,
+			);
+			path = Supported;
+			sourceTree = "<group>";
+		};
 		1163604822BB76F8003B2B28 /* Video */ = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +162,7 @@
 		11E7E45622BB364300CB6F59 = {
 			isa = PBXGroup;
 			children = (
+				111E769022C5B91A00BC37C1 /* Supported */,
 				117640AC22BBEA0E005FF178 /* Category */,
 				117640A522BB7D02005FF178 /* Resource */,
 				1176409B22BB7797005FF178 /* Modle */,
@@ -268,12 +286,14 @@
 				117640A422BB7A0E005FF178 /* VideoCell.m in Sources */,
 				117640C822BE17FE005FF178 /* VideoPlayerViewController.m in Sources */,
 				117640B922BBEC8C005FF178 /* AVMetadataItem+SYAdditions.m in Sources */,
+				111E768F22C5B90100BC37C1 /* VideoPrograssBar.m in Sources */,
 				117640C522BE157B005FF178 /* VideoPlayerController.m in Sources */,
 				117640D022BE3741005FF178 /* VideoChapterItem.m in Sources */,
 				1176409E22BB785F005FF178 /* VideoTableViewController.m in Sources */,
 				11E7E47222BB364300CB6F59 /* main.m in Sources */,
 				11E7E46422BB364300CB6F59 /* AppDelegate.m in Sources */,
 				117640CD22BE2E0C005FF178 /* SYVideoControlView.m in Sources */,
+				1176411C22C4D029005FF178 /* HCYoutubeParser.m in Sources */,
 				1176410122BE8F50005FF178 /* VideoContentView.m in Sources */,
 				117640C222BE0BAA005FF178 /* VideoControlView.m in Sources */,
 			);

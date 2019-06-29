@@ -50,14 +50,12 @@
     return success;
 }
 
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    self.rootChild.frame = self.frame;
-}
-
 - (void)play {
     [self.delegate doPlay];
+}
+
+- (void)beginAutoPlay {
+    
 }
 
 - (void)pause {
@@ -98,6 +96,10 @@
 }
 
 - (void)setCurrentTime:(CMTime)current remainTime:(CMTime)remain {
+    
+}
+
+- (void)setCacheLoadingProgress:(float)percent {
     
 }
 

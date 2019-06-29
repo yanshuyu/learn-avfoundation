@@ -21,7 +21,7 @@
     self = [super init];
     if (self) {
         [self setPlayer:player];
-        //self.playerLayer.backgroundColor = (__bridge CGColorRef _Nullable)([UIColor whiteColor]);
+        //self.playerLayer.backgroundColor = (__bridge CGColorRef _Nullable)([UIColor blackColor]);
     }
     return self;
 }

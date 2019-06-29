@@ -7,6 +7,7 @@
 //
 
 #import "SYVideoControlView.h"
+#import "../../Supported/VideoPrograssBar.h"
 
 @interface SYVideoControlView ()
 @property (weak, nonatomic) IBOutlet UILabel *titleLable;
@@ -14,6 +15,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *remainTimeLable;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
+@property (weak, nonatomic) IBOutlet VideoPrograssBar *progressBar;
 
 @end
 
@@ -24,6 +26,12 @@
     self = [super init];
     if (self) {
         [self loadNib:@"VideoControlOverlay" Options:nil];
+        UIImage* playImage = [UIImage imageNamed:@"icons8-circled-play-51"];
+        UIImage* pauseImage = [UIImage imageNamed:@"icons8-pause-button-51"];
+        [self.playButton setImage:playImage forState:UIControlStateNormal];
+        [self.playButton setImage:pauseImage forState:UIControlStateSelected];
+        [self.playButton setSelected:FALSE];
+        [self.playButton setHighlighted:FALSE];
     }
     return self;
 }
@@ -49,8 +57,19 @@
 }
 
 - (IBAction)onPlayButtonClick:(UIButton *)sender {
-    [super play];
+    if (!sender.isSelected) {
+        [self play];
+    } else {
+        [self pause];
+    }
+    
+    [sender setSelected:!sender.isSelected];
 }
+
+- (void)beginAutoPlay {
+    [self onPlayButtonClick:self.playButton];
+}
+
 
 - (void)startLoadingActivity {
     self.loadingIndicator.hidden = FALSE;
@@ -62,6 +81,32 @@
     self.loadingIndicator.hidden = TRUE;
     self.playButton.hidden = FALSE;
     [self.loadingIndicator stopAnimating];
+}
+
+
+- (void)setTitle:(NSString *)title {
+    self.titleLable.text = title;
+}
+
+- (void)setCurrentTime:(CMTime)current remainTime:(CMTime)remain {
+    int64_t totalCurTime = CMTimeGetSeconds(current);
+    int64_t totalRemainTime = CMTimeGetSeconds(remain);
+    int64_t curMin = totalCurTime / 60;
+    int64_t curSec = totalCurTime % 60;
+    int64_t remMin = totalRemainTime / 60;
+    int64_t remSec = totalRemainTime % 60;
+    
+    NSString* currentTimeStr = [NSString stringWithFormat:@"%02lld:%02lld", curMin, curSec];
+    NSString* remainTimeStr = [NSString stringWithFormat:@"%02lld:%02lld", remMin, remSec];
+    self.currentTimeLable.text = currentTimeStr;
+    self.remainTimeLable.text = remainTimeStr;
+    float progress = (Float64)totalCurTime / (totalCurTime + totalRemainTime);
+    
+    [self.progressBar setPlayBackProgress: progress];
+}
+
+- (void)setCacheLoadingProgress:(float)percent {
+    [self.progressBar setLoadCacheProgress:percent];
 }
 
 @end

@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // playback control
 - (void)play;
+- (void)beginAutoPlay;
 - (void)pause;
 - (void)scrubbingToTime:(CMTime)t;
 - (void)changeVideoGravity:(AVLayerVideoGravity)gravity;
@@ -36,6 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setTitle:(NSString*)title;
 - (void)toggleChapter;
 - (void)setCurrentTime:(CMTime)current remainTime:(CMTime)remain;
+- (void)setCacheLoadingProgress:(float)percent;
 - (void)startLoadingActivity;
 - (void)stopLoadingActivity;
 
