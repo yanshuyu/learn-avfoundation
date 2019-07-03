@@ -29,6 +29,8 @@
 @property (nonatomic) float progressTimeInterval;
 @property (strong, nonatomic) id progressTimer;
 
+@property (nonatomic) float beginPlayAtPercentWhenPrepared;
+
 @end
 
 
@@ -41,6 +43,7 @@
     if (self) {
         self.view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 640, 320)];
         self.progressTimeInterval = 0.5;
+        self.beginPlayAtPercentWhenPrepared = 0;
     }
     return self;
 }
@@ -157,10 +160,20 @@
     // updat cache loading
     //
     else if (context == PLAYER_ITEM_LOAD_RANGE_STATUS_CONTEXT) {
+        NSLog(@"Cache info: [");
+        for (NSValue* v in self.playerItem.loadedTimeRanges) {
+            CMTimeRange cacheRange = [v CMTimeRangeValue];
+            int64_t cacheStart = CMTimeGetSeconds(cacheRange.start);
+            int64_t cacheLength = CMTimeGetSeconds(cacheRange.duration);
+            NSLog(@"\t(%llds - %llds)", cacheStart, cacheLength);
+        }
+        NSLog(@"]");
+        
         CMTimeRange cacheRange = [self.playerItem.loadedTimeRanges.firstObject CMTimeRangeValue];
+        int64_t cacheStart = CMTimeGetSeconds(cacheRange.start);
         int64_t cacheLength= CMTimeGetSeconds(cacheRange.duration);
         int64_t totalLength = CMTimeGetSeconds(self.playerItem.duration);
-        float percent = (Float64)cacheLength / totalLength;
+        float percent =  (Float64) (cacheStart + cacheLength) / totalLength;
         [self.controlView setCacheLoadingProgress:percent];
     }
 }
@@ -169,7 +182,6 @@
 - (void)setupControlView {
     // hide loasding indicator
     [self.controlView stopLoadingActivity];
-    [self.controlView beginAutoPlay];
     
     //set title
     NSArray<AVMetadataItem*>* metadatas = [AVMetadataItem metadataItemsFromArray:self.asset.commonMetadata
@@ -186,6 +198,12 @@
     
     //cache loading timer
     [self addCacheLoadingTimer];
+    
+    [self.controlView beginAutoPlay];
+    if (self.beginPlayAtPercentWhenPrepared != 0) {
+        [self doScrubbingToPercent:self.beginPlayAtPercentWhenPrepared];
+        self.beginPlayAtPercentWhenPrepared = 0;
+    }
 }
 
 
@@ -220,14 +238,16 @@
 }
 
 - (void)addProgressTimer {
-    CMTime interval = CMTimeMakeWithSeconds(self.progressTimeInterval, NSEC_PER_SEC);
-    __weak VideoPlayerController* weakSelf = self;
-    self.progressTimer = [self.player addPeriodicTimeObserverForInterval:interval
-                                              queue:dispatch_get_main_queue()
-                                         usingBlock:^(CMTime time) {
-                                             CMTime remainTime = CMTimeSubtract(weakSelf.playerItem.duration, time);
-                                             [weakSelf.controlView setCurrentTime:time remainTime:remainTime];
-                                         }];
+    if (!self.progressTimer) {
+        CMTime interval = CMTimeMakeWithSeconds(self.progressTimeInterval, NSEC_PER_SEC);
+        __weak VideoPlayerController* weakSelf = self;
+        self.progressTimer = [self.player addPeriodicTimeObserverForInterval:interval
+                                                                       queue:dispatch_get_main_queue()
+                                                                  usingBlock:^(CMTime time) {
+                                                                      CMTime remainTime = CMTimeSubtract(weakSelf.playerItem.duration, time);
+                                                                      [weakSelf.controlView setCurrentTime:time remainTime:remainTime];
+                                                                  }];
+    }
 }
 
 - (void)removeProgressTimer {
@@ -284,8 +304,32 @@
     [self.player play];
 }
 
-- (void)doScrubbingToTime:(CMTime)t {
-    
+- (void)doBeginScrub:(float)percent {
+    [self removeProgressTimer];
+    if (self.prepared) {
+        [self.controlView pause];
+        [self.controlView startLoadingActivity];
+    }
+}
+
+- (void)doScrubbingToPercent:(float)percent {
+    if (self.prepared) {
+        float duration = CMTimeGetSeconds(self.playerItem.duration);
+        float length = duration * percent;
+        CMTime t = CMTimeMakeWithSeconds(length, NSEC_PER_SEC);
+        [self.player cancelPendingPrerolls];
+        [self.player seekToTime:t];
+    }
+}
+
+- (void)doEndedScrub:(float)percent {
+    if (!self.prepared) {
+        self.beginPlayAtPercentWhenPrepared = percent;
+    }else {
+        [self.controlView play];
+        [self.controlView stopLoadingActivity];
+    }
+    [self addProgressTimer];
 }
 
 - (void)doToggleFullScreen {

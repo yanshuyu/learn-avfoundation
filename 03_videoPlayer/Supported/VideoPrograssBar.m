@@ -61,6 +61,15 @@
     self.cachePrograss.trackTintColor = [UIColor grayColor];
     self.playbackHeader.minimumValue = 0;
     self.playbackHeader.maximumValue = 1;
+    
+//    [self.playbackHeader addTarget:self
+//                            action:@selector(handlePlayheaderTouchedDown)
+//                  forControlEvents:UIControlEventTouchDown];
+    [self.playbackHeader addTarget:self
+                            action:@selector(handlePlayheaderSliding::)
+                  forControlEvents:UIControlEventValueChanged];
+//    [self.playbackHeader addTarget:self action:@selector(handlePlayheadeTouchedUpInside)
+//                  forControlEvents:UIControlEventTouchUpInside];
 }
 
 
@@ -77,6 +86,42 @@
     self.cachePrograss.center = self.playbackHeader.center;
 }
 
+
+- (void)handlePlayheaderSliding:(UISlider*)sender :(UIEvent*)event {
+//    [self.delegate videoPrograssBar:self
+//                  didScrubToPercent:self.playbackHeader.value];
+    UITouch* touchEvent = [[event allTouches] anyObject];
+    switch (touchEvent.phase) {
+        case UITouchPhaseBegan:
+            [self.delegate videoPrograssBar:self didBeginScrub:self.playbackHeader.value];
+            break;
+            
+        case UITouchPhaseMoved:
+            [self.delegate videoPrograssBar:self didScrubToPercent:self.playbackHeader.value];
+            break;
+            
+        case UITouchPhaseEnded:
+            [self.delegate videoPrograssBar:self didEndedScrub:self.playbackHeader.value];
+            break;
+            
+        case UITouchPhaseCancelled:
+            [self.delegate videoPrograssBar:self didEndedScrub:self.playbackHeader.value];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+//- (void)handlePlayheaderTouchedDown {
+//    [self.delegate videoPrograssBar:self
+//                      didBeginScrub:self.playbackHeader.value];
+//}
+//
+//- (void)handlePlayheadeTouchedUpInside {
+//    [self.delegate videoPrograssBar:self
+//                      didEndedScrub:self.playbackHeader.value];
+//}
 
 - (void)setPlayBackProgress:(float)percent {
     self.playbackHeader.value = percent;

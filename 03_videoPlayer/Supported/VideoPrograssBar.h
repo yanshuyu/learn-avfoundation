@@ -10,11 +10,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
+@class VideoPrograssBar;
+@protocol VideoPrograssBarDelegate <NSObject>
+- (void)videoPrograssBar:(VideoPrograssBar*)videoPrograssBar didBeginScrub:(float)percent;
+- (void)videoPrograssBar:(VideoPrograssBar*)videoPrograssBar didScrubToPercent:(float)percent;
+- (void)videoPrograssBar:(VideoPrograssBar*)videoPrograssBar didEndedScrub:(float)percent;
+@end
+
+
 IB_DESIGNABLE
 @interface VideoPrograssBar : UIView
 
 @property (strong, nonatomic) UISlider* playbackHeader;
 @property (strong, nonatomic) UIProgressView* cachePrograss;
+@property (weak, nonatomic) id<VideoPrograssBarDelegate> delegate;
 
 - (void)setPlayBackProgress:(float)percent;
 - (void)setLoadCacheProgress:(float)percent;

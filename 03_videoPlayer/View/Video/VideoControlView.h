@@ -25,7 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)play;
 - (void)beginAutoPlay;
 - (void)pause;
-- (void)scrubbingToTime:(CMTime)t;
+- (void)beginScrub:(float)percent;
+- (void)scrubbingToPercent:(float)percent;
+- (void)endedScrub:(float)percent;
 - (void)changeVideoGravity:(AVLayerVideoGravity)gravity;
 - (void)changeSpeed:(float)speed;
 - (void)changeVolum:(float)volum;

@@ -35,8 +35,7 @@
     NSURL* remote_video_1 = [NSURL URLWithString:@"https://wolverine.raywenderlich.com/content/ios/tutorials/video_streaming/foxVillage.m3u8"];
     NSURL* remote_video_2 = [NSURL URLWithString:@"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"];
     NSURL* remote_video_3 = [NSURL URLWithString:@"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"];
-    NSURL* remote_video_4 = [NSURL URLWithString:@"http://v3-default.bytecdn.cn/7fe5d85f459756c86d805bd8d0e5455c/5d16daaa/video/m/2201f22ceb1cae64fa087ebace585acd60811627e32d000097a601a8c74c/"];
-    self.videoURLs = [NSArray arrayWithObjects:video_1,video_2, remote_video_1,remote_video_2, remote_video_3, remote_video_4, nil];
+    self.videoURLs = [NSArray arrayWithObjects:video_1,video_2, remote_video_1,remote_video_2, remote_video_3, nil];
     //self.videoURLs = @[video_1, video_2];
     
 }

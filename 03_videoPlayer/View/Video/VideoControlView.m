@@ -62,8 +62,16 @@
     [self.delegate doPause];
 }
 
-- (void)scrubbingToTime:(CMTime)t {
-    [self.delegate doScrubbingToTime:t];
+- (void)beginScrub:(float)percent {
+    [self.delegate doBeginScrub:percent];
+}
+
+- (void)scrubbingToPercent:(float)percent {
+    [self.delegate doScrubbingToPercent:percent];
+}
+
+- (void)endedScrub:(float)percent {
+    [self.delegate doEndedScrub:percent];
 }
 
 - (void)changeVideoGravity:(AVLayerVideoGravity)gravity {

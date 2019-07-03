@@ -9,7 +9,7 @@
 #import "SYVideoControlView.h"
 #import "../../Supported/VideoPrograssBar.h"
 
-@interface SYVideoControlView ()
+@interface SYVideoControlView () <VideoPrograssBarDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *titleLable;
 @property (weak, nonatomic) IBOutlet UILabel *currentTimeLable;
 @property (weak, nonatomic) IBOutlet UILabel *remainTimeLable;
@@ -32,6 +32,7 @@
         [self.playButton setImage:pauseImage forState:UIControlStateSelected];
         [self.playButton setSelected:FALSE];
         [self.playButton setHighlighted:FALSE];
+        self.progressBar.delegate = self;
     }
     return self;
 }
@@ -52,9 +53,6 @@
     // show volum ajustment view
 }
 
-- (IBAction)onTimeScrubbingSliding:(UISlider *)sender {
-    
-}
 
 - (IBAction)onPlayButtonClick:(UIButton *)sender {
     if (!sender.isSelected) {
@@ -62,14 +60,33 @@
     } else {
         [self pause];
     }
-    
-    [sender setSelected:!sender.isSelected];
+}
+
+- (void)play {
+    [super play];
+    [self.playButton setSelected:TRUE];
+}
+
+- (void)pause {
+    [super pause];
+    [self.playButton setSelected:FALSE];
 }
 
 - (void)beginAutoPlay {
     [self onPlayButtonClick:self.playButton];
 }
 
+- (void)videoPrograssBar:(VideoPrograssBar *)videoPrograssBar didBeginScrub:(float)percent {
+    [self beginScrub:percent];
+}
+
+- (void)videoPrograssBar:(VideoPrograssBar *)videoPrograssBar didScrubToPercent:(float)percent {
+    [self scrubbingToPercent:percent];
+}
+
+- (void)videoPrograssBar:(VideoPrograssBar *)videoPrograssBar didEndedScrub:(float)percent {
+    [self endedScrub:percent];
+}
 
 - (void)startLoadingActivity {
     self.loadingIndicator.hidden = FALSE;
