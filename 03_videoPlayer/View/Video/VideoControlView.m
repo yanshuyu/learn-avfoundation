@@ -112,7 +112,7 @@
 }
 
 - (void)toggleChapter {
-    
+    [self.delegate doToggleChapters];
 }
 
 - (void)startLoadingActivity {

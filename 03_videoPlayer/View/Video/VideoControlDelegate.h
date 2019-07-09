@@ -21,6 +21,7 @@
 - (void)doChangeVideoVolum:(float)volum;
 - (void)doToggleFullScreen;
 - (void)doToggleSubtitle;
+- (void)doToggleChapters;
 - (void)doClose;
 
 @end

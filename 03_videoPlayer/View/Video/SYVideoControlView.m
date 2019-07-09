@@ -16,7 +16,6 @@
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (weak, nonatomic) IBOutlet VideoPrograssBar *progressBar;
-
 @end
 
 @implementation SYVideoControlView
@@ -49,17 +48,16 @@
     [self toggleScreen];
 }
 
-- (IBAction)onVolumButtonClick:(UIButton *)sender {
-    // show volum ajustment view
-}
-
-
 - (IBAction)onPlayButtonClick:(UIButton *)sender {
     if (!sender.isSelected) {
         [self play];
     } else {
         [self pause];
     }
+}
+
+- (IBAction)onSubtitleButtonClick:(UIButton *)sender {
+    [self toggleSubtitle];
 }
 
 - (void)play {

@@ -11,7 +11,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface VideoPlayerViewController : UIViewController
+typedef enum : NSUInteger {
+    TableViewModeNone,
+    TableViewModeSubTitles,
+    TableViewModeChapters,
+} TableViewMode;
+
+@interface VideoPlayerViewController : UIViewController <VideoPlayerControllerDelegate>
 
 @property (weak, nonatomic) NSURL* url;
 @property (strong, nonatomic) VideoPlayerController* videoController;

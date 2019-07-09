@@ -108,7 +108,10 @@
         return;
     }
     
-    NSArray* keys = @[@"duration", @"commonMetadata", @"tracks"];
+    NSArray* keys = @[@"duration",
+                      @"commonMetadata",
+                      @"tracks",
+                      @"availableMediaCharacteristicsWithMediaSelectionOptions"];
     self.asset = [AVAsset assetWithURL:self.url];
     self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset automaticallyLoadedAssetKeys:keys];
     [self addVideoRequestTimer];
@@ -140,19 +143,19 @@
             self.prepared = YES;
         } else {
             NSLog(@"load asset:%@ failed, retry later again!", self.asset);
-            UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Loading error"
-                                                                                     message:@"Try again later"
-                                                                              preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK"
-                                                               style:UIAlertActionStyleDestructive
-                                                             handler:^(UIAlertAction * _Nonnull action) {
-                                                                 [alertController dismissViewControllerAnimated:true
-                                                                                                     completion:nil];
-                                                             }];
-            [alertController addAction:okAction];
-            [self.embedViewController presentViewController:alertController
-                                                   animated:TRUE
-                                                 completion:nil];
+//            UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Loading error"
+//                                                                                     message:@"Try again later"
+//                                                                              preferredStyle:UIAlertControllerStyleAlert];
+//            UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK"
+//                                                               style:UIAlertActionStyleDestructive
+//                                                             handler:^(UIAlertAction * _Nonnull action) {
+//                                                                 [alertController dismissViewControllerAnimated:true
+//                                                                                                     completion:nil];
+//                                                             }];
+//            [alertController addAction:okAction];
+//            [self.embedViewController presentViewController:alertController
+//                                                   animated:TRUE
+//                                                 completion:nil];
         }
     }
     
@@ -209,11 +212,13 @@
 
 - (void)resetControlView {
     [self.controlView pause];
-    [self.controlView startLoadingActivity];
     [self.controlView setCurrentTime:kCMTimeZero remainTime:kCMTimeZero];
     [self removeVideoRequestTimer];
     [self removeProgressTimer];
     [self removeCacheLoadingTimer];
+    self.player = nil;
+    self.playerItem = nil;
+    self.asset = nil;
 }
 
 
@@ -291,9 +296,10 @@
 
 - (void)doClose {
     [self resetControlView];
-    if (self.embedViewController) {
-        [self.embedViewController dismissViewControllerAnimated:TRUE completion:nil];
-    }
+//    if (self.embedViewController) {
+//        [self.embedViewController dismissViewControllerAnimated:TRUE completion:nil];
+//    }
+    [self.delegate videoPlayerControllerDoRequestExit];
 }
 
 - (void)doPause {
@@ -337,8 +343,44 @@
 }
 
 - (void)doToggleSubtitle {
+    AVMediaSelectionGroup* subtitleSelectionGroup = [self.asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];
+    NSMutableArray* subtitles = [NSMutableArray array];
+    if (subtitleSelectionGroup) {
+        for (AVMediaSelectionOption* option in subtitleSelectionGroup.options) {
+            [subtitles addObject:option.displayName];
+        }
+    }
     
+    if (subtitles.count > 0) {
+        [self.delegate videoPlayerController:self
+                      doRequestShowSubtitles:subtitles];
+    }
+}
+
+- (void)doToggleChapters {
+    [self.delegate videoPlayerController:self
+                   doRequestShowChapters:@[]];
 }
     
+
+- (void)selectSubtitle:(NSString *)subtitle {
+    AVMediaSelectionGroup* subtitleSelectionGroup = [self.asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];
+    BOOL selected = FALSE;
+    if (subtitleSelectionGroup) {
+        for (AVMediaSelectionOption* option in subtitleSelectionGroup.options) {
+            if ([option.displayName isEqualToString:subtitle]) {
+                [self.playerItem selectMediaOption:option
+                             inMediaSelectionGroup:subtitleSelectionGroup];
+                selected = TRUE;
+                break;
+            }
+        }
+    }
+    
+    if (!selected) {
+        [self.playerItem selectMediaOption:nil
+                     inMediaSelectionGroup:subtitleSelectionGroup];
+    }
+}
 
 @end
