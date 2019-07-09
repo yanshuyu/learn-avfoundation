@@ -128,8 +128,10 @@
 }
 
 
-- (void)setPreviewLayer:(AVCaptureVideoPreviewLayer *)layer {
-    [layer setSession:self.session];
+- (void)setPreviewLayer:(VideoPreviewView*)view {
+    view.captureSession = self.session;
+    view.delegate = self;
+    
 }
 
 
@@ -141,6 +143,7 @@
     }
 }
 
+
 - (void)stopSession {
     if (self.session.running) {
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
@@ -148,5 +151,19 @@
         });
     }
 }
+
+
+//
+// MARK: - videoPreview delegate
+//
+- (void)tapToFocusAndExposureAtPoint:(CGPoint)point {
+    NSLog(@"tapToFocusAndExposureAtPoint: (%f, %f)", point.x, point.y);
+}
+
+
+- (void)tapToResetFocusAndExposure {
+    NSLog(@"tapToResetFocusAndExposure");
+}
+
 
 @end

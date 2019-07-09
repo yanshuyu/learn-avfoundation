@@ -28,7 +28,7 @@
     NSError* e;
     if ([self.captureController setupCaptureSessionWithPreset:AVCaptureSessionPresetHigh
                                                         Error:&e]) {
-        [self.captureController setPreviewLayer:self.videoPreviewView.previewLayer];
+        [self.captureController setPreviewLayer:self.videoPreviewView];
         [self.captureController startSession];
     }
 }

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import "../View/VideoPreviewView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,7 +30,7 @@ typedef enum : NSUInteger {
 @end
 
 
-@interface CaptureController : NSObject
+@interface CaptureController : NSObject <VideoPreviewViewDelegate>
 
 @property (weak, nonatomic) id<CaptureControllerDelegate> delegate;
 
@@ -37,7 +38,7 @@ typedef enum : NSUInteger {
 // configurate session
 //
 - (BOOL)setupCaptureSessionWithPreset:(AVCaptureSessionPreset)preset Error:(NSError* _Nullable*)error;
-- (void)setPreviewLayer:(AVCaptureVideoPreviewLayer*)layer;
+- (void)setPreviewLayer:(VideoPreviewView*)view;
 - (void)startSession;
 - (void)stopSession;
 

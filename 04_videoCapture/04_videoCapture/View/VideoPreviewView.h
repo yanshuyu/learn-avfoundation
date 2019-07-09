@@ -11,6 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
 @protocol VideoPreviewViewDelegate <NSObject>
 
 - (void)tapToFocusAndExposureAtPoint:(CGPoint)point;

@@ -15,6 +15,7 @@
 		118AB80522D488FC0073C888 /* VideoPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AB80422D488FC0073C888 /* VideoPreviewView.m */; };
 		118AB80A22D48C780073C888 /* CaptureController.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AB80922D48C780073C888 /* CaptureController.m */; };
 		118AB80D22D48CF50073C888 /* SYCaptureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AB80C22D48CF50073C888 /* SYCaptureViewController.m */; };
+		11EE984E22D4EB760036A68C /* FocusWiget.m in Sources */ = {isa = PBXBuildFile; fileRef = 11EE984D22D4EB760036A68C /* FocusWiget.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,8 @@
 		118AB80922D48C780073C888 /* CaptureController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaptureController.m; sourceTree = "<group>"; };
 		118AB80B22D48CF50073C888 /* SYCaptureViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SYCaptureViewController.h; sourceTree = "<group>"; };
 		118AB80C22D48CF50073C888 /* SYCaptureViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SYCaptureViewController.m; sourceTree = "<group>"; };
+		11EE984C22D4EB760036A68C /* FocusWiget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FocusWiget.h; sourceTree = "<group>"; };
+		11EE984D22D4EB760036A68C /* FocusWiget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FocusWiget.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +83,8 @@
 		118AB80222D488C30073C888 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				11EE984C22D4EB760036A68C /* FocusWiget.h */,
+				11EE984D22D4EB760036A68C /* FocusWiget.m */,
 				118AB80322D488FC0073C888 /* VideoPreviewView.h */,
 				118AB80422D488FC0073C888 /* VideoPreviewView.m */,
 			);
@@ -170,6 +175,7 @@
 				118AB80A22D48C780073C888 /* CaptureController.m in Sources */,
 				118AB7FC22D486BD0073C888 /* main.m in Sources */,
 				118AB7EE22D486BA0073C888 /* AppDelegate.m in Sources */,
+				11EE984E22D4EB760036A68C /* FocusWiget.m in Sources */,
 				118AB80D22D48CF50073C888 /* SYCaptureViewController.m in Sources */,
 				118AB80522D488FC0073C888 /* VideoPreviewView.m in Sources */,
 			);
