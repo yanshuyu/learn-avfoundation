@@ -11,12 +11,16 @@
 
 #define WIGET_SIZE CGRectMake(0, 0, 120, 120)
 #define WIGET_COLOR [UIColor colorWithRed:255 green:0 blue:0 alpha:1]
+#define WIGET_DELAY_HIDE_TIME 0.8
 
 @interface VideoPreviewView ()
 
 @property (strong, nonatomic) UITapGestureRecognizer* singleTapGesture;
 @property (strong, nonatomic) UITapGestureRecognizer* doubleTapGesture;
 @property (strong, nonatomic) FocusWiget* tapWiget;
+@property (strong, nonatomic) FocusWiget* unvisibleWiget;
+@property (strong, nonatomic) UIViewPropertyAnimator* zoomAnimator;
+@property (strong, nonatomic) UIViewPropertyAnimator* hiddenAnimator;
 
 @end
 
@@ -65,6 +69,10 @@
     self.tapWiget = [[FocusWiget alloc] initWithFrame:WIGET_SIZE color:WIGET_COLOR];
     self.tapWiget.hidden = TRUE;
     [self addSubview:self.tapWiget];
+    
+    self.unvisibleWiget = [[FocusWiget alloc] initWithFrame:WIGET_SIZE color:WIGET_COLOR];
+    self.unvisibleWiget.hidden = TRUE;
+    [self addSubview:self.unvisibleWiget];
 }
 
 - (AVCaptureVideoPreviewLayer *)previewLayer {
@@ -94,27 +102,43 @@
 
 
 - (void)runTapWigetZoomAnimationTo:(CGPoint)point {
+    [self.zoomAnimator stopAnimation:TRUE];
+    [self.hiddenAnimator stopAnimation:TRUE];
+    self.unvisibleWiget.layer.transform = CATransform3DIdentity;
+    self.zoomAnimator = [[UIViewPropertyAnimator alloc] initWithDuration:0.2
+                                                                   curve:UIViewAnimationCurveEaseInOut
+                                                              animations:^{
+                                                                  self.tapWiget.layer.transform = CATransform3DMakeScale(0.5, 0.5, 0.5);
+                                                              }];
+    
+    
+    __weak VideoPreviewView* weakSelf = self;
+    [self.zoomAnimator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+        if (finalPosition == UIViewAnimatingPositionEnd && weakSelf) {
+            weakSelf.hiddenAnimator = [[UIViewPropertyAnimator alloc] initWithDuration:WIGET_DELAY_HIDE_TIME
+                                                                                 curve:UIViewAnimationCurveLinear
+                                                                            animations:^{
+                                                                                if (weakSelf) {
+                                                                                    weakSelf.unvisibleWiget.layer.transform = CATransform3DMakeScale(0.5, 0.5, 0.5);
+                                                                                }
+                                                                            }];
+            [weakSelf.hiddenAnimator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+                if (finalPosition == UIViewAnimatingPositionEnd && weakSelf) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        weakSelf.tapWiget.hidden = TRUE;
+                    });
+                }
+            }];
+            
+            [weakSelf.hiddenAnimator startAnimation];
+        }
+    }];
+    
     self.tapWiget.center = point;
     self.tapWiget.layer.transform = CATransform3DIdentity;
     self.tapWiget.hidden = FALSE;
-
     
-    [UIView animateWithDuration:0.2
-                          delay:0
-                        options:UIViewAnimationOptionCurveEaseInOut
-                     animations:^{
-                         self.tapWiget.layer.transform = CATransform3DMakeScale(0.5, 0.5, 0.5);
-                     }
-                     completion:^(BOOL finished){
-                         dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC);
-                         dispatch_after(delayTime,
-                                        dispatch_get_main_queue(),
-                                        ^{
-                                            self.tapWiget.hidden = TRUE;
-                                            self.tapWiget.layer.transform = CATransform3DIdentity;
-                                        });
-                     }];
-     
-     }
+    [self.zoomAnimator startAnimation];
+}
 
 @end
