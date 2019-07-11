@@ -15,6 +15,8 @@
 		118AB80522D488FC0073C888 /* VideoPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AB80422D488FC0073C888 /* VideoPreviewView.m */; };
 		118AB80A22D48C780073C888 /* CaptureController.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AB80922D48C780073C888 /* CaptureController.m */; };
 		118AB80D22D48CF50073C888 /* SYCaptureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AB80C22D48CF50073C888 /* SYCaptureViewController.m */; };
+		1197BFB722D7355700A30CF6 /* ScrollableTabBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1197BFB622D7355700A30CF6 /* ScrollableTabBarItem.m */; };
+		1197BFBA22D7363300A30CF6 /* ScrollableTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1197BFB922D7363300A30CF6 /* ScrollableTabBar.m */; };
 		11EE984E22D4EB760036A68C /* FocusWiget.m in Sources */ = {isa = PBXBuildFile; fileRef = 11EE984D22D4EB760036A68C /* FocusWiget.m */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +35,10 @@
 		118AB80922D48C780073C888 /* CaptureController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaptureController.m; sourceTree = "<group>"; };
 		118AB80B22D48CF50073C888 /* SYCaptureViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SYCaptureViewController.h; sourceTree = "<group>"; };
 		118AB80C22D48CF50073C888 /* SYCaptureViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SYCaptureViewController.m; sourceTree = "<group>"; };
+		1197BFB522D7355700A30CF6 /* ScrollableTabBarItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollableTabBarItem.h; sourceTree = "<group>"; };
+		1197BFB622D7355700A30CF6 /* ScrollableTabBarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScrollableTabBarItem.m; sourceTree = "<group>"; };
+		1197BFB822D7363300A30CF6 /* ScrollableTabBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollableTabBar.h; sourceTree = "<group>"; };
+		1197BFB922D7363300A30CF6 /* ScrollableTabBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScrollableTabBar.m; sourceTree = "<group>"; };
 		11EE984C22D4EB760036A68C /* FocusWiget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FocusWiget.h; sourceTree = "<group>"; };
 		11EE984D22D4EB760036A68C /* FocusWiget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FocusWiget.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -67,13 +73,14 @@
 		118AB7EB22D486BA0073C888 /* 04_videoCapture */ = {
 			isa = PBXGroup;
 			children = (
+				1197BFB422D734D000A30CF6 /* Supported */,
 				118AB80722D48C3F0073C888 /* Controller */,
 				118AB80222D488C30073C888 /* View */,
 				118AB7EC22D486BA0073C888 /* AppDelegate.h */,
 				118AB7ED22D486BA0073C888 /* AppDelegate.m */,
 				118AB7F222D486BA0073C888 /* Main.storyboard */,
-				118AB7F522D486BD0073C888 /* Assets.xcassets */,
 				118AB7F722D486BD0073C888 /* LaunchScreen.storyboard */,
+				118AB7F522D486BD0073C888 /* Assets.xcassets */,
 				118AB7FA22D486BD0073C888 /* Info.plist */,
 				118AB7FB22D486BD0073C888 /* main.m */,
 			);
@@ -100,6 +107,17 @@
 				118AB80C22D48CF50073C888 /* SYCaptureViewController.m */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		1197BFB422D734D000A30CF6 /* Supported */ = {
+			isa = PBXGroup;
+			children = (
+				1197BFB522D7355700A30CF6 /* ScrollableTabBarItem.h */,
+				1197BFB622D7355700A30CF6 /* ScrollableTabBarItem.m */,
+				1197BFB822D7363300A30CF6 /* ScrollableTabBar.h */,
+				1197BFB922D7363300A30CF6 /* ScrollableTabBar.m */,
+			);
+			path = Supported;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -174,7 +192,9 @@
 			files = (
 				118AB80A22D48C780073C888 /* CaptureController.m in Sources */,
 				118AB7FC22D486BD0073C888 /* main.m in Sources */,
+				1197BFB722D7355700A30CF6 /* ScrollableTabBarItem.m in Sources */,
 				118AB7EE22D486BA0073C888 /* AppDelegate.m in Sources */,
+				1197BFBA22D7363300A30CF6 /* ScrollableTabBar.m in Sources */,
 				11EE984E22D4EB760036A68C /* FocusWiget.m in Sources */,
 				118AB80D22D48CF50073C888 /* SYCaptureViewController.m in Sources */,
 				118AB80522D488FC0073C888 /* VideoPreviewView.m in Sources */,

@@ -24,7 +24,13 @@ typedef enum : NSUInteger {
 
 @protocol CaptureControllerDelegate <NSObject>
 
+@optional
 - (void)captureController:(CaptureController*)controller ConfigureSessionFailedWithError:(NSError*)error;
+- (void)captureControllerStartRunningSessionFailed:(CaptureController *)controller;
+- (void)captureControllerSessionDidStartRunning:(CaptureController*)controller;
+- (void)captureControllerSessionDidStopRunning:(CaptureController *)controller;
+
+@required
 
 
 @end
@@ -41,6 +47,7 @@ typedef enum : NSUInteger {
 - (void)setPreviewLayer:(VideoPreviewView*)view;
 - (void)startSession;
 - (void)stopSession;
+- (void)cleanUpSession;
 
 @end
 
