@@ -10,6 +10,7 @@
 #import "../View/VideoPreviewView.h"
 #import "../Controller/CaptureController.h"
 #import "../Supported/ScrollableTabBar.h"
+#import "../Supported/SYScrollableTabBarItem.h"
 
 @interface SYCaptureViewController () <CaptureControllerDelegate, ScrollableTabBarDelegate>
 
@@ -30,13 +31,9 @@
     //setup scrollable tab bar
     UIImageView* barItemSelectedIndicator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"select_indicator"]];
     barItemSelectedIndicator.frame = CGRectMake(0, 0, 12, 12);
-    ScrollableTabBarItem* item1 = [[ScrollableTabBarItem alloc] initWithTitleString:@"Video"];
-    ScrollableTabBarItem* item2 = [[ScrollableTabBarItem alloc] initWithTitleString:@"Photo"];
-    ScrollableTabBarItem* item3 = [[ScrollableTabBarItem alloc] initWithTitleString:@"sgg"];
-    ScrollableTabBarItem* item4 = [[ScrollableTabBarItem alloc] initWithTitleString:@"gdv"];
-    ScrollableTabBarItem* item5 = [[ScrollableTabBarItem alloc] initWithTitleString:@"whisss"];
-    ScrollableTabBarItem* item6 = [[ScrollableTabBarItem alloc] initWithTitleString:@"sfsfggs"];
-    NSArray* barItems = [NSArray arrayWithObjects:item1, item2,item3, item4, item5, nil];
+    SYScrollableTabBarItem* photoBarItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Photo" CaptureMode:CaptureModePhoto];
+    SYScrollableTabBarItem* videoBarItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Video" CaptureMode:CaptureModeVideo];
+    NSArray<SYScrollableTabBarItem*>* barItems = [NSArray arrayWithObjects:photoBarItem, videoBarItem, nil];
     self.scrollableTabBar = [[ScrollableTabBar alloc] initWithFrame:self.scrollableTabBarContainer.bounds
                                                               Items:barItems
                                                           ItemSpace:5
@@ -49,18 +46,19 @@
     //setup capture session
     self.captureController = [CaptureController new];
     self.captureController.delegate = self;
-    NSError* e;
-    if ([self.captureController setupCaptureSessionWithPreset:AVCaptureSessionPresetMedium
-                                                        Error:&e]) {
-        [self.captureController setPreviewLayer:self.videoPreviewView];
-        [self.captureController startSession];
-    }
+    [self.captureController setupSession];
+    [self.captureController setPreviewLayer:self.videoPreviewView];
+    [self.captureController switchToMode:barItems.firstObject.mode];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [self.captureController cleanUpSession];
 }
 
+- (BOOL)prefersStatusBarHidden {
+    return TRUE;
+}
 
 //
 // MARK: - capture controller delegate
@@ -81,16 +79,12 @@
     NSLog(@"capture session start running failed!");
 }
 
-- (BOOL)prefersStatusBarHidden {
-    return TRUE;
+- (void)captureController:(CaptureController *)controller LeaveCaptureMode:(CaptureMode)mode {
+    NSLog(@"Leave capture mode: %lu", (unsigned long)mode);
 }
 
-- (IBAction)onPrevButtonTap:(UIButton *)sender {
-    [self.scrollableTabBar jumpToItemAtIndex:self.scrollableTabBar.selectedIndex - 1 Animated:FALSE];
-}
-
-- (IBAction)onNextButtonTap:(UIButton *)sender {
-    [self.scrollableTabBar jumpToItemAtIndex:self.scrollableTabBar.selectedIndex + 1 Animated:FALSE];
+- (void)captureController:(CaptureController *)controller EnterCaptureMode:(CaptureMode)mode {
+    NSLog(@"Enter capture mode: %lu", (unsigned long)mode);
 }
 
 
@@ -99,6 +93,7 @@
 //
 - (void)scrollableTabBar:(ScrollableTabBar *)bar SelectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {
     NSLog(@"select at index: %d", index);
+    [self.captureController switchToMode:((SYScrollableTabBarItem*)item).mode];
 }
 
 - (void)scrollableTabBar:(ScrollableTabBar *)bar DeselectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {

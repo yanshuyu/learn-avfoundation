@@ -17,6 +17,7 @@
 		118AB80D22D48CF50073C888 /* SYCaptureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AB80C22D48CF50073C888 /* SYCaptureViewController.m */; };
 		1197BFB722D7355700A30CF6 /* ScrollableTabBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1197BFB622D7355700A30CF6 /* ScrollableTabBarItem.m */; };
 		1197BFBA22D7363300A30CF6 /* ScrollableTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1197BFB922D7363300A30CF6 /* ScrollableTabBar.m */; };
+		1197BFBD22D88DB800A30CF6 /* SYScrollableTabBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1197BFBC22D88DB800A30CF6 /* SYScrollableTabBarItem.m */; };
 		11EE984E22D4EB760036A68C /* FocusWiget.m in Sources */ = {isa = PBXBuildFile; fileRef = 11EE984D22D4EB760036A68C /* FocusWiget.m */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +40,8 @@
 		1197BFB622D7355700A30CF6 /* ScrollableTabBarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScrollableTabBarItem.m; sourceTree = "<group>"; };
 		1197BFB822D7363300A30CF6 /* ScrollableTabBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollableTabBar.h; sourceTree = "<group>"; };
 		1197BFB922D7363300A30CF6 /* ScrollableTabBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScrollableTabBar.m; sourceTree = "<group>"; };
+		1197BFBB22D88DB800A30CF6 /* SYScrollableTabBarItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SYScrollableTabBarItem.h; sourceTree = "<group>"; };
+		1197BFBC22D88DB800A30CF6 /* SYScrollableTabBarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SYScrollableTabBarItem.m; sourceTree = "<group>"; };
 		11EE984C22D4EB760036A68C /* FocusWiget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FocusWiget.h; sourceTree = "<group>"; };
 		11EE984D22D4EB760036A68C /* FocusWiget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FocusWiget.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -112,6 +115,8 @@
 		1197BFB422D734D000A30CF6 /* Supported */ = {
 			isa = PBXGroup;
 			children = (
+				1197BFBB22D88DB800A30CF6 /* SYScrollableTabBarItem.h */,
+				1197BFBC22D88DB800A30CF6 /* SYScrollableTabBarItem.m */,
 				1197BFB522D7355700A30CF6 /* ScrollableTabBarItem.h */,
 				1197BFB622D7355700A30CF6 /* ScrollableTabBarItem.m */,
 				1197BFB822D7363300A30CF6 /* ScrollableTabBar.h */,
@@ -190,6 +195,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1197BFBD22D88DB800A30CF6 /* SYScrollableTabBarItem.m in Sources */,
 				118AB80A22D48C780073C888 /* CaptureController.m in Sources */,
 				118AB7FC22D486BD0073C888 /* main.m in Sources */,
 				1197BFB722D7355700A30CF6 /* ScrollableTabBarItem.m in Sources */,

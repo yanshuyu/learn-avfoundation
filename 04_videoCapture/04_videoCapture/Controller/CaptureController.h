@@ -12,9 +12,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define SESSION_DEBUG_INFO 1
+
 @class CaptureController;
 
 #define CaptureControllerErrorDomain @"com.sy.videoCapture"
+
+typedef enum : NSUInteger {
+    SessionSetupResultUnKnowed,
+    SessionSetupResultSuccess,
+    SessionSetupResultFailed,
+    SessionSetupResultUnAuthorized,
+} SessionSetupResult;
 
 typedef enum : NSUInteger {
     CaptureControllerErrorIncompatibleDeviceInput,
@@ -22,13 +31,23 @@ typedef enum : NSUInteger {
 } CaptureControllerError;
 
 
+typedef enum : NSUInteger {
+    CaptureModeUnkonwed,
+    CaptureModeVideo,
+    CaptureModePhoto,
+} CaptureMode;
+
+
 @protocol CaptureControllerDelegate <NSObject>
 
 @optional
-- (void)captureController:(CaptureController*)controller ConfigureSessionFailedWithError:(NSError*)error;
-- (void)captureControllerStartRunningSessionFailed:(CaptureController *)controller;
+- (void)captureController:(CaptureController * _Nullable )controller ConfigureSessionFailedWithError:(NSError*)error;
+- (void)captureControllerSessionRuntimeError:(CaptureController*)controller;
 - (void)captureControllerSessionDidStartRunning:(CaptureController*)controller;
 - (void)captureControllerSessionDidStopRunning:(CaptureController *)controller;
+- (void)captureController:(CaptureController *)controller LeaveCaptureMode:(CaptureMode)mode;
+- (void)captureController:(CaptureController *)controller EnterCaptureMode:(CaptureMode)mode;
+
 
 @required
 
@@ -39,11 +58,11 @@ typedef enum : NSUInteger {
 @interface CaptureController : NSObject <VideoPreviewViewDelegate>
 
 @property (weak, nonatomic) id<CaptureControllerDelegate> delegate;
-
 //
 // configurate session
 //
-- (BOOL)setupCaptureSessionWithPreset:(AVCaptureSessionPreset)preset Error:(NSError* _Nullable*)error;
+- (SessionSetupResult)setupSession;
+- (BOOL)switchToMode:(CaptureMode)mode;
 - (void)setPreviewLayer:(VideoPreviewView*)view;
 - (void)startSession;
 - (void)stopSession;

@@ -20,13 +20,45 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AMr-6p-1d6" customClass="VideoPreviewView">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yKm-cY-ayC" userLabel="scrollable tab bar">
-                                <rect key="frame" x="0.0" y="539" width="375" height="128"/>
+                                <rect key="frame" x="0.0" y="547" width="375" height="120"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ran-Xp-fH3" userLabel="capture button">
+                                        <rect key="frame" x="147.5" y="0.0" width="80" height="80"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="80" id="S6h-nk-PH8"/>
+                                            <constraint firstAttribute="height" constant="80" id="uvS-Ru-jcW"/>
+                                        </constraints>
+                                        <state key="normal" image="circle_red" backgroundImage="frame_2"/>
+                                        <state key="highlighted" image="square" backgroundImage="frame_2"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VNv-QK-Md4" userLabel="album button">
+                                        <rect key="frame" x="28" y="20" width="40" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="MAg-Fs-WCy"/>
+                                            <constraint firstAttribute="height" constant="40" id="utm-Mc-000"/>
+                                        </constraints>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Gh-0s-UNP" userLabel="camera button">
+                                        <rect key="frame" x="307" y="20" width="40" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="27C-af-9gl"/>
+                                            <constraint firstAttribute="height" constant="40" id="Ytc-Kw-zpy"/>
+                                        </constraints>
+                                        <state key="normal" image="switch-camera"/>
+                                    </button>
+                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="128" id="c5y-5F-Zk5"/>
+                                    <constraint firstItem="VNv-QK-Md4" firstAttribute="leading" secondItem="yKm-cY-ayC" secondAttribute="leading" constant="28" id="9Qg-hL-mlp"/>
+                                    <constraint firstItem="8Gh-0s-UNP" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="NQ5-HR-Qsy"/>
+                                    <constraint firstItem="VNv-QK-Md4" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="TK8-ib-APd"/>
+                                    <constraint firstItem="ran-Xp-fH3" firstAttribute="top" secondItem="yKm-cY-ayC" secondAttribute="top" id="WZ4-TX-a19"/>
+                                    <constraint firstAttribute="trailing" secondItem="8Gh-0s-UNP" secondAttribute="trailing" constant="28" id="XdD-42-JGo"/>
+                                    <constraint firstAttribute="height" constant="120" id="c5y-5F-Zk5"/>
+                                    <constraint firstItem="ran-Xp-fH3" firstAttribute="centerX" secondItem="yKm-cY-ayC" secondAttribute="centerX" id="pSH-oz-STD"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -52,4 +84,10 @@
             <point key="canvasLocation" x="602.39999999999998" y="-563.56821589205401"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="circle_red" width="50" height="50"/>
+        <image name="frame_2" width="80" height="80"/>
+        <image name="square" width="30" height="30"/>
+        <image name="switch-camera" width="80" height="80"/>
+    </resources>
 </document>
