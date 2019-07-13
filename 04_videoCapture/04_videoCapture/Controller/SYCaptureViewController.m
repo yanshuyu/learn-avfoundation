@@ -42,14 +42,16 @@
     [self.scrollableTabBarContainer addSubview:self.scrollableTabBar];
     //[self.view addSubview:self.scrollableTabBar];
     
+    //todo: disable UI
     
     //setup capture session
     self.captureController = [CaptureController new];
     self.captureController.delegate = self;
-    [self.captureController setupSession];
     [self.captureController setPreviewLayer:self.videoPreviewView];
-    [self.captureController switchToMode:barItems.firstObject.mode];
-
+    [self.captureController setupSessionWithCompletionHandle:^{
+        [self.captureController switchToMode:barItems.firstObject.mode];
+        // todo: enable UI
+    }];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -63,8 +65,12 @@
 //
 // MARK: - capture controller delegate
 //
-- (void)captureController:(CaptureController*)controller ConfigureSessionFailedWithError:(NSError*)error {
-    NSLog(@"session configruation error: %@", error.localizedDescription);
+- (void)captureController:(CaptureController *)controller ConfigureSessionResult:(SessionConfigResult)result Error:(NSError *)error {
+    if (result == SessionSetupResultUnAuthorized) {
+        NSLog(@"config seesion failed, no authorization to capture device.");
+    } else if (error) {
+        NSLog(@"config session failed, error: %@", error.localizedDescription);
+    }
 }
 
 - (void)captureControllerSessionDidStartRunning:(CaptureController *)controller {
@@ -92,12 +98,11 @@
 // MARK: - scrollable tab bar delegate
 //
 - (void)scrollableTabBar:(ScrollableTabBar *)bar SelectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {
-    NSLog(@"select at index: %d", index);
     [self.captureController switchToMode:((SYScrollableTabBarItem*)item).mode];
 }
 
 - (void)scrollableTabBar:(ScrollableTabBar *)bar DeselectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {
-    NSLog(@"deSelect at index: %d", index);
+ 
 }
 
 

@@ -20,15 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef enum : NSUInteger {
     SessionSetupResultUnKnowed,
+    SessionSetupResultUnAuthorized,
     SessionSetupResultSuccess,
     SessionSetupResultFailed,
-    SessionSetupResultUnAuthorized,
-} SessionSetupResult;
-
-typedef enum : NSUInteger {
-    CaptureControllerErrorIncompatibleDeviceInput,
-    CaptureControllerErrorIncompatibleDeviceOutput,
-} CaptureControllerError;
+} SessionConfigResult;
 
 
 typedef enum : NSUInteger {
@@ -41,7 +36,7 @@ typedef enum : NSUInteger {
 @protocol CaptureControllerDelegate <NSObject>
 
 @optional
-- (void)captureController:(CaptureController * _Nullable )controller ConfigureSessionFailedWithError:(NSError*)error;
+- (void)captureController:(CaptureController * _Nullable )controller ConfigureSessionResult:(SessionConfigResult)result Error:(NSError* _Nullable)error;
 - (void)captureControllerSessionRuntimeError:(CaptureController*)controller;
 - (void)captureControllerSessionDidStartRunning:(CaptureController*)controller;
 - (void)captureControllerSessionDidStopRunning:(CaptureController *)controller;
@@ -61,8 +56,8 @@ typedef enum : NSUInteger {
 //
 // configurate session
 //
-- (SessionSetupResult)setupSession;
-- (BOOL)switchToMode:(CaptureMode)mode;
+- (void)setupSessionWithCompletionHandle:(void(^)(void))completionHandler;
+- (void)switchToMode:(CaptureMode)mode;
 - (void)setPreviewLayer:(VideoPreviewView*)view;
 - (void)startSession;
 - (void)stopSession;

@@ -21,7 +21,7 @@
 @property (strong, nonatomic) AVCaptureMovieFileOutput* movieOutput;
 @property (strong, nonatomic) AVCapturePhotoOutput* photoOutput;
 @property (nonatomic) CaptureMode currentCaptureMode;
-
+@property (strong, nonatomic) dispatch_queue_t sessionQueue;
 @end
 
 
@@ -31,7 +31,10 @@
 {
     self = [super init];
     if (self) {
+        self.session = [AVCaptureSession new];
+        [self addSessionObserver];
         self.currentCaptureMode = CaptureModeUnkonwed;
+        self.sessionQueue = dispatch_queue_create("com.sy.learn-avfoundation.video-capture", DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }
@@ -40,78 +43,149 @@
 //
 // MARK: - session configuration
 //
-- (SessionSetupResult)setupSession {
-    NSArray* devicesType = @[AVCaptureDeviceTypeBuiltInDualCamera, AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTrueDepthCamera];
-    self.discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:devicesType
-                                                                                   mediaType:AVMediaTypeVideo
-                                                                                    position:AVCaptureDevicePositionUnspecified];
-    if (SESSION_DEBUG_INFO) {
-        NSLog(@"[CaptureController debug info] discovery devices: %@", self.discoverySession.devices);
+- (void)setupSessionWithCompletionHandle:(void(^)(void))completionHandler {
+    // check video device authorized state
+    AVAuthorizationStatus videoAuthorizedStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    AVAuthorizationStatus audioAuthorizedStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+    if (videoAuthorizedStatus == AVAuthorizationStatusDenied || audioAuthorizedStatus == AVAuthorizationStatusDenied) {
+        if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
+            [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultUnAuthorized Error:nil];
+        return;
     }
     
-    self.session = [AVCaptureSession new];
-    [self addSessionObserver];
-    [self.session beginConfiguration];
-    self.session.sessionPreset = AVCaptureSessionPresetPhoto;
-    
-    NSError* e;
-    // add audio input
-    AVCaptureDevice* audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-    self.audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&e];
-    if (!self.audioDeviceInput) {
-        if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionFailedWithError:)]) {
-            [self.delegate captureController:nil ConfigureSessionFailedWithError:e];
-        }
-        return SessionSetupResultFailed;
+    if (videoAuthorizedStatus == AVAuthorizationStatusNotDetermined) {
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
+                                 completionHandler:^(BOOL granted) {
+                                     if (!granted) {
+                                         if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
+                                             [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultUnAuthorized Error:nil];
+                                     } else {
+                                         if (audioAuthorizedStatus == AVAuthorizationStatusNotDetermined) {
+                                             [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
+                                                 if (!granted) {
+                                                     if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
+                                                         [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultUnAuthorized Error:nil];
+                                                 } else {
+                                                     [self doSetupSessionWithCompletionHandle:completionHandler];
+                                                 }
+                                             }];
+                                         } else {
+                                             [self doSetupSessionWithCompletionHandle:completionHandler];
+                                         }
+                                     }
+                                 }];
+        return;
     }
-    if ([self.session canAddInput:self.audioDeviceInput]) {
-        [self.session addInput:self.audioDeviceInput];
+    
+    if (audioAuthorizedStatus == AVAuthorizationStatusNotDetermined) {
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
+            if (!granted) {
+                if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
+                    [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultUnAuthorized Error:nil];
+            } else {
+                [self doSetupSessionWithCompletionHandle:completionHandler];
+            }
+        }];
+        return;
+    }
+
+    // we already got video/audio devices access authorization
+    // setup session in session queue
+    [self doSetupSessionWithCompletionHandle:completionHandler];
+
+}
+
+- (void)doSetupSessionWithCompletionHandle:(void(^)(void))completionHandler {
+    dispatch_async(self.sessionQueue, ^{
+        NSArray* devicesType = @[AVCaptureDeviceTypeBuiltInDualCamera, AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+        self.discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:devicesType
+                                                                                       mediaType:AVMediaTypeVideo
+                                                                                        position:AVCaptureDevicePositionUnspecified];
         if (SESSION_DEBUG_INFO) {
-            NSLog(@"[CaptureController debug info] session add audio devices input: %@", audioDevice);
+            NSLog(@"[CaptureController debug info] discovery devices: %@", self.discoverySession.devices);
         }
-    }
-    
-    // add video input
-    AVCaptureDevice* videoDevice = nil;
-    for (AVCaptureDeviceType videoDeviceType in self.discoverySession.devices) {
-        if (videoDevice != nil) {
-            break;
+        
+        [self.session beginConfiguration];
+        self.session.sessionPreset = AVCaptureSessionPresetPhoto;
+        
+        NSError* e;
+        // add audio input
+        AVCaptureDevice* audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+        self.audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&e];
+        if (!self.audioDeviceInput) {
+            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
+                [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:e];
+            [self.session commitConfiguration];
+            return;
         }
-        videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:videoDeviceType
-                                                         mediaType:AVMediaTypeVideo
-                                                          position:AVCaptureDevicePositionUnspecified];
-    }
-    
-    if (!videoDevice) {
-        videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    }
-    
-    self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&e];
-    if (!self.videoDeviceInput) {
-        if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionFailedWithError:)]) {
-            [self.delegate captureController:nil ConfigureSessionFailedWithError:e];
-            return SessionSetupResultFailed;
+        if ([self.session canAddInput:self.audioDeviceInput]) {
+            [self.session addInput:self.audioDeviceInput];
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] session add audio devices input: %@", audioDevice);
+            }
+        } else {
+            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
+                [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:nil];
+            [self.session commitConfiguration];
+            return;
         }
-    }
-    if([self.session canAddInput:self.videoDeviceInput]) {
-        [self.session addInput:self.videoDeviceInput];
-        if (SESSION_DEBUG_INFO) {
-            NSLog(@"[CaptureController debug info] seesion add video devices input: %@", videoDevice);
+        
+        // add video input
+        AVCaptureDevice* videoDevice = nil;
+        for (AVCaptureDeviceType videoDeviceType in self.discoverySession.devices) {
+            if (videoDevice != nil) {
+                break;
+            }
+            videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:videoDeviceType
+                                                             mediaType:AVMediaTypeVideo
+                                                              position:AVCaptureDevicePositionUnspecified];
         }
-    }
-    
-    // add photo output
-    self.photoOutput = [AVCapturePhotoOutput new];
-    self.photoOutput.livePhotoCaptureEnabled = self.photoOutput.livePhotoCaptureSupported;
-    if ([self.session canAddOutput:self.photoOutput]) {
-        [self.session addOutput:self.photoOutput];
-        if (SESSION_DEBUG_INFO) {
-            NSLog(@"[CaptureController debug info] session add output: %@", self.photoOutput);
+        
+        if (!videoDevice) {
+            videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
         }
-    }
-    
-    [self.session commitConfiguration];
-    return SessionSetupResultSuccess;
+        
+        self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&e];
+        if (!self.videoDeviceInput) {
+            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
+                [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:e];
+            [self.session commitConfiguration];
+            return;
+        }
+        if([self.session canAddInput:self.videoDeviceInput]) {
+            [self.session addInput:self.videoDeviceInput];
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] seesion add video devices input: %@", videoDevice);
+            }
+        }else {
+            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
+                [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:nil];
+            [self.session commitConfiguration];
+            return;
+        }
+        
+        // add photo output
+        self.photoOutput = [AVCapturePhotoOutput new];
+        self.photoOutput.livePhotoCaptureEnabled = self.photoOutput.livePhotoCaptureSupported;
+        if ([self.session canAddOutput:self.photoOutput]) {
+            [self.session addOutput:self.photoOutput];
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] session add output: %@", self.photoOutput);
+            }
+        } else {
+            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
+                [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:nil];
+            [self.session commitConfiguration];
+            return;
+        }
+        
+        [self.session commitConfiguration];
+        [self startSession];
+        
+        if (completionHandler) {
+            completionHandler();
+        }
+    });
 }
 
 - (void)setPreviewLayer:(VideoPreviewView*)view {
@@ -123,7 +197,7 @@
 - (void)startSession {
     //startRunning method is a blocking call which can take some time
     if (!self.session.running) {
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+        dispatch_async(self.sessionQueue, ^{
             [self.session startRunning];
         });
     }
@@ -173,18 +247,21 @@
 //
 // MARK: - switch capture mode
 //
-- (BOOL)switchToMode:(CaptureMode)mode {
-    BOOL success = [self configSessionForMode:mode];
-    if (success) {
-        [self enumerateDeviceForMode:mode];
-        [self startSession];
-        self.currentCaptureMode = mode;
-        if ([self.delegate respondsToSelector:@selector(captureController:EnterCaptureMode:)]) {
-            [self.delegate captureController:self
-                            EnterCaptureMode:mode];
+- (void)switchToMode:(CaptureMode)mode {
+    dispatch_async(self.sessionQueue, ^{
+        BOOL success = [self configSessionForMode:mode];
+        if (success) {
+            [self enumerateDeviceForMode:mode];
+            [self startSession];
+            self.currentCaptureMode = mode;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([self.delegate respondsToSelector:@selector(captureController:EnterCaptureMode:)]) {
+                    [self.delegate captureController:self
+                                    EnterCaptureMode:mode];
+                }
+            });
         }
-    }
-    return success;
+    });
 }
 
 - (BOOL)configSessionForMode:(CaptureMode)mode {
@@ -192,11 +269,13 @@
         return TRUE;
     }
     
-    if ([self.delegate respondsToSelector:@selector(captureController:LeaveCaptureMode:)]) {
-        [self.delegate captureController:self
-                        LeaveCaptureMode:self.currentCaptureMode];
-    }
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(captureController:LeaveCaptureMode:)]) {
+            [self.delegate captureController:self
+                            LeaveCaptureMode:self.currentCaptureMode];
+        }
+    });
+
     if (mode == CaptureModePhoto) {
         [self.session beginConfiguration];
         self.session.sessionPreset = AVCaptureSessionPresetPhoto;
