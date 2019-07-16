@@ -34,6 +34,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>test your device capture feture</string>
 	<key>NSCameraUsageDescription</key>
 	<string>test your device&apos;s capture feture</string>
 	<key>NSMicrophoneUsageDescription</key>

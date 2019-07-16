@@ -16,10 +16,12 @@
 
 @property (weak, nonatomic) IBOutlet VideoPreviewView *videoPreviewView;
 @property (weak, nonatomic) IBOutlet UIView *scrollableTabBarContainer;
+@property (weak, nonatomic) IBOutlet UIButton *captureButton;
 
 
 @property (strong, nonatomic) CaptureController* captureController;
 @property (strong, nonatomic) ScrollableTabBar* scrollableTabBar;
+@property (nonatomic) CaptureMode currentCaptureMode;
 @end
 
 @implementation SYCaptureViewController
@@ -62,6 +64,16 @@
     return TRUE;
 }
 
+- (IBAction)handleCaptureButtonTap:(UIButton *)sender {
+    if (self.currentCaptureMode == CaptureModePhoto) {
+        [self.captureController capturePhoto];
+    }
+}
+
+- (IBAction)handleSwitchCameraTap:(UIButton *)sender {
+    NSLog(@"switch camera tapping");
+}
+
 //
 // MARK: - capture controller delegate
 //
@@ -90,7 +102,20 @@
 }
 
 - (void)captureController:(CaptureController *)controller EnterCaptureMode:(CaptureMode)mode {
+    self.currentCaptureMode = mode;
     NSLog(@"Enter capture mode: %lu", (unsigned long)mode);
+}
+
+- (void)captureController:(CaptureController *)controller SavePhotoData:(NSData *)data Result:(PhotoSavedResult)result Error:(NSError *)error {
+    if (result == PhotoSavedResultUnAuthorized) {
+        UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"save error"
+                                                                                message:@"please go to settings > videoCapture > Photos to allow access to photo library"
+                                                                         preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"ok"
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:nil]];
+        [self presentViewController:alertController animated:TRUE completion:nil];
+    }
 }
 
 
@@ -104,6 +129,8 @@
 - (void)scrollableTabBar:(ScrollableTabBar *)bar DeselectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {
  
 }
+
+
 
 
 @end

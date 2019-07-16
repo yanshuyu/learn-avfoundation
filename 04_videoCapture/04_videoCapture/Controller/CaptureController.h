@@ -25,6 +25,13 @@ typedef enum : NSUInteger {
     SessionSetupResultFailed,
 } SessionConfigResult;
 
+typedef enum : NSUInteger {
+    PhotoSavedResultUnknowed,
+    PhotoSavedResultSuccess,
+    PhotoSavedResultFailed,
+    PhotoSavedResultUnAuthorized,
+} PhotoSavedResult;
+
 
 typedef enum : NSUInteger {
     CaptureModeUnkonwed,
@@ -33,16 +40,27 @@ typedef enum : NSUInteger {
 } CaptureMode;
 
 
+
 @protocol CaptureControllerDelegate <NSObject>
 
 @optional
+//
+// session configuration
+//
 - (void)captureController:(CaptureController * _Nullable )controller ConfigureSessionResult:(SessionConfigResult)result Error:(NSError* _Nullable)error;
 - (void)captureControllerSessionRuntimeError:(CaptureController*)controller;
 - (void)captureControllerSessionDidStartRunning:(CaptureController*)controller;
 - (void)captureControllerSessionDidStopRunning:(CaptureController *)controller;
 - (void)captureController:(CaptureController *)controller LeaveCaptureMode:(CaptureMode)mode;
 - (void)captureController:(CaptureController *)controller EnterCaptureMode:(CaptureMode)mode;
-
+//
+// photo/video capture
+//
+- (void)captureController:(CaptureController *)controller InavailbleCaptureRequestForMode:(CaptureMode)mode;
+- (void)captureController:(CaptureController *)controller WillCapturePhotoWithSettings:(AVCaptureResolvedPhotoSettings*)settings;
+- (void)captureController:(CaptureController *)controller DidCapturePhotoWithSettings:(AVCaptureResolvedPhotoSettings *)settings;
+- (void)captureController:(CaptureController *)controller DidFinishCapturePhotoWithSettings:(AVCaptureResolvedPhotoSettings *)settings Error:(NSError*)error;
+- (void)captureController:(CaptureController *)controller SavePhotoData:(NSData* _Nullable)data Result:(PhotoSavedResult)result Error:(NSError* _Nullable)error;
 
 @required
 
@@ -62,6 +80,11 @@ typedef enum : NSUInteger {
 - (void)startSession;
 - (void)stopSession;
 - (void)cleanUpSession;
+
+//
+// photo capture
+//
+- (void)capturePhoto;
 
 @end
 

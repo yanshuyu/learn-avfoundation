@@ -7,21 +7,28 @@
 //
 
 #import "CaptureController.h"
+#import <Photos/Photos.h>
 
+@interface CaptureController () <AVCapturePhotoCaptureDelegate>
 
-@interface CaptureController ()
-
+//
+// session configuration
+//
 @property (strong, nonatomic) AVCaptureSession* session;
 @property (strong, nonatomic) AVCaptureDeviceDiscoverySession* discoverySession;
-//@property (strong, nonatomic) AVCaptureDevice* videoDevice;
 @property (strong, nonatomic) AVCaptureDeviceInput* videoDeviceInput;
-//@property (strong, nonatomic) AVCaptureDevice* audioDevice;
 @property (strong, nonatomic) AVCaptureDeviceInput* audioDeviceInput;
-//@property (strong, nonatomic) AVCaptureDeviceInput* activeDeviceInput;
 @property (strong, nonatomic) AVCaptureMovieFileOutput* movieOutput;
 @property (strong, nonatomic) AVCapturePhotoOutput* photoOutput;
 @property (nonatomic) CaptureMode currentCaptureMode;
 @property (strong, nonatomic) dispatch_queue_t sessionQueue;
+
+//
+// photo/video capture
+//
+@property (strong, nonatomic) NSMutableDictionary* photoCaptureSettingsOnProgressing;
+@property (strong, nonatomic) NSMutableDictionary* photoCaptureDataOnProgressing;
+
 @end
 
 
@@ -35,6 +42,8 @@
         [self addSessionObserver];
         self.currentCaptureMode = CaptureModeUnkonwed;
         self.sessionQueue = dispatch_queue_create("com.sy.learn-avfoundation.video-capture", DISPATCH_QUEUE_SERIAL);
+        self.photoCaptureSettingsOnProgressing = [NSMutableDictionary new];
+        self.photoCaptureDataOnProgressing = [NSMutableDictionary new];
     }
     return self;
 }
@@ -97,7 +106,9 @@
 
 - (void)doSetupSessionWithCompletionHandle:(void(^)(void))completionHandler {
     dispatch_async(self.sessionQueue, ^{
-        NSArray* devicesType = @[AVCaptureDeviceTypeBuiltInDualCamera, AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+        NSArray* devicesType = @[AVCaptureDeviceTypeBuiltInDualCamera,
+                                 AVCaptureDeviceTypeBuiltInWideAngleCamera,
+                                 AVCaptureDeviceTypeBuiltInTrueDepthCamera];
         self.discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:devicesType
                                                                                        mediaType:AVMediaTypeVideo
                                                                                         position:AVCaptureDevicePositionUnspecified];
@@ -131,31 +142,28 @@
         }
         
         // add video input
-        AVCaptureDevice* videoDevice = nil;
-        for (AVCaptureDeviceType videoDeviceType in self.discoverySession.devices) {
-            if (videoDevice != nil) {
+        for (AVCaptureDevice* device in self.discoverySession.devices) {
+            self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:device
+                                                                          error:&e];
+            if (self.videoDeviceInput)
                 break;
-            }
-            videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:videoDeviceType
-                                                             mediaType:AVMediaTypeVideo
-                                                              position:AVCaptureDevicePositionUnspecified];
         }
         
-        if (!videoDevice) {
-            videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-        }
-        
-        self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&e];
         if (!self.videoDeviceInput) {
-            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
-                [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:e];
-            [self.session commitConfiguration];
-            return;
+            AVCaptureDevice* videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+            self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&e];
+            if (!self.videoDeviceInput) {
+                if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
+                    [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:e];
+                [self.session commitConfiguration];
+                return;
+            }
         }
+        
         if([self.session canAddInput:self.videoDeviceInput]) {
             [self.session addInput:self.videoDeviceInput];
             if (SESSION_DEBUG_INFO) {
-                NSLog(@"[CaptureController debug info] seesion add video devices input: %@", videoDevice);
+                NSLog(@"[CaptureController debug info] seesion add video devices input: %@", self.videoDeviceInput.device);
             }
         }else {
             if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
@@ -164,9 +172,11 @@
             return;
         }
         
+
         // add photo output
         self.photoOutput = [AVCapturePhotoOutput new];
         self.photoOutput.livePhotoCaptureEnabled = self.photoOutput.livePhotoCaptureSupported;
+        self.photoOutput.highResolutionCaptureEnabled = TRUE;
         if ([self.session canAddOutput:self.photoOutput]) {
             [self.session addOutput:self.photoOutput];
             if (SESSION_DEBUG_INFO) {
@@ -252,14 +262,12 @@
         BOOL success = [self configSessionForMode:mode];
         if (success) {
             [self enumerateDeviceForMode:mode];
-            [self startSession];
+            //[self startSession];
             self.currentCaptureMode = mode;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if ([self.delegate respondsToSelector:@selector(captureController:EnterCaptureMode:)]) {
-                    [self.delegate captureController:self
-                                    EnterCaptureMode:mode];
-                }
-            });
+            if ([self.delegate respondsToSelector:@selector(captureController:EnterCaptureMode:)]) {
+                [self.delegate captureController:self
+                                EnterCaptureMode:mode];
+            }
         }
     });
 }
@@ -269,12 +277,11 @@
         return TRUE;
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.delegate respondsToSelector:@selector(captureController:LeaveCaptureMode:)]) {
-            [self.delegate captureController:self
-                            LeaveCaptureMode:self.currentCaptureMode];
-        }
-    });
+    if ([self.delegate respondsToSelector:@selector(captureController:LeaveCaptureMode:)]) {
+        [self.delegate captureController:self
+                        LeaveCaptureMode:self.currentCaptureMode];
+    }
+    
 
     if (mode == CaptureModePhoto) {
         [self.session beginConfiguration];
@@ -325,6 +332,35 @@
 }
 
 
+//
+// MARK: - capture photo
+//
+- (void)capturePhoto {
+    if (self.currentCaptureMode != CaptureModePhoto) {
+        if ([self.delegate respondsToSelector:@selector(captureController:InavailbleCaptureRequestForMode:)]) {
+            [self.delegate captureController:self
+             InavailbleCaptureRequestForMode:self.currentCaptureMode];
+        }
+        return;
+    }
+    
+    
+    AVCapturePhotoSettings* captureSetting = nil;
+    if ([self.photoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC] ) {
+        captureSetting = [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey:AVVideoCodecTypeHEVC}];
+    } else {
+        captureSetting = [AVCapturePhotoSettings photoSettings];
+    }
+    captureSetting.highResolutionPhotoEnabled  = self.photoOutput.highResolutionCaptureEnabled;
+    captureSetting.flashMode = AVCaptureFlashModeAuto;
+    captureSetting.autoStillImageStabilizationEnabled = self.photoOutput.stillImageStabilizationSupported;
+    self.photoOutput.livePhotoCaptureEnabled = FALSE;
+    
+    [self.photoCaptureSettingsOnProgressing setObject:captureSetting forKey:[NSNumber numberWithLongLong:captureSetting.uniqueID]];
+    [self.photoOutput capturePhotoWithSettings:captureSetting
+                                      delegate:self];
+}
+
 
 //
 // MARK: - controller delegate
@@ -361,4 +397,119 @@
 }
 
 
+//
+// MARK: - photo / video capture protocol
+//
+- (void)savePhotoToPhotoLibraryWithCaptureUUID:(int64_t)uuid {
+    PHAuthorizationStatus authorizationStatus = [PHPhotoLibrary authorizationStatus];
+    if (authorizationStatus == PHAuthorizationStatusNotDetermined) {
+        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+            if (status == PHAuthorizationStatusAuthorized) {
+                [self doSavePhotoToPhotoLibraryWithCaptureUUID:uuid];
+            } else {
+                if ([self.delegate respondsToSelector:@selector(captureController:SavePhotoData:Result:Error:)]){
+                    [self.delegate captureController:self
+                                       SavePhotoData:nil
+                                              Result:PhotoSavedResultUnAuthorized
+                                               Error:nil];
+                }
+            }
+        }];
+        
+        return;
+    } else if (authorizationStatus == PHAuthorizationStatusDenied) {
+        if ([self.delegate respondsToSelector:@selector(captureController:SavePhotoData:Result:Error:)]){
+            [self.delegate captureController:self
+                               SavePhotoData:nil
+                                      Result:PhotoSavedResultUnAuthorized
+                                       Error:nil];
+            
+        }
+        
+        return;
+    }
+    
+    [self doSavePhotoToPhotoLibraryWithCaptureUUID:uuid];
+}
+
+
+- (void)doSavePhotoToPhotoLibraryWithCaptureUUID:(int64_t)uuid {
+    NSNumber* key = [NSNumber numberWithLongLong:uuid];
+    AVCapturePhotoSettings* captureSetting = [self.photoCaptureSettingsOnProgressing objectForKey:key];
+    NSData* photoData = [self.photoCaptureDataOnProgressing objectForKey:key];
+    if (SESSION_DEBUG_INFO) {
+        NSLog(@"saving photo data at address: %d for key: %@", (int)photoData.bytes, key);
+    }
+    assert(captureSetting != nil && photoData != nil);
+    
+    [[PHPhotoLibrary sharedPhotoLibrary]performChanges:^{
+        PHAssetResourceCreationOptions* options = [PHAssetResourceCreationOptions new];
+        options.uniformTypeIdentifier = captureSetting.processedFileType;
+        PHAssetCreationRequest* newAssetRequest = [PHAssetCreationRequest creationRequestForAsset];
+        
+        [newAssetRequest addResourceWithType:PHAssetResourceTypePhoto
+                                        data:photoData
+                                     options:options];
+    } completionHandler:^(BOOL success, NSError * _Nullable error) {
+        if (success) {
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"saving photo data at address: %d for key: %@ success", (int)photoData.bytes, key);
+            }
+            dispatch_async(self.sessionQueue, ^{
+                [self.photoCaptureSettingsOnProgressing removeObjectForKey:key];
+                [self.photoCaptureDataOnProgressing removeObjectForKey:key];
+            });
+            
+        }
+        PhotoSavedResult reslut = success ? PhotoSavedResultSuccess : PhotoSavedResultFailed;
+        if ([self.delegate respondsToSelector:@selector(captureController:SavePhotoData:Result:Error:)]) {
+            [self.delegate captureController:self
+                               SavePhotoData:photoData
+                                      Result:reslut
+                                       Error:error];
+        }
+    }];
+}
+
+
+- (void)captureOutput:(AVCapturePhotoOutput *)output willCaptureForResolvedSettings:(AVCaptureResolvedPhotoSettings *)resolvedSettings {
+    if ([self.delegate respondsToSelector:@selector(captureController:WillCapturePhotoWithSettings:)]) {
+        [self.delegate captureController:self
+            WillCapturePhotoWithSettings:resolvedSettings];
+    }
+}
+
+- (void)captureOutput:(AVCapturePhotoOutput *)output didCapturePhotoForResolvedSettings:(AVCaptureResolvedPhotoSettings *)resolvedSettings {
+    if([self.delegate respondsToSelector:@selector(captureController:DidCapturePhotoWithSettings:)]) {
+        [self.delegate captureController:self
+             DidCapturePhotoWithSettings:resolvedSettings];
+    }
+}
+
+- (void)captureOutput:(AVCapturePhotoOutput *)output didFinishProcessingPhoto:(AVCapturePhoto *)photo error:(NSError *)error {
+    dispatch_async(self.sessionQueue, ^{
+        NSNumber* key = [NSNumber numberWithLongLong:photo.resolvedSettings.uniqueID];
+        NSData* photoData = [photo fileDataRepresentation];
+        [self.photoCaptureDataOnProgressing setObject:photoData forKey:key];
+        if (SESSION_DEBUG_INFO) {
+            NSLog(@"Generating photo data at address:%d, for key: %@ success", (int)photoData.bytes, key);
+        }
+    });
+}
+
+- (void)captureOutput:(AVCapturePhotoOutput *)output didFinishCaptureForResolvedSettings:(AVCaptureResolvedPhotoSettings *)resolvedSettings error:(NSError *)error {
+    if([self.delegate respondsToSelector:@selector(captureController:DidFinishCapturePhotoWithSettings:Error:)]) {
+        [self.delegate captureController:self
+       DidFinishCapturePhotoWithSettings:resolvedSettings
+                                   Error:error];
+    }
+    
+    if (!error) {
+        dispatch_async(self.sessionQueue, ^{
+            [self savePhotoToPhotoLibraryWithCaptureUUID:resolvedSettings.uniqueID];
+        });
+    }
+}
+
 @end
+
