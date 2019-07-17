@@ -73,10 +73,17 @@
     self.unvisibleWiget = [[FocusWiget alloc] initWithFrame:WIGET_SIZE color:WIGET_COLOR];
     self.unvisibleWiget.hidden = TRUE;
     [self addSubview:self.unvisibleWiget];
+    self.tapToFocusAndExposureEnabled = FALSE;
 }
 
 - (AVCaptureVideoPreviewLayer *)previewLayer {
     return (AVCaptureVideoPreviewLayer*)self.layer;
+}
+
+- (void)setTapToFocusAndExposureEnabled:(BOOL)tapToFocusAndExposureEnabled {
+    _tapToFocusAndExposureEnabled = tapToFocusAndExposureEnabled;
+    self.singleTapGesture.enabled = tapToFocusAndExposureEnabled;
+    self.doubleTapGesture.enabled = tapToFocusAndExposureEnabled;
 }
 
 

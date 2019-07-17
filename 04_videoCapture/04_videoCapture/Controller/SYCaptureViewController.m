@@ -12,7 +12,7 @@
 #import "../Supported/ScrollableTabBar.h"
 #import "../Supported/SYScrollableTabBarItem.h"
 
-@interface SYCaptureViewController () <CaptureControllerDelegate, ScrollableTabBarDelegate>
+@interface SYCaptureViewController () <CaptureControllerDelegate, ScrollableTabBarDelegate, VideoPreviewViewDelegate>
 
 @property (weak, nonatomic) IBOutlet VideoPreviewView *videoPreviewView;
 @property (weak, nonatomic) IBOutlet UIView *scrollableTabBarContainer;
@@ -42,17 +42,21 @@
                                               SelectedItemIndicator:barItemSelectedIndicator
                                                            Delegate:self];
     [self.scrollableTabBarContainer addSubview:self.scrollableTabBar];
-    //[self.view addSubview:self.scrollableTabBar];
-    
-    //todo: disable UI
+   
+    self.videoPreviewView.delegate = self;
     
     //setup capture session
     self.captureController = [CaptureController new];
     self.captureController.delegate = self;
-    [self.captureController setPreviewLayer:self.videoPreviewView];
+    [self.captureController setPreviewLayer:self.videoPreviewView.previewLayer];
     [self.captureController setupSessionWithCompletionHandle:^{
         [self.captureController switchToMode:barItems.firstObject.mode];
-        // todo: enable UI
+        
+        // enable or disable tap to focus and exposure
+        BOOL tapToFocusAndExposureEnable = self.captureController.tapToFocusSupported && self.captureController.tapToExposureSupported;
+        self.videoPreviewView.tapToFocusAndExposureEnabled = tapToFocusAndExposureEnable;
+        self.captureController.tapToFocusEnabled = tapToFocusAndExposureEnable;
+        self.captureController.tapToExposureEnabled = tapToFocusAndExposureEnable;
     }];
 }
 
@@ -80,6 +84,31 @@
 
 - (IBAction)handleSwitchCameraTap:(UIButton *)sender {
     NSLog(@"switch camera tapping");
+}
+
+//
+// MARK: - scrollable tab bar delegate
+//
+- (void)scrollableTabBar:(ScrollableTabBar *)bar SelectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {
+    [self.captureController switchToMode:((SYScrollableTabBarItem*)item).mode];
+}
+
+- (void)scrollableTabBar:(ScrollableTabBar *)bar DeselectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {
+    
+}
+
+
+//
+// MARK: - videoPreview delegate
+//
+- (void)tapToFocusAndExposureAtPoint:(CGPoint)point {
+    [self.captureController tapToFocusAtInterestPoint:point];
+    [self.captureController tapToExposureAtInterestPoint:point];
+}
+
+- (void)tapToResetFocusAndExposure {
+    [self.captureController resetFocus];
+    [self.captureController resetExposure];
 }
 
 //
@@ -126,19 +155,6 @@
             [self presentViewController:alertController animated:TRUE completion:nil];
         }
     });
-}
-
-
-
-//
-// MARK: - scrollable tab bar delegate
-//
-- (void)scrollableTabBar:(ScrollableTabBar *)bar SelectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {
-    [self.captureController switchToMode:((SYScrollableTabBarItem*)item).mode];
-}
-
-- (void)scrollableTabBar:(ScrollableTabBar *)bar DeselectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {
- 
 }
 
 

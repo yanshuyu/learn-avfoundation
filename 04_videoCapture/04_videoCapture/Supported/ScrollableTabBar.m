@@ -36,8 +36,9 @@
         self.itemSpace = itemSpace;
         self.selectedIndicator = selectIndicator;
         [self setupView];
-        [self jumpToItemAtIndex:0 Animated:FALSE];
         [self setupInteraction];
+        [self jumpToItemAtIndex:0 Animated:FALSE];
+        self.interactionEnabled = TRUE;
     }
     
     return self;
@@ -91,6 +92,13 @@
     [self addGestureRecognizer:self.panGesture];
 }
 
+- (BOOL)interactionEnabled {
+    return self.panGesture.enabled;
+}
+
+- (void)setInteractionEnabled:(BOOL)interactionEnabled {
+    self.panGesture.enabled = interactionEnabled;
+}
 
 - (void)selectItemAtIndex:(int)index {
     if (self.selectedIndex >= 0 && self.selectedIndex < self.barItems.count) {

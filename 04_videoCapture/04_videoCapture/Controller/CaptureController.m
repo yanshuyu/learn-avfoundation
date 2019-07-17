@@ -16,6 +16,7 @@
 //
 @property (strong, nonatomic) AVCaptureSession* session;
 @property (strong, nonatomic) AVCaptureDeviceDiscoverySession* discoverySession;
+@property (weak, nonatomic) AVCaptureVideoPreviewLayer* videoPreviewLayer;
 @property (strong, nonatomic) AVCaptureDeviceInput* videoDeviceInput;
 @property (strong, nonatomic) AVCaptureDeviceInput* audioDeviceInput;
 @property (strong, nonatomic) AVCaptureMovieFileOutput* movieOutput;
@@ -202,10 +203,9 @@
     });
 }
 
-- (void)setPreviewLayer:(VideoPreviewView*)view {
-    view.captureSession = self.session;
-    view.delegate = self;
-    
+- (void)setPreviewLayer:(AVCaptureVideoPreviewLayer*)videoPreviewlayer {
+    videoPreviewlayer.session = self.session;
+    self.videoPreviewLayer = videoPreviewlayer;
 }
 
 - (void)startSession {
@@ -299,6 +299,10 @@
             }
             //self.movieOutput = nil;
         }
+        
+        AVCaptureConnection* photoOutputConnection = [self.photoOutput connectionWithMediaType:AVMediaTypeVideo];
+        photoOutputConnection.enabled = TRUE;
+        
         [self.session commitConfiguration];
     }
     
@@ -319,6 +323,10 @@
             [self.session commitConfiguration];
             return FALSE;
         }
+        if (self.photoOutput) {
+            AVCaptureConnection* photoOutputConnection = [self.photoOutput connectionWithMediaType:AVMediaTypeVideo];
+            photoOutputConnection.enabled = FALSE;
+        }
         [self.session commitConfiguration];
     }
     
@@ -337,6 +345,112 @@
 
 
 //
+// MARK: - device capability
+//
+- (BOOL)tapToFocusSupported {
+    AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+    return [cameraDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus] && [cameraDevice isFocusPointOfInterestSupported];
+}
+
+- (BOOL)tapToExposureSupported {
+    AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+    return [cameraDevice isExposureModeSupported:AVCaptureExposureModeAutoExpose] && [cameraDevice isExposurePointOfInterestSupported];
+}
+
+- (void)tapToFocusAtInterestPoint:(CGPoint)point {
+    dispatch_async(self.sessionQueue, ^{
+        if (!self.tapToFocusSupported || !self.tapToFocusEnabled)
+            return ;
+        AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+        NSError* e = nil;
+        if(![cameraDevice lockForConfiguration:&e]) {
+            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
+                [self.delegate captureController:self
+                                 ConfigureDevice:cameraDevice
+                                 FailedWithError:e];
+            }
+            
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] tapToFocusAtInterestPoint failed with error: %@", e);
+            }
+            return ;
+        }
+        
+        cameraDevice.focusMode = AVCaptureFocusModeAutoFocus;
+        cameraDevice.focusPointOfInterest = point;
+        [cameraDevice unlockForConfiguration];
+    });
+}
+
+- (void)tapToExposureAtInterestPoint:(CGPoint)point {
+    dispatch_async(self.sessionQueue, ^{
+        if (!self.tapToExposureSupported || !self.tapToExposureEnabled)
+            return ;
+        AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+        NSError* e = nil;
+        if (![cameraDevice lockForConfiguration:&e]) {
+            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
+                [self.delegate captureController:self
+                                 ConfigureDevice:cameraDevice
+                                 FailedWithError:e];
+            }
+            
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] tapToFocusAtInterestPoint failed with error: %@", e);
+            }
+            return ;
+        }
+        
+        cameraDevice.exposureMode = AVCaptureExposureModeAutoExpose;
+        cameraDevice.exposurePointOfInterest = point;
+        [cameraDevice unlockForConfiguration];
+    });
+}
+
+- (void)resetFocus {
+    AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+    if ([cameraDevice isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]){
+        NSError* e = nil;
+        if (![cameraDevice lockForConfiguration:&e]) {
+            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
+                [self.delegate captureController:self
+                                 ConfigureDevice:cameraDevice
+                                 FailedWithError:e];
+            }
+            
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] resetFocus failed with error: %@", e);
+            }
+            return ;
+        }
+        cameraDevice.focusMode = AVCaptureFocusModeContinuousAutoFocus;
+        [cameraDevice unlockForConfiguration];
+    }
+}
+
+- (void)resetExposure {
+    AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+    if ([cameraDevice isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]){
+        NSError* e = nil;
+        if (![cameraDevice lockForConfiguration:&e]) {
+            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
+                [self.delegate captureController:self
+                                 ConfigureDevice:cameraDevice
+                                 FailedWithError:e];
+            }
+            
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] resetExposure failed with error: %@", e);
+            }
+            return ;
+        }
+        
+        cameraDevice.exposureMode = AVCaptureExposureModeContinuousAutoExposure;
+        [cameraDevice unlockForConfiguration];
+    }
+}
+
+//
 // MARK: - capture photo/video
 //
 - (void)capturePhoto {
@@ -347,6 +461,23 @@
                  InavailbleCaptureRequestForMode:self.currentCaptureMode];
             }
             return;
+        }
+        
+        AVCaptureConnection* photoOutputVideoConnection = [self.photoOutput connectionWithMediaType:AVMediaTypeVideo];
+        if (photoOutputVideoConnection.supportsVideoOrientation) {
+            //photoOutputVideoConnection.videoOrientation = self.videoPreviewLayer.connection.videoOrientation;
+            photoOutputVideoConnection.videoOrientation = [self currentVideoOrientationWithCureentDevice];
+        }
+        if (photoOutputVideoConnection.supportsVideoStabilization) {
+            photoOutputVideoConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+        }
+        
+        AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+        if (cameraDevice.smoothAutoFocusSupported) {
+            if ([cameraDevice lockForConfiguration:nil]) {
+                cameraDevice.smoothAutoFocusEnabled = FALSE;
+                [cameraDevice unlockForConfiguration];
+            }
         }
         
         AVCapturePhotoSettings* captureSetting = nil;
@@ -385,6 +516,23 @@
                                   forConnection:movieOutputVideoConnection];
         }
         
+        AVCaptureConnection* movieOutputVideoConnection = [self.movieOutput connectionWithMediaType:AVMediaTypeVideo];
+        if (movieOutputVideoConnection.supportsVideoOrientation) {
+            //movieOutputVideoConnection.videoOrientation = self.videoPreviewLayer.connection.videoOrientation;
+            movieOutputVideoConnection.videoOrientation = [self currentVideoOrientationWithCureentDevice];
+        }
+        if (movieOutputVideoConnection.supportsVideoStabilization) {
+            movieOutputVideoConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+        }
+        
+        AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+        if (cameraDevice.smoothAutoFocusSupported) {
+            if ([cameraDevice lockForConfiguration:nil]) {
+                cameraDevice.smoothAutoFocusEnabled = TRUE;
+                [cameraDevice unlockForConfiguration];
+            }
+        }
+    
         NSURL* url = [self uniqueResourceURLAtDirectory:NSTemporaryDirectory() WithFileExtension:@"mov"];
         [self.movieOutput startRecordingToOutputFileURL:url
                                       recordingDelegate:self];
@@ -401,6 +549,29 @@
 
 - (BOOL)recording {
     return self.movieOutput.recording;
+}
+
+- (AVCaptureVideoOrientation)currentVideoOrientationWithCureentDevice {
+    UIDevice* currentDevice = [UIDevice currentDevice];
+    AVCaptureVideoOrientation videoOrientation = AVCaptureVideoOrientationPortrait;
+    switch (currentDevice.orientation) {
+        case UIDeviceOrientationPortrait:
+            videoOrientation = AVCaptureVideoOrientationPortrait;
+            break;
+        case UIDeviceOrientationPortraitUpsideDown:
+            videoOrientation = AVCaptureVideoOrientationPortraitUpsideDown;
+            break;
+        case UIDeviceOrientationLandscapeLeft:
+            videoOrientation = AVCaptureVideoOrientationLandscapeRight;
+            break;
+        case UIDeviceOrientationLandscapeRight:
+            videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
+            break;
+        default:
+            break;
+    }
+    
+    return videoOrientation;
 }
 
 - (NSURL*)uniqueResourceURLAtDirectory:(NSString*)directory WithFileExtension:(NSString*)ext {
@@ -530,20 +701,6 @@
         [self.delegate captureControllerSessionDidStopRunning:self];
     }
 }
-
-
-//
-// MARK: - videoPreview delegate
-//
-- (void)tapToFocusAndExposureAtPoint:(CGPoint)point {
-    NSLog(@"tapToFocusAndExposureAtPoint: (%f, %f)", point.x, point.y);
-}
-
-
-- (void)tapToResetFocusAndExposure {
-    NSLog(@"tapToResetFocusAndExposure");
-}
-
 
 //
 // MARK: - photo / video capture delegate

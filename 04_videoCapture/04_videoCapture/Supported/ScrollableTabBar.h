@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak, nonatomic) id<ScrollableTabBarDelegate> delegate;
 @property (readonly, nonatomic) int selectedIndex;
+@property (nonatomic) BOOL interactionEnabled;
 
 - (instancetype)initWithFrame:(CGRect)frame Items:(NSArray<ScrollableTabBarItem*>*)items
                     ItemSpace:(float)itemSpace

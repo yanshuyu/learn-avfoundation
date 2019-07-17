@@ -48,6 +48,7 @@ typedef enum : NSUInteger {
 // session configuration
 //
 - (void)captureController:(CaptureController * _Nullable )controller ConfigureSessionResult:(SessionConfigResult)result Error:(NSError* _Nullable)error;
+- (void)captureController:(CaptureController *)controller ConfigureDevice:(AVCaptureDevice*)device FailedWithError:(NSError*)error;
 - (void)captureControllerSessionRuntimeError:(CaptureController*)controller;
 - (void)captureControllerSessionDidStartRunning:(CaptureController*)controller;
 - (void)captureControllerSessionDidStopRunning:(CaptureController *)controller;
@@ -70,16 +71,22 @@ typedef enum : NSUInteger {
 @end
 
 
-@interface CaptureController : NSObject <VideoPreviewViewDelegate>
+@interface CaptureController : NSObject
 
 @property (weak, nonatomic) id<CaptureControllerDelegate> delegate;
 @property (readonly, nonatomic) BOOL recording; // whether session is currently recording video
+
+@property (nonatomic, readonly) BOOL tapToFocusSupported;
+@property (nonatomic) BOOL tapToFocusEnabled;
+@property (nonatomic, readonly) BOOL tapToExposureSupported;
+@property (nonatomic) BOOL tapToExposureEnabled;
+
 //
 // configurate session
 //
 - (void)setupSessionWithCompletionHandle:(void(^)(void))completionHandler;
 - (void)switchToMode:(CaptureMode)mode;
-- (void)setPreviewLayer:(VideoPreviewView*)view;
+- (void)setPreviewLayer:(AVCaptureVideoPreviewLayer*)videoPreviewlayer;
 - (void)startSession;
 - (void)stopSession;
 - (void)cleanUpSession;
@@ -90,6 +97,14 @@ typedef enum : NSUInteger {
 - (void)capturePhoto;
 - (void)startRecording;
 - (void)stopRecording;
+
+//
+// device capability
+//
+- (void)tapToFocusAtInterestPoint:(CGPoint)point;
+- (void)resetFocus;
+- (void)tapToExposureAtInterestPoint:(CGPoint)point;
+- (void)resetExposure;
 
 
 @end
