@@ -26,11 +26,11 @@ typedef enum : NSUInteger {
 } SessionConfigResult;
 
 typedef enum : NSUInteger {
-    PhotoSavedResultUnknowed,
-    PhotoSavedResultSuccess,
-    PhotoSavedResultFailed,
-    PhotoSavedResultUnAuthorized,
-} PhotoSavedResult;
+    AssetSavedResultUnknowed,
+    AssetSavedResultSuccess,
+    AssetSavedResultFailed,
+    AssetSavedResultUnAuthorized,
+} AssetSavedResult;
 
 
 typedef enum : NSUInteger {
@@ -60,8 +60,10 @@ typedef enum : NSUInteger {
 - (void)captureController:(CaptureController *)controller WillCapturePhotoWithSettings:(AVCaptureResolvedPhotoSettings*)settings;
 - (void)captureController:(CaptureController *)controller DidCapturePhotoWithSettings:(AVCaptureResolvedPhotoSettings *)settings;
 - (void)captureController:(CaptureController *)controller DidFinishCapturePhotoWithSettings:(AVCaptureResolvedPhotoSettings *)settings Error:(NSError*)error;
-- (void)captureController:(CaptureController *)controller SavePhotoData:(NSData* _Nullable)data Result:(PhotoSavedResult)result Error:(NSError* _Nullable)error;
-
+- (void)captureController:(CaptureController *)controller SavePhoto:(NSData* _Nullable)data ToLibraryWithResult:(AssetSavedResult)result Error:(NSError* _Nullable)error;
+- (void)captureController:(CaptureController *)controller DidStartRecordingToFileURL:(NSURL*)url;
+- (void)captureController:(CaptureController *)controller DidFinishRecordingToFileURL:(NSURL*)url Error:(NSError*)error;
+- (void)captureController:(CaptureController *)controller SaveVideo:(NSURL* _Nullable)url ToLibraryWithResult:(AssetSavedResult)result Error:(NSError* _Nullable)error;
 @required
 
 
@@ -71,6 +73,7 @@ typedef enum : NSUInteger {
 @interface CaptureController : NSObject <VideoPreviewViewDelegate>
 
 @property (weak, nonatomic) id<CaptureControllerDelegate> delegate;
+@property (readonly, nonatomic) BOOL recording; // whether session is currently recording video
 //
 // configurate session
 //
@@ -82,9 +85,12 @@ typedef enum : NSUInteger {
 - (void)cleanUpSession;
 
 //
-// photo capture
+// photo/video capture
 //
 - (void)capturePhoto;
+- (void)startRecording;
+- (void)stopRecording;
+
 
 @end
 

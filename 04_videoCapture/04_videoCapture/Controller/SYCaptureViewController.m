@@ -68,6 +68,14 @@
     if (self.currentCaptureMode == CaptureModePhoto) {
         [self.captureController capturePhoto];
     }
+    
+    if (self.currentCaptureMode == CaptureModeVideo) {
+        if (self.captureController.recording) {
+            [self.captureController stopRecording];
+        } else {
+            [self.captureController startRecording];
+        }
+    }
 }
 
 - (IBAction)handleSwitchCameraTap:(UIButton *)sender {
@@ -106,17 +114,20 @@
     NSLog(@"Enter capture mode: %lu", (unsigned long)mode);
 }
 
-- (void)captureController:(CaptureController *)controller SavePhotoData:(NSData *)data Result:(PhotoSavedResult)result Error:(NSError *)error {
-    if (result == PhotoSavedResultUnAuthorized) {
-        UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"save error"
-                                                                                message:@"please go to settings > videoCapture > Photos to allow access to photo library"
-                                                                         preferredStyle:UIAlertControllerStyleAlert];
-        [alertController addAction:[UIAlertAction actionWithTitle:@"ok"
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:nil]];
-        [self presentViewController:alertController animated:TRUE completion:nil];
-    }
+- (void)captureController:(CaptureController *)controller SavePhoto:(NSData *)data ToLibraryWithResult:(AssetSavedResult)result Error:(NSError *)error {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (result == AssetSavedResultUnAuthorized) {
+            UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Save Error"
+                                                                                     message:@"please go to settings > videoCapture > Photos to allow we access to photo library to save your content"
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"ok"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:nil]];
+            [self presentViewController:alertController animated:TRUE completion:nil];
+        }
+    });
 }
+
 
 
 //
