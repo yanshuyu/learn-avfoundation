@@ -5,18 +5,22 @@
 //  Created by sy on 2019/7/9.
 //  Copyright © 2019 sy. All rights reserved.
 //
-
+#import <MobileCoreServices/MobileCoreServices.h>
 #import "SYCaptureViewController.h"
 #import "../View/VideoPreviewView.h"
 #import "../Controller/CaptureController.h"
 #import "../Supported/ScrollableTabBar.h"
 #import "../Supported/SYScrollableTabBarItem.h"
+#import <Photos/Photos.h>
 
-@interface SYCaptureViewController () <CaptureControllerDelegate, ScrollableTabBarDelegate, VideoPreviewViewDelegate>
+@interface SYCaptureViewController () <CaptureControllerDelegate, ScrollableTabBarDelegate, VideoPreviewViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet VideoPreviewView *videoPreviewView;
 @property (weak, nonatomic) IBOutlet UIView *scrollableTabBarContainer;
 @property (weak, nonatomic) IBOutlet UIButton *captureButton;
+@property (weak, nonatomic) IBOutlet UIButton *cameraSwitchButton;
+@property (weak, nonatomic) IBOutlet UIButton *albumButton;
+@property (weak, nonatomic) IBOutlet UIVisualEffectView *blurEffectView;
 
 
 @property (strong, nonatomic) CaptureController* captureController;
@@ -29,7 +33,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     //setup scrollable tab bar
     UIImageView* barItemSelectedIndicator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"select_indicator"]];
     barItemSelectedIndicator.frame = CGRectMake(0, 0, 12, 12);
@@ -58,6 +62,10 @@
         self.captureController.tapToFocusEnabled = tapToFocusAndExposureEnable;
         self.captureController.tapToExposureEnabled = tapToFocusAndExposureEnable;
     }];
+    
+    //setup user interface
+    [self setupView];
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -67,6 +75,18 @@
 - (BOOL)prefersStatusBarHidden {
     return TRUE;
 }
+
+- (void)setupView {
+    self.scrollableTabBarContainer.backgroundColor = [UIColor blackColor];
+    [self.captureButton setImage:[UIImage imageNamed:@"square"] forState:UIControlStateSelected];
+    self.blurEffectView.hidden = TRUE;
+    self.cameraSwitchButton.hidden = self.captureController.switchCameraSupported;
+    self.albumButton.layer.borderWidth = 1;
+    self.albumButton.layer.borderColor = [UIColor redColor].CGColor;
+    self.albumButton.layer.cornerRadius = 4;
+    self.albumButton.layer.masksToBounds = true;
+}
+
 
 - (IBAction)handleCaptureButtonTap:(UIButton *)sender {
     if (self.currentCaptureMode == CaptureModePhoto) {
@@ -84,8 +104,34 @@
 
 - (IBAction)handleSwitchCameraTap:(UIButton *)sender {
     NSLog(@"switch camera tapping");
+    [self.captureController switchCamera];
 }
 
+- (IBAction)handleAlbumButtonTap:(UIButton *)sender {
+    NSLog(@"album button tapped");
+
+    void(^presentPhotoViewer)(void) = ^{
+        UIImagePickerController* imagePickerController = [UIImagePickerController new];
+        imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+        imagePickerController.mediaTypes = @[(NSString*)kUTTypeImage, (NSString*)kUTTypeVideo];
+        imagePickerController.allowsEditing = FALSE;
+        imagePickerController.delegate = self;
+        [self presentViewController:imagePickerController animated:TRUE completion:Nil];
+    };
+    
+    PHAuthorizationStatus photoLibraryAuthorization = [PHPhotoLibrary authorizationStatus];
+    if (photoLibraryAuthorization == PHAuthorizationStatusDenied || photoLibraryAuthorization == PHAuthorizationStatusNotDetermined) {
+        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+            if (status == PHAuthorizationStatusAuthorized) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    presentPhotoViewer();
+                });
+            }
+        }];
+        return ;
+    }
+    presentPhotoViewer();
+}
 //
 // MARK: - scrollable tab bar delegate
 //
@@ -112,10 +158,22 @@
 }
 
 //
+// MARK: - image picker delegate
+//
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey,id> *)info {
+    [self.captureController startSession];
+    [self dismissViewControllerAnimated:TRUE completion:Nil];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    [self.captureController startSession];
+}
+
+//
 // MARK: - capture controller delegate
 //
 - (void)captureController:(CaptureController *)controller ConfigureSessionResult:(SessionConfigResult)result Error:(NSError *)error {
-    if (result == SessionSetupResultUnAuthorized) {
+    if (result == SessionConfigResultUnAuthorized) {
         NSLog(@"config seesion failed, no authorization to capture device.");
     } else if (error) {
         NSLog(@"config session failed, error: %@", error.localizedDescription);
@@ -136,11 +194,52 @@
 
 - (void)captureController:(CaptureController *)controller LeaveCaptureMode:(CaptureMode)mode {
     NSLog(@"Leave capture mode: %lu", (unsigned long)mode);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.cameraSwitchButton.userInteractionEnabled = FALSE;
+        self.captureButton.userInteractionEnabled = FALSE;
+        self.albumButton.userInteractionEnabled = FALSE;
+        self.blurEffectView.hidden = FALSE;
+    });
 }
 
 - (void)captureController:(CaptureController *)controller EnterCaptureMode:(CaptureMode)mode {
-    self.currentCaptureMode = mode;
     NSLog(@"Enter capture mode: %lu", (unsigned long)mode);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.currentCaptureMode = mode;
+        self.cameraSwitchButton.userInteractionEnabled = TRUE;
+        self.captureButton.userInteractionEnabled = TRUE;
+        self.albumButton.userInteractionEnabled = TRUE;
+        self.blurEffectView.hidden = TRUE;
+        
+        if (self.currentCaptureMode == CaptureModePhoto) {
+            self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
+            UIImage* whiteCircle = [UIImage imageNamed:@"circle_white"];
+            [self.captureButton setImage:whiteCircle forState:UIControlStateNormal];
+            self.scrollableTabBarContainer.alpha = 1;
+         
+        } else if (self.currentCaptureMode == CaptureModeVideo) {
+            self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
+            UIImage* redCircle = [UIImage imageNamed:@"circle_red"];
+            [self.captureButton setImage:redCircle forState:UIControlStateNormal];
+            self.scrollableTabBarContainer.alpha = 0.5;
+       }
+    });
+}
+
+- (void)captureControllerBeginSwitchCamera {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.blurEffectView.hidden = FALSE;
+    });
+}
+
+- (void)captureControllerDidFinishSwitchCamera:(BOOL)success {
+    NSLog(@"camera switch: %d", success);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.blurEffectView.hidden = TRUE;
+        if (success) {
+            self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
+        }
+    });
 }
 
 - (void)captureController:(CaptureController *)controller SavePhoto:(NSData *)data ToLibraryWithResult:(AssetSavedResult)result Error:(NSError *)error {
@@ -154,6 +253,22 @@
                                                               handler:nil]];
             [self presentViewController:alertController animated:TRUE completion:nil];
         }
+    });
+}
+
+- (void)captureController:(CaptureController *)controller DidStartRecordingToFileURL:(NSURL *)url {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.scrollableTabBar.interactionEnabled = FALSE;
+        self.cameraSwitchButton.enabled = FALSE;
+        [self.captureButton setSelected:TRUE];
+    });
+}
+
+- (void)captureController:(CaptureController *)controller DidFinishRecordingToFileURL:(NSURL *)url Error:(NSError *)error {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.scrollableTabBar.interactionEnabled = TRUE;
+        self.cameraSwitchButton.enabled = TRUE;
+        [self.captureButton setSelected:FALSE];
     });
 }
 

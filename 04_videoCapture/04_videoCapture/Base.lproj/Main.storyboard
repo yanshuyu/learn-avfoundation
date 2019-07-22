@@ -20,31 +20,59 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AMr-6p-1d6" customClass="VideoPreviewView">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yKm-cY-ayC" userLabel="scrollable tab bar">
-                                <rect key="frame" x="0.0" y="547" width="375" height="120"/>
+                                <subviews>
+                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="G4l-11-h6A">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="IKi-9o-Aag">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        </view>
+                                        <blurEffect style="light"/>
+                                    </visualEffectView>
+                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="120" id="c5y-5F-Zk5"/>
+                                    <constraint firstItem="G4l-11-h6A" firstAttribute="top" secondItem="AMr-6p-1d6" secondAttribute="top" id="R3b-s2-a8w"/>
+                                    <constraint firstAttribute="bottom" secondItem="G4l-11-h6A" secondAttribute="bottom" id="SF9-0X-a8O"/>
+                                    <constraint firstItem="G4l-11-h6A" firstAttribute="leading" secondItem="AMr-6p-1d6" secondAttribute="leading" id="bNm-9u-AiK"/>
+                                    <constraint firstAttribute="trailing" secondItem="G4l-11-h6A" secondAttribute="trailing" id="u40-cc-rYu"/>
                                 </constraints>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ran-Xp-fH3" userLabel="capture button">
-                                <rect key="frame" x="147" y="550" width="80" height="80"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yKm-cY-ayC" userLabel="scrollable tab bar">
+                                <rect key="frame" x="0.0" y="557" width="375" height="110"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="110" id="c5y-5F-Zk5"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ran-Xp-fH3" userLabel="capture button">
+                                <rect key="frame" x="147.5" y="557" width="80" height="80"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="Bpe-TQ-lcd"/>
+                                    <constraint firstAttribute="width" constant="80" id="ex7-vg-Gw6"/>
+                                </constraints>
                                 <state key="normal" image="circle_red" backgroundImage="frame_2"/>
                                 <state key="highlighted" image="square" backgroundImage="frame_2"/>
                                 <connections>
                                     <action selector="handleCaptureButtonTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="Tr0-K3-RsZ"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VNv-QK-Md4" userLabel="album button">
-                                <rect key="frame" x="50" y="550" width="40" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VNv-QK-Md4" userLabel="album button">
+                                <rect key="frame" x="50" y="577" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="GSs-H2-9Eq"/>
+                                    <constraint firstAttribute="width" constant="40" id="UPy-M9-qdK"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="handleAlbumButtonTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="vZh-8K-NrF"/>
+                                </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Gh-0s-UNP" userLabel="camera button">
-                                <rect key="frame" x="300" y="550" width="40" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Gh-0s-UNP" userLabel="camera button">
+                                <rect key="frame" x="285" y="577" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="EfG-aO-9bs"/>
+                                    <constraint firstAttribute="width" constant="40" id="OKR-Gb-YjH"/>
+                                </constraints>
                                 <state key="normal" image="switch-camera"/>
                                 <connections>
                                     <action selector="handleSwitchCameraTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="xDN-r9-lms"/>
@@ -54,16 +82,25 @@
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="H4I-Wv-7zF" firstAttribute="trailing" secondItem="AMr-6p-1d6" secondAttribute="trailing" id="1Wu-0R-b0u"/>
+                            <constraint firstItem="H4I-Wv-7zF" firstAttribute="trailing" secondItem="8Gh-0s-UNP" secondAttribute="trailing" constant="50" id="4lh-Et-UlG"/>
                             <constraint firstItem="AMr-6p-1d6" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="Fu1-CI-wup"/>
                             <constraint firstItem="yKm-cY-ayC" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="Grh-Tb-puo"/>
                             <constraint firstItem="H4I-Wv-7zF" firstAttribute="bottom" secondItem="yKm-cY-ayC" secondAttribute="bottom" id="ItQ-hj-Hb7"/>
+                            <constraint firstItem="ran-Xp-fH3" firstAttribute="centerX" secondItem="hne-uj-s8C" secondAttribute="centerX" id="T2W-Nl-hrW"/>
                             <constraint firstAttribute="bottom" secondItem="AMr-6p-1d6" secondAttribute="bottom" id="Xko-yg-3Fd"/>
+                            <constraint firstItem="ran-Xp-fH3" firstAttribute="top" secondItem="yKm-cY-ayC" secondAttribute="top" id="fm0-A5-Q7V"/>
+                            <constraint firstItem="VNv-QK-Md4" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" constant="50" id="gCU-cM-WrQ"/>
                             <constraint firstItem="AMr-6p-1d6" firstAttribute="top" secondItem="hne-uj-s8C" secondAttribute="top" id="gzF-mY-bQs"/>
+                            <constraint firstItem="8Gh-0s-UNP" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="lfk-wZ-5vf"/>
                             <constraint firstItem="yKm-cY-ayC" firstAttribute="trailing" secondItem="H4I-Wv-7zF" secondAttribute="trailing" id="p4k-lo-MAX"/>
+                            <constraint firstItem="VNv-QK-Md4" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="vt4-VK-Nv0"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="H4I-Wv-7zF"/>
                     </view>
                     <connections>
+                        <outlet property="albumButton" destination="VNv-QK-Md4" id="wET-rS-N28"/>
+                        <outlet property="blurEffectView" destination="G4l-11-h6A" id="9fT-vy-Xcu"/>
+                        <outlet property="cameraSwitchButton" destination="8Gh-0s-UNP" id="wPt-fp-dA9"/>
                         <outlet property="captureButton" destination="ran-Xp-fH3" id="mfw-Kp-ms4"/>
                         <outlet property="scrollableTabBarContainer" destination="yKm-cY-ayC" id="HeS-jQ-9JG"/>
                         <outlet property="videoPreviewView" destination="AMr-6p-1d6" id="dLk-ih-gmU"/>

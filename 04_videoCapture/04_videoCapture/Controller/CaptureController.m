@@ -50,6 +50,18 @@
 }
 
 
+- (void)captureDeviceSubjectAreaHasChanged:(NSNotification* )notification {
+    //NSLog(@"captureDeviceSubjectAreaHasChanged: %@", notification);
+    AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+    if (cameraDevice.exposureMode == AVCaptureExposureModeLocked
+        && [cameraDevice isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]
+        && [cameraDevice lockForConfiguration:Nil] )
+    {
+        cameraDevice.exposureMode = AVCaptureExposureModeContinuousAutoExposure;
+        [cameraDevice unlockForConfiguration];
+    }
+}
+
 //
 // MARK: - session configuration
 //
@@ -59,7 +71,7 @@
     AVAuthorizationStatus audioAuthorizedStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
     if (videoAuthorizedStatus == AVAuthorizationStatusDenied || audioAuthorizedStatus == AVAuthorizationStatusDenied) {
         if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
-            [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultUnAuthorized Error:nil];
+            [self.delegate captureController:self ConfigureSessionResult:SessionConfigResultUnAuthorized Error:nil];
         return;
     }
     
@@ -68,13 +80,13 @@
                                  completionHandler:^(BOOL granted) {
                                      if (!granted) {
                                          if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
-                                             [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultUnAuthorized Error:nil];
+                                             [self.delegate captureController:self ConfigureSessionResult:SessionConfigResultUnAuthorized Error:nil];
                                      } else {
                                          if (audioAuthorizedStatus == AVAuthorizationStatusNotDetermined) {
                                              [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
                                                  if (!granted) {
                                                      if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
-                                                         [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultUnAuthorized Error:nil];
+                                                         [self.delegate captureController:self ConfigureSessionResult:SessionConfigResultUnAuthorized Error:nil];
                                                  } else {
                                                      [self doSetupSessionWithCompletionHandle:completionHandler];
                                                  }
@@ -91,7 +103,7 @@
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
             if (!granted) {
                 if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
-                    [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultUnAuthorized Error:nil];
+                    [self.delegate captureController:self ConfigureSessionResult:SessionConfigResultUnAuthorized Error:nil];
             } else {
                 [self doSetupSessionWithCompletionHandle:completionHandler];
             }
@@ -126,7 +138,7 @@
         self.audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:&e];
         if (!self.audioDeviceInput) {
             if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
-                [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:e];
+                [self.delegate captureController:self ConfigureSessionResult:SessionConfigResultFailed Error:e];
             [self.session commitConfiguration];
             return;
         }
@@ -137,7 +149,7 @@
             }
         } else {
             if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
-                [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:nil];
+                [self.delegate captureController:self ConfigureSessionResult:SessionConfigResultFailed Error:nil];
             [self.session commitConfiguration];
             return;
         }
@@ -155,7 +167,7 @@
             self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&e];
             if (!self.videoDeviceInput) {
                 if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
-                    [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:e];
+                    [self.delegate captureController:self ConfigureSessionResult:SessionConfigResultFailed Error:e];
                 [self.session commitConfiguration];
                 return;
             }
@@ -163,12 +175,18 @@
         
         if([self.session canAddInput:self.videoDeviceInput]) {
             [self.session addInput:self.videoDeviceInput];
+            if ([self.videoDeviceInput.device lockForConfiguration:Nil]) {
+                self.videoDeviceInput.device.subjectAreaChangeMonitoringEnabled = TRUE;
+                [self.videoDeviceInput.device unlockForConfiguration];
+            }
+            [self addVideoDeviceObserver];
+            
             if (SESSION_DEBUG_INFO) {
                 NSLog(@"[CaptureController debug info] seesion add video devices input: %@", self.videoDeviceInput.device);
             }
         }else {
             if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
-                [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:nil];
+                [self.delegate captureController:self ConfigureSessionResult:SessionConfigResultFailed Error:nil];
             [self.session commitConfiguration];
             return;
         }
@@ -185,7 +203,7 @@
             }
         } else {
             if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)])
-                [self.delegate captureController:self ConfigureSessionResult:SessionSetupResultFailed Error:nil];
+                [self.delegate captureController:self ConfigureSessionResult:SessionConfigResultFailed Error:nil];
             [self.session commitConfiguration];
             return;
         }
@@ -225,6 +243,7 @@
 
 - (void)cleanUpSession {
     [self stopSession];
+    [self removeVideoDeviceObserver];
     [self removeSessionObserver];
 }
 
@@ -242,8 +261,19 @@
                   selector:@selector(sessionStopRunningNotification:)
                       name:AVCaptureSessionDidStopRunningNotification
                     object:self.session];
+    [defaultNC addObserver:self
+                  selector:@selector(sessionWasInteruptNotification:)
+                      name:AVCaptureSessionWasInterruptedNotification
+                    object:self.session];
 }
 
+- (void)addVideoDeviceObserver {
+    NSNotificationCenter* defaultNC = [NSNotificationCenter defaultCenter];
+    [defaultNC addObserver:self
+                  selector:@selector(captureDeviceSubjectAreaHasChanged:)
+                      name:AVCaptureDeviceSubjectAreaDidChangeNotification
+                    object:self.videoDeviceInput.device];
+}
 
 - (void)removeSessionObserver {
     NSNotificationCenter* defaultNC = [NSNotificationCenter defaultCenter];
@@ -257,6 +287,14 @@
     }
 }
 
+- (void)removeVideoDeviceObserver {
+    NSNotificationCenter* defaultNC = [NSNotificationCenter defaultCenter];
+    @try {
+        [defaultNC removeObserver:self.videoDeviceInput.device];
+    } @catch (NSException *exception) {
+        // do nothing
+    }
+}
 
 //
 // MARK: - switch capture mode
@@ -450,6 +488,69 @@
     }
 }
 
+- (BOOL)switchCameraSupported {
+    return self.discoverySession.devices.count > 1;
+}
+
+- (void)switchCamera {
+    if (self.switchCameraSupported) {
+        AVCaptureDevice* currentDevice = self.videoDeviceInput.device;
+        AVCaptureDevice* targetDevice = Nil;
+        
+        for (AVCaptureDevice* device in self.discoverySession.devices) {
+            if (device != currentDevice && device.position != currentDevice.position)
+            {
+                targetDevice = device;
+                break;
+            }
+        }
+        
+        if (targetDevice) {
+            NSError* e;
+            AVCaptureDeviceInput* targetDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:targetDevice
+                                                                                            error:&e];
+            if (!targetDeviceInput) {
+                if ([self.delegate respondsToSelector:@selector(captureController:ConfigureSessionResult:Error:)]) {
+                    [self.delegate captureController:self
+                              ConfigureSessionResult:SessionConfigResultFailed
+                                               Error:e];
+                }
+                return ;
+            }
+            
+            dispatch_async(self.sessionQueue, ^{
+                BOOL success = FALSE;
+                AVCaptureDeviceInput* currentDeviceInput = self.videoDeviceInput;
+                [self.session beginConfiguration];
+                [self removeVideoDeviceObserver];
+                [self.session removeInput:self.videoDeviceInput];
+                if ([self.delegate respondsToSelector:@selector(captureControllerBeginSwitchCamera)]) {
+                    [self.delegate captureControllerBeginSwitchCamera];
+                }
+
+                if([self.session canAddInput:targetDeviceInput]) {
+                    [self.session addInput:targetDeviceInput];
+                    self.videoDeviceInput = targetDeviceInput;
+                    if ([self.videoDeviceInput.device lockForConfiguration:Nil]) {
+                        self.videoDeviceInput.device.subjectAreaChangeMonitoringEnabled = TRUE;
+                        [self.videoDeviceInput.device unlockForConfiguration];
+                    }
+                    [self enumerateDeviceForMode:self.currentCaptureMode];
+                    success = TRUE;
+                } else {
+                    [self.session addInput:currentDeviceInput];
+                }
+                [self addVideoDeviceObserver];
+                [self.session commitConfiguration];
+                
+                if ([self.delegate respondsToSelector:@selector(captureControllerDidFinishSwitchCamera:)]) {
+                    [self.delegate captureControllerDidFinishSwitchCamera:success];
+                }
+            });
+        }
+    }
+}
+
 //
 // MARK: - capture photo/video
 //
@@ -510,13 +611,12 @@
             return;
         }
         
+         AVCaptureConnection* movieOutputVideoConnection = [self.movieOutput connectionWithMediaType:AVMediaTypeVideo];
         if ([self.movieOutput.availableVideoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
-            AVCaptureConnection* movieOutputVideoConnection = [self.movieOutput connectionWithMediaType:AVMediaTypeVideo];
             [self.movieOutput setOutputSettings:@{AVVideoCodecKey:AVVideoCodecTypeHEVC}
                                   forConnection:movieOutputVideoConnection];
         }
         
-        AVCaptureConnection* movieOutputVideoConnection = [self.movieOutput connectionWithMediaType:AVMediaTypeVideo];
         if (movieOutputVideoConnection.supportsVideoOrientation) {
             //movieOutputVideoConnection.videoOrientation = self.videoPreviewLayer.connection.videoOrientation;
             movieOutputVideoConnection.videoOrientation = [self currentVideoOrientationWithCureentDevice];
@@ -700,6 +800,10 @@
     if ([self.delegate respondsToSelector:@selector(captureControllerSessionDidStopRunning:)]) {
         [self.delegate captureControllerSessionDidStopRunning:self];
     }
+}
+
+- (void)sessionWasInteruptNotification:(NSNotification*)notification {
+    NSLog(@"session was intterupt: %@", notification);
 }
 
 //

@@ -19,10 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
 #define CaptureControllerErrorDomain @"com.sy.videoCapture"
 
 typedef enum : NSUInteger {
-    SessionSetupResultUnKnowed,
-    SessionSetupResultUnAuthorized,
-    SessionSetupResultSuccess,
-    SessionSetupResultFailed,
+    SessionConfigResultUnKnowed,
+    SessionConfigResultUnAuthorized,
+    SessionConfigResultSuccess,
+    SessionConfigResultFailed,
 } SessionConfigResult;
 
 typedef enum : NSUInteger {
@@ -65,6 +65,8 @@ typedef enum : NSUInteger {
 - (void)captureController:(CaptureController *)controller DidStartRecordingToFileURL:(NSURL*)url;
 - (void)captureController:(CaptureController *)controller DidFinishRecordingToFileURL:(NSURL*)url Error:(NSError*)error;
 - (void)captureController:(CaptureController *)controller SaveVideo:(NSURL* _Nullable)url ToLibraryWithResult:(AssetSavedResult)result Error:(NSError* _Nullable)error;
+- (void)captureControllerBeginSwitchCamera;
+- (void)captureControllerDidFinishSwitchCamera:(BOOL)success;
 @required
 
 
@@ -80,6 +82,7 @@ typedef enum : NSUInteger {
 @property (nonatomic) BOOL tapToFocusEnabled;
 @property (nonatomic, readonly) BOOL tapToExposureSupported;
 @property (nonatomic) BOOL tapToExposureEnabled;
+@property (nonatomic, readonly) BOOL switchCameraSupported;
 
 //
 // configurate session
@@ -105,7 +108,7 @@ typedef enum : NSUInteger {
 - (void)resetFocus;
 - (void)tapToExposureAtInterestPoint:(CGPoint)point;
 - (void)resetExposure;
-
+- (void)switchCamera;
 
 @end
 
