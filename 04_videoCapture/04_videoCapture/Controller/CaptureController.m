@@ -10,7 +10,6 @@
 #import <Photos/Photos.h>
 
 @interface CaptureController () <AVCapturePhotoCaptureDelegate, AVCaptureFileOutputRecordingDelegate>
-
 //
 // session configuration
 //
@@ -49,7 +48,6 @@
     return self;
 }
 
-
 - (void)captureDeviceSubjectAreaHasChanged:(NSNotification* )notification {
     //NSLog(@"captureDeviceSubjectAreaHasChanged: %@", notification);
     AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
@@ -59,6 +57,15 @@
     {
         cameraDevice.exposureMode = AVCaptureExposureModeContinuousAutoExposure;
         [cameraDevice unlockForConfiguration];
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if (context == CAMERA_ZOOM_CONTEXT) {
+        if ([self.delegate respondsToSelector:@selector(captureController:DidCameraZoomToFactor:)]) {
+            [self.delegate captureController:self
+                       DidCameraZoomToFactor:self.cameraZoomFactor];
+        }
     }
 }
 
@@ -215,6 +222,12 @@
         [self.session commitConfiguration];
         [self startSession];
         
+        // enable all avaliable device capbilities at default
+        self.tapToFocusEnabled = self.tapToFocusSupported;
+        self.tapToExposureEnabled = self.tapToExposureSupported;
+        self.switchCameraEnabled = self.switchCameraSupported;
+        self.cameraZoomEnabled = self.cameraZoomSupported;
+        
         if (completionHandler) {
             completionHandler();
         }
@@ -273,6 +286,11 @@
                   selector:@selector(captureDeviceSubjectAreaHasChanged:)
                       name:AVCaptureDeviceSubjectAreaDidChangeNotification
                     object:self.videoDeviceInput.device];
+    
+    [self.videoDeviceInput.device addObserver:self
+                                   forKeyPath:@"videoZoomFactor"
+                                      options:NSKeyValueObservingOptionNew
+                                      context:CAMERA_ZOOM_CONTEXT];
 }
 
 - (void)removeSessionObserver {
@@ -282,6 +300,9 @@
         //        [defaultNC removeObserver:self name:AVCaptureSessionDidStartRunningNotification object:self.session];
         //        [defaultNC removeObserver:self name:AVCaptureSessionDidStopRunningNotification object:self.session];
         [defaultNC removeObserver:self];
+        [self.videoDeviceInput.device removeObserver:self
+                                          forKeyPath:@"videoZoomFactor"
+                                             context:CAMERA_ZOOM_CONTEXT];
     } @catch (NSException *exception) {
         //do nothing
     }
@@ -397,51 +418,51 @@
 
 - (void)tapToFocusAtInterestPoint:(CGPoint)point {
     dispatch_async(self.sessionQueue, ^{
-        if (!self.tapToFocusSupported || !self.tapToFocusEnabled)
-            return ;
-        AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
-        NSError* e = nil;
-        if(![cameraDevice lockForConfiguration:&e]) {
-            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
-                [self.delegate captureController:self
-                                 ConfigureDevice:cameraDevice
-                                 FailedWithError:e];
+        if (self.tapToFocusSupported && self.tapToFocusEnabled) {
+            AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+            NSError* e = nil;
+            if(![cameraDevice lockForConfiguration:&e]) {
+                if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
+                    [self.delegate captureController:self
+                                     ConfigureDevice:cameraDevice
+                                     FailedWithError:e];
+                }
+                
+                if (SESSION_DEBUG_INFO) {
+                    NSLog(@"[CaptureController debug info] tapToFocusAtInterestPoint failed with error: %@", e);
+                }
+                return ;
             }
             
-            if (SESSION_DEBUG_INFO) {
-                NSLog(@"[CaptureController debug info] tapToFocusAtInterestPoint failed with error: %@", e);
-            }
-            return ;
+            cameraDevice.focusMode = AVCaptureFocusModeAutoFocus;
+            cameraDevice.focusPointOfInterest = point;
+            [cameraDevice unlockForConfiguration];
         }
-        
-        cameraDevice.focusMode = AVCaptureFocusModeAutoFocus;
-        cameraDevice.focusPointOfInterest = point;
-        [cameraDevice unlockForConfiguration];
     });
 }
 
 - (void)tapToExposureAtInterestPoint:(CGPoint)point {
     dispatch_async(self.sessionQueue, ^{
-        if (!self.tapToExposureSupported || !self.tapToExposureEnabled)
-            return ;
-        AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
-        NSError* e = nil;
-        if (![cameraDevice lockForConfiguration:&e]) {
-            if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
-                [self.delegate captureController:self
-                                 ConfigureDevice:cameraDevice
-                                 FailedWithError:e];
+        if (self.tapToExposureSupported && self.tapToExposureEnabled) {
+            AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+            NSError* e = nil;
+            if (![cameraDevice lockForConfiguration:&e]) {
+                if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
+                    [self.delegate captureController:self
+                                     ConfigureDevice:cameraDevice
+                                     FailedWithError:e];
+                }
+                
+                if (SESSION_DEBUG_INFO) {
+                    NSLog(@"[CaptureController debug info] tapToFocusAtInterestPoint failed with error: %@", e);
+                }
+                return ;
             }
             
-            if (SESSION_DEBUG_INFO) {
-                NSLog(@"[CaptureController debug info] tapToFocusAtInterestPoint failed with error: %@", e);
-            }
-            return ;
+            cameraDevice.exposureMode = AVCaptureExposureModeAutoExpose;
+            cameraDevice.exposurePointOfInterest = point;
+            [cameraDevice unlockForConfiguration];
         }
-        
-        cameraDevice.exposureMode = AVCaptureExposureModeAutoExpose;
-        cameraDevice.exposurePointOfInterest = point;
-        [cameraDevice unlockForConfiguration];
     });
 }
 
@@ -493,7 +514,7 @@
 }
 
 - (void)switchCamera {
-    if (self.switchCameraSupported) {
+    if (self.switchCameraSupported && self.switchCameraEnabled) {
         AVCaptureDevice* currentDevice = self.videoDeviceInput.device;
         AVCaptureDevice* targetDevice = Nil;
         
@@ -549,6 +570,106 @@
             });
         }
     }
+}
+
+- (BOOL)cameraZoomSupported {
+    //return self.videoDeviceInput.device.activeFormat.videoMaxZoomFactor > 1;
+    return self.cameraMaxZoomFactor > 1;
+}
+
+- (CGFloat)cameraMinZoomFactor {
+    return self.videoDeviceInput.device.minAvailableVideoZoomFactor;
+}
+
+- (CGFloat)cameraMaxZoomFactor {
+    CGFloat maxZoomFactor = MAX(self.videoDeviceInput.device.minAvailableVideoZoomFactor, self.videoDeviceInput.device.maxAvailableVideoZoomFactor);
+    maxZoomFactor = MIN(maxZoomFactor, 4);
+    return maxZoomFactor;
+}
+
+- (CGFloat)cameraZoomFactor {
+    return self.videoDeviceInput.device.videoZoomFactor;
+}
+
+- (void)setVideoZoomWithFactor:(CGFloat)factor {
+    dispatch_async(self.sessionQueue, ^{
+        if (self.cameraZoomSupported && self.cameraZoomEnabled) {
+            CGFloat clampFactor = MIN(self.cameraMaxZoomFactor, factor);
+            clampFactor = MAX(self.cameraMinZoomFactor, clampFactor);
+            AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+            NSError* e;
+            if (!cameraDevice.isRampingVideoZoom) {
+                if (![cameraDevice lockForConfiguration:&e]) {
+                    if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
+                        [self.delegate captureController:self
+                                         ConfigureDevice:cameraDevice
+                                         FailedWithError:e];
+                    }
+                    if (SESSION_DEBUG_INFO) {
+                        NSLog(@"[CaptureController debug info] set video zoom factor failed with error: %@", e);
+                    }
+                    return ;
+                }
+                cameraDevice.videoZoomFactor = clampFactor;
+                [cameraDevice unlockForConfiguration];
+            }
+        }
+    });
+}
+
+- (void)setVideoZoomWithPercent:(float)percent {
+    float clampPercent = MIN(percent, 1);
+    clampPercent = MAX(clampPercent, 0);
+    //float factor = self.cameraMinZoomFactor + (self.cameraMaxZoomFactor - self.cameraMinZoomFactor) * percent;
+    float factor = MAX(powf(self.cameraMaxZoomFactor, percent) , self.cameraMinZoomFactor);
+    [self setVideoZoomWithFactor:factor];
+}
+
+- (void)smoothZoomVideoTo:(CGFloat)zoomFactor WithRate:(float)rate {
+    dispatch_async(self.sessionQueue, ^{
+        if (self.cameraZoomSupported && self.cameraZoomEnabled) {
+            CGFloat clampFactor = MIN(self.cameraMaxZoomFactor, zoomFactor);
+            clampFactor = MAX(self.cameraMinZoomFactor, clampFactor);
+            AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+            NSError* e;
+            if (![cameraDevice lockForConfiguration:&e]) {
+                if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
+                    [self.delegate captureController:self
+                                     ConfigureDevice:cameraDevice
+                                     FailedWithError:e];
+                }
+                if (SESSION_DEBUG_INFO) {
+                    NSLog(@"[CaptureController debug info] ramping video zoom factor failed with error: %@", e);
+                }
+                return ;
+            }
+            
+            [cameraDevice rampToVideoZoomFactor:clampFactor withRate:rate];
+            [cameraDevice unlockForConfiguration];
+        }
+    });
+}
+
+- (void)cancelVideoSmoothZoom {
+    dispatch_async(self.sessionQueue, ^{
+        if (self.cameraZoomSupported && self.cameraZoomEnabled) {
+            AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+            NSError* e;
+            if (![cameraDevice lockForConfiguration:&e]) {
+                if ([self.delegate respondsToSelector:@selector(captureController:ConfigureDevice:FailedWithError:)]) {
+                    [self.delegate captureController:self
+                                     ConfigureDevice:cameraDevice
+                                     FailedWithError:e];
+                }
+                if (SESSION_DEBUG_INFO) {
+                    NSLog(@"[CaptureController debug info] cancel ramping video zoom factor failed with error: %@", e);
+                }
+                return ;
+            }
+            [cameraDevice cancelVideoZoomRamp];
+            [cameraDevice unlockForConfiguration];
+        }
+    });
 }
 
 //

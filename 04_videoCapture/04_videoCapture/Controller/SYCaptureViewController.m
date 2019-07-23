@@ -17,15 +17,19 @@
 
 @property (weak, nonatomic) IBOutlet VideoPreviewView *videoPreviewView;
 @property (weak, nonatomic) IBOutlet UIView *scrollableTabBarContainer;
+@property (weak, nonatomic) IBOutlet UIStackView *zoomSliderContainer;
 @property (weak, nonatomic) IBOutlet UIButton *captureButton;
 @property (weak, nonatomic) IBOutlet UIButton *cameraSwitchButton;
 @property (weak, nonatomic) IBOutlet UIButton *albumButton;
 @property (weak, nonatomic) IBOutlet UIVisualEffectView *blurEffectView;
+@property (weak, nonatomic) IBOutlet UISlider *zoomSlider;
 
 
 @property (strong, nonatomic) CaptureController* captureController;
 @property (strong, nonatomic) ScrollableTabBar* scrollableTabBar;
 @property (nonatomic) CaptureMode currentCaptureMode;
+@property (strong, nonatomic) UIViewPropertyAnimator* zoomSliderAnimator;
+
 @end
 
 @implementation SYCaptureViewController
@@ -35,6 +39,7 @@
     [super viewDidLoad];
 
     //setup scrollable tab bar
+    self.zoomSliderContainer.alpha = 0;
     UIImageView* barItemSelectedIndicator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"select_indicator"]];
     barItemSelectedIndicator.frame = CGRectMake(0, 0, 12, 12);
     SYScrollableTabBarItem* photoBarItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Photo" CaptureMode:CaptureModePhoto];
@@ -61,11 +66,12 @@
         self.videoPreviewView.tapToFocusAndExposureEnabled = tapToFocusAndExposureEnable;
         self.captureController.tapToFocusEnabled = tapToFocusAndExposureEnable;
         self.captureController.tapToExposureEnabled = tapToFocusAndExposureEnable;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setupView];
+        });
     }];
-    
-    //setup user interface
-    [self setupView];
-    
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -80,11 +86,47 @@
     self.scrollableTabBarContainer.backgroundColor = [UIColor blackColor];
     [self.captureButton setImage:[UIImage imageNamed:@"square"] forState:UIControlStateSelected];
     self.blurEffectView.hidden = TRUE;
-    self.cameraSwitchButton.hidden = self.captureController.switchCameraSupported;
     self.albumButton.layer.borderWidth = 1;
     self.albumButton.layer.borderColor = [UIColor redColor].CGColor;
     self.albumButton.layer.cornerRadius = 4;
     self.albumButton.layer.masksToBounds = true;
+    
+    self.cameraSwitchButton.hidden = !self.captureController.switchCameraSupported;
+    self.videoPreviewView.tapToFocusAndExposureEnabled = self.captureController.tapToFocusSupported && self.captureController.tapToExposureSupported;
+    self.videoPreviewView.pinchToZoomCameraEnabled = self.captureController.cameraZoomSupported;
+    
+    [self syncZoomSliderWithDeviceZoomLevel];
+}
+
+
+- (void)runZoomSliderFadeAnimaton:(BOOL)visible {
+    [self.zoomSliderAnimator stopAnimation:TRUE];
+    if (visible) {
+        self.zoomSliderAnimator = [UIViewPropertyAnimator runningPropertyAnimatorWithDuration:0.25
+                                                                                        delay:0
+                                                                                      options:UIViewAnimationOptionCurveEaseIn | UIViewAnimationOptionAllowUserInteraction
+                                                                                   animations:^{
+                                                                                       self.zoomSliderContainer.alpha = 1;
+                                                                                   }
+                                                                                   completion:^(UIViewAnimatingPosition finalPosition) {
+                                                                                       if (finalPosition == UIViewAnimatingPositionEnd) {
+                                                                                           NSLog(@"zoom slider hidden: 0");
+                                                                                       }
+                                                                                   }];
+        
+    } else {
+        self.zoomSliderAnimator = [UIViewPropertyAnimator runningPropertyAnimatorWithDuration:0.5
+                                                                                        delay:3
+                                                                                      options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction
+                                                                                   animations:^{
+                                                                                       self.zoomSliderContainer.alpha = 0;
+                                                                                   }
+                                                                                   completion:^(UIViewAnimatingPosition finalPosition) {
+                                                                                       if (finalPosition == UIViewAnimatingPositionEnd) {
+                                                                                           NSLog(@"zoom slider hidden: 1");
+                                                                                       }
+                                                                                   }];
+    }
 }
 
 
@@ -132,6 +174,41 @@
     }
     presentPhotoViewer();
 }
+
+- (IBAction)handleZoomSliderTouchDragEnter:(UISlider *)sender {
+    [self runZoomSliderFadeAnimaton:TRUE];
+}
+
+- (IBAction)handleZoomSliderTouchDraging:(UISlider *)sender {
+    [self.captureController setVideoZoomWithPercent:sender.value];
+}
+
+- (IBAction)handleZoomSliderTouchDragExit:(UISlider *)sender {
+    [self runZoomSliderFadeAnimaton:FALSE];
+}
+
+- (IBAction)handleZoomInButtonTouchDown:(UIButton *)sender {
+    [self.captureController smoothZoomVideoTo:self.captureController.cameraMaxZoomFactor WithRate:2];
+    [self runZoomSliderFadeAnimaton:TRUE];
+}
+
+- (IBAction)handleZoomInButtonTouchUp:(UIButton *)sender {
+    [self.captureController cancelVideoSmoothZoom];
+    [self runZoomSliderFadeAnimaton:FALSE];
+}
+
+
+- (IBAction)handleZoomOutButtonTouchDown:(UIButton *)sender {
+    [self.captureController smoothZoomVideoTo:self.captureController.cameraMinZoomFactor WithRate:2];
+    [self runZoomSliderFadeAnimaton:TRUE];
+}
+
+- (IBAction)handleZoomOutButtonTouchUp:(UIButton *)sender {
+    [self.captureController cancelVideoSmoothZoom];
+    [self runZoomSliderFadeAnimaton:FALSE];
+}
+
+
 //
 // MARK: - scrollable tab bar delegate
 //
@@ -147,14 +224,33 @@
 //
 // MARK: - videoPreview delegate
 //
-- (void)tapToFocusAndExposureAtPoint:(CGPoint)point {
+- (void)syncZoomSliderWithDeviceZoomLevel {
+    float percent = (self.captureController.cameraZoomFactor - self.captureController.cameraMinZoomFactor) / (self.captureController.cameraMaxZoomFactor - self.captureController.cameraMinZoomFactor);
+    [self.zoomSlider setValue:percent animated:FALSE];
+}
+
+- (void)videoPreviewView:(VideoPreviewView *)view TapToFocusAndExposureAtPoint:(CGPoint)point {
     [self.captureController tapToFocusAtInterestPoint:point];
     [self.captureController tapToExposureAtInterestPoint:point];
 }
 
-- (void)tapToResetFocusAndExposure {
+- (void)videoPreviewView:(VideoPreviewView *)view TapToResetFocusAndExposure:(CGPoint)point {
     [self.captureController resetFocus];
     [self.captureController resetExposure];
+}
+
+- (void)videoPreviewView:(VideoPreviewView *)view BeginCameraZoom:(CGFloat)scale {
+    [self runZoomSliderFadeAnimaton:TRUE];
+}
+
+- (void)videoPreviewView:(VideoPreviewView *)view CameraZooming:(CGFloat)scale {
+    CGFloat currentZoomFactor = self.captureController.cameraZoomFactor;
+    [self.captureController setVideoZoomWithFactor:(currentZoomFactor + scale * 0.1)];
+    //[self syncZoomSliderWithDeviceZoomLevel];
+}
+
+- (void)videoPreviewView:(VideoPreviewView *)view DidFinishCameraZoom:(CGFloat)scale {
+    [self runZoomSliderFadeAnimaton:FALSE];
 }
 
 //
@@ -167,6 +263,7 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     [self.captureController startSession];
+    [self dismissViewControllerAnimated:TRUE completion:Nil];
 }
 
 //
@@ -272,7 +369,12 @@
     });
 }
 
-
+- (void)captureController:(CaptureController *)controller DidCameraZoomToFactor:(CGFloat)factor {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"camera zoom factor: %f", factor);
+        [self syncZoomSliderWithDeviceZoomLevel];
+    });
+}
 
 
 @end

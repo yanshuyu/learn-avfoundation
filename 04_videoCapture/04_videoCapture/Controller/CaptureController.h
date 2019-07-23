@@ -12,11 +12,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define SESSION_DEBUG_INFO 1
-
 @class CaptureController;
 
+#define SESSION_DEBUG_INFO 1
 #define CaptureControllerErrorDomain @"com.sy.videoCapture"
+#define CAMERA_ZOOM_CONTEXT @"CAMERA_ZOOM_CONTEXT"
 
 typedef enum : NSUInteger {
     SessionConfigResultUnKnowed,
@@ -65,8 +65,12 @@ typedef enum : NSUInteger {
 - (void)captureController:(CaptureController *)controller DidStartRecordingToFileURL:(NSURL*)url;
 - (void)captureController:(CaptureController *)controller DidFinishRecordingToFileURL:(NSURL*)url Error:(NSError*)error;
 - (void)captureController:(CaptureController *)controller SaveVideo:(NSURL* _Nullable)url ToLibraryWithResult:(AssetSavedResult)result Error:(NSError* _Nullable)error;
+
+// device capbilities
 - (void)captureControllerBeginSwitchCamera;
 - (void)captureControllerDidFinishSwitchCamera:(BOOL)success;
+- (void)captureController:(CaptureController *)controller DidCameraZoomToFactor:(CGFloat)factor;
+
 @required
 
 
@@ -80,9 +84,18 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, readonly) BOOL tapToFocusSupported;
 @property (nonatomic) BOOL tapToFocusEnabled;
+
 @property (nonatomic, readonly) BOOL tapToExposureSupported;
 @property (nonatomic) BOOL tapToExposureEnabled;
+
 @property (nonatomic, readonly) BOOL switchCameraSupported;
+@property (nonatomic) BOOL switchCameraEnabled;
+
+@property (nonatomic, readonly) BOOL cameraZoomSupported;
+@property (nonatomic) BOOL cameraZoomEnabled;
+@property (nonatomic, readonly) CGFloat cameraMinZoomFactor;
+@property (nonatomic, readonly) CGFloat cameraMaxZoomFactor;
+@property (nonatomic, readonly) CGFloat cameraZoomFactor;
 
 //
 // configurate session
@@ -109,6 +122,10 @@ typedef enum : NSUInteger {
 - (void)tapToExposureAtInterestPoint:(CGPoint)point;
 - (void)resetExposure;
 - (void)switchCamera;
+- (void)setVideoZoomWithFactor:(CGFloat)factor;
+- (void)setVideoZoomWithPercent:(float)percent;
+- (void)smoothZoomVideoTo:(CGFloat)zoomFactor WithRate:(float)rate;
+- (void)cancelVideoSmoothZoom;
 
 @end
 

@@ -17,6 +17,7 @@
 
 @property (strong, nonatomic) UITapGestureRecognizer* singleTapGesture;
 @property (strong, nonatomic) UITapGestureRecognizer* doubleTapGesture;
+@property (strong, nonatomic) UIPinchGestureRecognizer* pinchGesture;
 @property (strong, nonatomic) FocusWiget* tapWiget;
 @property (strong, nonatomic) FocusWiget* unvisibleWiget;
 @property (strong, nonatomic) UIViewPropertyAnimator* zoomAnimator;
@@ -60,11 +61,13 @@
                                                                     action:@selector(hanleSingleTap:)];
     self.doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                     action:@selector(handleDoubleTap:)];
+    self.pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self
+                                                                  action:@selector(handlePinch:)];
     self.doubleTapGesture.numberOfTapsRequired = 2;
     [self.singleTapGesture requireGestureRecognizerToFail:self.doubleTapGesture];
     [self addGestureRecognizer:self.singleTapGesture];
     [self addGestureRecognizer:self.doubleTapGesture];
-    
+    [self addGestureRecognizer:self.pinchGesture];
     
     self.tapWiget = [[FocusWiget alloc] initWithFrame:WIGET_SIZE color:WIGET_COLOR];
     self.tapWiget.hidden = TRUE;
@@ -81,9 +84,20 @@
 }
 
 - (void)setTapToFocusAndExposureEnabled:(BOOL)tapToFocusAndExposureEnabled {
-    _tapToFocusAndExposureEnabled = tapToFocusAndExposureEnabled;
     self.singleTapGesture.enabled = tapToFocusAndExposureEnabled;
     self.doubleTapGesture.enabled = tapToFocusAndExposureEnabled;
+}
+
+- (BOOL)tapToFocusAndExposureEnabled {
+    return self.singleTapGesture.enabled && self.doubleTapGesture.enabled;
+}
+
+- (void)setPinchToZoomCameraEnabled:(BOOL)pinchToZoomCameraEnabled {
+    self.pinchGesture.enabled = pinchToZoomCameraEnabled;
+}
+
+- (BOOL)pinchToZoomCameraEnabled {
+    return self.pinchGesture.enabled;
 }
 
 
@@ -99,14 +113,49 @@
     CGPoint point = [gesture locationInView:self];
     CGPoint deviceInterestPoint = [self.previewLayer captureDevicePointOfInterestForPoint:point];
     [self runTapWigetZoomAnimationTo:point];
-    [self.delegate tapToFocusAndExposureAtPoint:deviceInterestPoint];
+    if ([self.delegate respondsToSelector:@selector(videoPreviewView:TapToFocusAndExposureAtPoint:)]) {
+        [self.delegate videoPreviewView:self
+           TapToFocusAndExposureAtPoint:deviceInterestPoint];
+    }
 }
 
 - (void)handleDoubleTap:(UIGestureRecognizer*)gesture {
     [self runTapWigetZoomAnimationTo:self.center];
-    [self.delegate tapToResetFocusAndExposure];
+    if ([self.delegate respondsToSelector:@selector(videoPreviewView:TapToResetFocusAndExposure:)]) {
+        [self.delegate videoPreviewView:self
+             TapToResetFocusAndExposure:CGPointMake(0.5, 0.5)];
+    }
 }
 
+- (void)handlePinch:(UIPinchGestureRecognizer*)gesture {
+    CGFloat sign = (gesture.velocity / fabs(gesture.velocity));
+    switch (gesture.state) {
+        case UIGestureRecognizerStateBegan:
+            if ([self.delegate respondsToSelector:@selector(videoPreviewView:BeginCameraZoom:)]) {
+                [self.delegate videoPreviewView:self
+                                BeginCameraZoom:gesture.scale * sign];
+            }
+            gesture.scale = 1;
+            break;
+        case UIGestureRecognizerStateChanged:
+            if (!isnan(sign)) {
+                if ([self.delegate respondsToSelector:@selector(videoPreviewView:CameraZooming:)]) {
+                    [self.delegate videoPreviewView:self
+                                      CameraZooming:gesture.scale * sign];
+                }
+            }
+            gesture.scale = 1;
+            break;
+        case UIGestureRecognizerStateEnded:
+            if ([self.delegate respondsToSelector:@selector(videoPreviewView:DidFinishCameraZoom:)]) {
+                [self.delegate videoPreviewView:self
+                            DidFinishCameraZoom:gesture.scale * sign];
+            }
+            break;
+        default:
+            break;
+    }
+}
 
 - (void)runTapWigetZoomAnimationTo:(CGPoint)point {
     [self.zoomAnimator stopAnimation:TRUE];

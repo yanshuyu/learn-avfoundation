@@ -78,14 +78,59 @@
                                     <action selector="handleSwitchCameraTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="xDN-r9-lms"/>
                                 </connections>
                             </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="ip0-lJ-xkQ" userLabel="slider container">
+                                <rect key="frame" x="20" y="485" width="335" height="32"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h02-HV-yIK">
+                                        <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="32" id="XKg-cq-nOm"/>
+                                            <constraint firstAttribute="height" constant="32" id="jix-m4-cBr"/>
+                                        </constraints>
+                                        <state key="normal" image="minus"/>
+                                        <connections>
+                                            <action selector="handleZoomOutButtonTouchDown:" destination="KdT-PG-SUD" eventType="touchDown" id="wDW-20-X4p"/>
+                                            <action selector="handleZoomOutButtonTouchUp:" destination="KdT-PG-SUD" eventType="touchUpOutside" id="YNu-oh-sZi"/>
+                                            <action selector="handleZoomOutButtonTouchUp:" destination="KdT-PG-SUD" eventType="touchUpInside" id="jyJ-lj-ucO"/>
+                                        </connections>
+                                    </button>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="35d-HA-QIp">
+                                        <rect key="frame" x="45" y="1" width="245" height="31"/>
+                                        <color key="minimumTrackTintColor" red="0.90588235289999997" green="0.29803921570000003" blue="0.23529411759999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="maximumTrackTintColor" red="0.90588235289999997" green="0.29803921570000003" blue="0.23529411759999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="thumbTintColor" red="0.90588235289999997" green="0.29803921570000003" blue="0.23529411759999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <connections>
+                                            <action selector="handleZoomSliderTouchDragEnter:" destination="KdT-PG-SUD" eventType="touchDown" id="GJG-sS-6W8"/>
+                                            <action selector="handleZoomSliderTouchDragExit:" destination="KdT-PG-SUD" eventType="touchUpInside" id="Bo5-fA-trD"/>
+                                            <action selector="handleZoomSliderTouchDragExit:" destination="KdT-PG-SUD" eventType="touchUpOutside" id="DeX-pJ-Eh0"/>
+                                            <action selector="handleZoomSliderTouchDraging:" destination="KdT-PG-SUD" eventType="valueChanged" id="aLZ-tv-MFP"/>
+                                        </connections>
+                                    </slider>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ydy-Vf-w3O">
+                                        <rect key="frame" x="303" y="0.0" width="32" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="32" id="Ice-DO-tOv"/>
+                                            <constraint firstAttribute="width" constant="32" id="eTP-1W-z1W"/>
+                                        </constraints>
+                                        <state key="normal" image="plus"/>
+                                        <connections>
+                                            <action selector="handleZoomInButtonTouchDown:" destination="KdT-PG-SUD" eventType="touchDown" id="H5C-Nt-MxK"/>
+                                            <action selector="handleZoomInButtonTouchUp:" destination="KdT-PG-SUD" eventType="touchUpInside" id="PL8-FG-xoa"/>
+                                            <action selector="handleZoomInButtonTouchUp:" destination="KdT-PG-SUD" eventType="touchUpOutside" id="crF-fs-X7N"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="H4I-Wv-7zF" firstAttribute="trailing" secondItem="AMr-6p-1d6" secondAttribute="trailing" id="1Wu-0R-b0u"/>
+                            <constraint firstItem="ip0-lJ-xkQ" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" constant="20" id="3Bm-3d-Oit"/>
                             <constraint firstItem="H4I-Wv-7zF" firstAttribute="trailing" secondItem="8Gh-0s-UNP" secondAttribute="trailing" constant="50" id="4lh-Et-UlG"/>
                             <constraint firstItem="AMr-6p-1d6" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="Fu1-CI-wup"/>
                             <constraint firstItem="yKm-cY-ayC" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="Grh-Tb-puo"/>
                             <constraint firstItem="H4I-Wv-7zF" firstAttribute="bottom" secondItem="yKm-cY-ayC" secondAttribute="bottom" id="ItQ-hj-Hb7"/>
+                            <constraint firstItem="yKm-cY-ayC" firstAttribute="top" secondItem="ip0-lJ-xkQ" secondAttribute="bottom" constant="40" id="RxZ-i2-xcn"/>
                             <constraint firstItem="ran-Xp-fH3" firstAttribute="centerX" secondItem="hne-uj-s8C" secondAttribute="centerX" id="T2W-Nl-hrW"/>
                             <constraint firstAttribute="bottom" secondItem="AMr-6p-1d6" secondAttribute="bottom" id="Xko-yg-3Fd"/>
                             <constraint firstItem="ran-Xp-fH3" firstAttribute="top" secondItem="yKm-cY-ayC" secondAttribute="top" id="fm0-A5-Q7V"/>
@@ -93,6 +138,7 @@
                             <constraint firstItem="AMr-6p-1d6" firstAttribute="top" secondItem="hne-uj-s8C" secondAttribute="top" id="gzF-mY-bQs"/>
                             <constraint firstItem="8Gh-0s-UNP" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="lfk-wZ-5vf"/>
                             <constraint firstItem="yKm-cY-ayC" firstAttribute="trailing" secondItem="H4I-Wv-7zF" secondAttribute="trailing" id="p4k-lo-MAX"/>
+                            <constraint firstItem="H4I-Wv-7zF" firstAttribute="trailing" secondItem="ip0-lJ-xkQ" secondAttribute="trailing" constant="20" id="v9W-gT-sf3"/>
                             <constraint firstItem="VNv-QK-Md4" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="vt4-VK-Nv0"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="H4I-Wv-7zF"/>
@@ -104,6 +150,8 @@
                         <outlet property="captureButton" destination="ran-Xp-fH3" id="mfw-Kp-ms4"/>
                         <outlet property="scrollableTabBarContainer" destination="yKm-cY-ayC" id="HeS-jQ-9JG"/>
                         <outlet property="videoPreviewView" destination="AMr-6p-1d6" id="dLk-ih-gmU"/>
+                        <outlet property="zoomSlider" destination="35d-HA-QIp" id="Rzk-Mc-lA8"/>
+                        <outlet property="zoomSliderContainer" destination="ip0-lJ-xkQ" id="fiv-Mm-LfQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TsE-UZ-3Yh" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -114,6 +162,8 @@
     <resources>
         <image name="circle_red" width="50" height="50"/>
         <image name="frame_2" width="80" height="80"/>
+        <image name="minus" width="64" height="64"/>
+        <image name="plus" width="64" height="64"/>
         <image name="square" width="30" height="30"/>
         <image name="switch-camera" width="80" height="80"/>
     </resources>

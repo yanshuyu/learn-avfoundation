@@ -11,11 +11,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class VideoPreviewView;
 
 @protocol VideoPreviewViewDelegate <NSObject>
 
-- (void)tapToFocusAndExposureAtPoint:(CGPoint)point;
-- (void)tapToResetFocusAndExposure;
+@optional
+- (void)videoPreviewView:(VideoPreviewView*)view TapToFocusAndExposureAtPoint:(CGPoint)point;
+- (void)videoPreviewView:(VideoPreviewView*)view TapToResetFocusAndExposure:(CGPoint)point;
+- (void)videoPreviewView:(VideoPreviewView*)view BeginCameraZoom:(CGFloat)scale;
+- (void)videoPreviewView:(VideoPreviewView *)view CameraZooming:(CGFloat)scale;
+- (void)videoPreviewView:(VideoPreviewView *)view DidFinishCameraZoom:(CGFloat)scale;
 
 @end
 
@@ -25,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, readonly, nonatomic) AVCaptureVideoPreviewLayer* previewLayer;
 @property (weak, nonatomic) id<VideoPreviewViewDelegate> delegate;
 @property (assign, nonatomic) BOOL tapToFocusAndExposureEnabled;
+@property (nonatomic) BOOL pinchToZoomCameraEnabled;
 
 @end
 
