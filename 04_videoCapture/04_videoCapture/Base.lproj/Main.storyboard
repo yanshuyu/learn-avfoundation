@@ -39,14 +39,14 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yKm-cY-ayC" userLabel="scrollable tab bar">
-                                <rect key="frame" x="0.0" y="557" width="375" height="110"/>
+                                <rect key="frame" x="0.0" y="552" width="375" height="115"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="110" id="c5y-5F-Zk5"/>
+                                    <constraint firstAttribute="height" constant="115" id="c5y-5F-Zk5"/>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ran-Xp-fH3" userLabel="capture button">
-                                <rect key="frame" x="147.5" y="557" width="80" height="80"/>
+                                <rect key="frame" x="147.5" y="556" width="80" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="Bpe-TQ-lcd"/>
                                     <constraint firstAttribute="width" constant="80" id="ex7-vg-Gw6"/>
@@ -58,7 +58,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VNv-QK-Md4" userLabel="album button">
-                                <rect key="frame" x="50" y="577" width="40" height="40"/>
+                                <rect key="frame" x="50" y="576" width="40" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="GSs-H2-9Eq"/>
                                     <constraint firstAttribute="width" constant="40" id="UPy-M9-qdK"/>
@@ -68,7 +68,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Gh-0s-UNP" userLabel="camera button">
-                                <rect key="frame" x="285" y="577" width="40" height="40"/>
+                                <rect key="frame" x="285" y="576" width="40" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="EfG-aO-9bs"/>
                                     <constraint firstAttribute="width" constant="40" id="OKR-Gb-YjH"/>
@@ -79,7 +79,7 @@
                                 </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="ip0-lJ-xkQ" userLabel="slider container">
-                                <rect key="frame" x="20" y="485" width="335" height="32"/>
+                                <rect key="frame" x="20" y="480" width="335" height="32"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h02-HV-yIK">
                                         <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
@@ -133,7 +133,7 @@
                             <constraint firstItem="yKm-cY-ayC" firstAttribute="top" secondItem="ip0-lJ-xkQ" secondAttribute="bottom" constant="40" id="RxZ-i2-xcn"/>
                             <constraint firstItem="ran-Xp-fH3" firstAttribute="centerX" secondItem="hne-uj-s8C" secondAttribute="centerX" id="T2W-Nl-hrW"/>
                             <constraint firstAttribute="bottom" secondItem="AMr-6p-1d6" secondAttribute="bottom" id="Xko-yg-3Fd"/>
-                            <constraint firstItem="ran-Xp-fH3" firstAttribute="top" secondItem="yKm-cY-ayC" secondAttribute="top" id="fm0-A5-Q7V"/>
+                            <constraint firstItem="ran-Xp-fH3" firstAttribute="top" secondItem="yKm-cY-ayC" secondAttribute="top" constant="4" id="fm0-A5-Q7V"/>
                             <constraint firstItem="VNv-QK-Md4" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" constant="50" id="gCU-cM-WrQ"/>
                             <constraint firstItem="AMr-6p-1d6" firstAttribute="top" secondItem="hne-uj-s8C" secondAttribute="top" id="gzF-mY-bQs"/>
                             <constraint firstItem="8Gh-0s-UNP" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="lfk-wZ-5vf"/>
