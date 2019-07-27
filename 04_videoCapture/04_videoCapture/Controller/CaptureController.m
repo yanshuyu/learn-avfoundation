@@ -29,6 +29,11 @@
 @property (strong, nonatomic) NSMutableDictionary* photoCaptureSettingsOnProgressing;
 @property (strong, nonatomic) NSMutableDictionary* photoCaptureDataOnProgressing;
 
+//
+// device capbilites
+//
+@property (nonatomic) AVCaptureFlashMode flashMode;
+
 @end
 
 
@@ -203,6 +208,7 @@
         self.photoOutput = [AVCapturePhotoOutput new];
         self.photoOutput.livePhotoCaptureEnabled = self.photoOutput.livePhotoCaptureSupported;
         self.photoOutput.highResolutionCaptureEnabled = TRUE;
+    
         if ([self.session canAddOutput:self.photoOutput]) {
             [self.session addOutput:self.photoOutput];
             if (SESSION_DEBUG_INFO) {
@@ -213,6 +219,10 @@
                 [self.delegate captureController:self ConfigureSessionResult:SessionConfigResultFailed Error:nil];
             [self.session commitConfiguration];
             return;
+        }
+        self.flashMode = AVCaptureFlashModeOff;
+        if ([[self.photoOutput supportedFlashModes] containsObject:[NSNumber numberWithInt:AVCaptureFlashModeAuto]]) {
+            self.flashMode = AVCaptureFlashModeAuto;
         }
         
         // movie file output
@@ -672,6 +682,35 @@
     });
 }
 
+- (BOOL)flashModeSwitchSupported {
+    AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+    return cameraDevice.flashAvailable && self.photoOutput.supportedFlashModes.count > 1;
+}
+
+- (void)switchFlashMoe:(AVCaptureFlashMode)mode {
+    dispatch_async(self.sessionQueue, ^{
+        if (self.flashMode == mode){
+            return ;
+        }
+        
+        if (self.flashModeSwitchSupported && self.flashModeSwitchEnabled) {
+            if ([self.delegate respondsToSelector:@selector(captureController:WillSwitchFlashModeFrom:)]) {
+                [self.delegate captureController:self
+                         WillSwitchFlashModeFrom:self.flashMode];
+            }
+        }
+        
+        if ([self.photoOutput.supportedFlashModes containsObject:[NSNumber numberWithInt:mode]]) {
+            self.flashMode = mode;
+            if ([self.delegate respondsToSelector:@selector(captureController:DidSwitchFlashModeTo:)]) {
+                [self.delegate captureController:self
+                            DidSwitchFlashModeTo:self.flashMode];
+            }
+        }
+    });
+}
+
+
 //
 // MARK: - capture photo/video
 //
@@ -709,9 +748,12 @@
             captureSetting = [AVCapturePhotoSettings photoSettings];
         }
         captureSetting.highResolutionPhotoEnabled  = self.photoOutput.highResolutionCaptureEnabled;
-        captureSetting.flashMode = AVCaptureFlashModeAuto;
         captureSetting.autoStillImageStabilizationEnabled = self.photoOutput.stillImageStabilizationSupported;
         self.photoOutput.livePhotoCaptureEnabled = FALSE;
+        captureSetting.flashMode = AVCaptureFlashModeOff;
+        if (self.flashModeSwitchSupported && self.flashModeSwitchEnabled) {
+            captureSetting.flashMode = self.flashMode;
+        }
         
         [self.photoCaptureSettingsOnProgressing setObject:captureSetting forKey:[NSNumber numberWithLongLong:captureSetting.uniqueID]];
         [self.photoOutput capturePhotoWithSettings:captureSetting
@@ -992,6 +1034,8 @@
         [self saveVideoToPhotoLibararyWithURL:outputFileURL];
     });
 }
+
+
 
 
 @end

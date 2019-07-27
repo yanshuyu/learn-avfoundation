@@ -70,6 +70,8 @@ typedef enum : NSUInteger {
 - (void)captureControllerBeginSwitchCamera;
 - (void)captureControllerDidFinishSwitchCamera:(BOOL)success;
 - (void)captureController:(CaptureController *)controller DidCameraZoomToFactor:(CGFloat)factor;
+- (void)captureController:(CaptureController*)controller WillSwitchFlashModeFrom:(AVCaptureFlashMode)mode;
+- (void)captureController:(CaptureController*)controller DidSwitchFlashModeTo:(AVCaptureFlashMode)mode;
 
 @required
 
@@ -97,6 +99,9 @@ typedef enum : NSUInteger {
 @property (nonatomic, readonly) CGFloat cameraMaxZoomFactor;
 @property (nonatomic, readonly) CGFloat cameraZoomFactor;
 
+@property (nonatomic, readonly) BOOL flashModeSwitchSupported;
+@property (nonatomic) BOOL flashModeSwitchEnabled;
+@property (nonatomic, readonly) AVCaptureFlashMode flashMode;
 //
 // configurate session
 //
@@ -126,6 +131,7 @@ typedef enum : NSUInteger {
 - (void)setVideoZoomWithPercent:(float)percent;
 - (void)smoothZoomVideoTo:(CGFloat)zoomFactor WithRate:(float)rate;
 - (void)cancelVideoSmoothZoom;
+- (void)switchFlashMoe:(AVCaptureFlashMode)mode;
 
 @end
 

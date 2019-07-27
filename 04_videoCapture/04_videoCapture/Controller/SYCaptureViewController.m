@@ -23,6 +23,15 @@
 @property (weak, nonatomic) IBOutlet UIButton *albumButton;
 @property (weak, nonatomic) IBOutlet UIVisualEffectView *blurEffectView;
 @property (weak, nonatomic) IBOutlet UISlider *zoomSlider;
+@property (weak, nonatomic) IBOutlet UIView *captureSettingContainerView;
+@property (weak, nonatomic) IBOutlet UIView *photoSettingView;
+@property (weak, nonatomic) IBOutlet UIButton *flashSwitchButton;
+@property (weak, nonatomic) IBOutlet UIButton *livePhotoSwitchButton;
+@property (weak, nonatomic) IBOutlet UIButton *hdrSwitchButton;
+@property (weak, nonatomic) IBOutlet UIView *flashMeunView;
+@property (weak, nonatomic) IBOutlet UIButton *flashAutoButton;
+@property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
+@property (weak, nonatomic) IBOutlet UIButton *flashOffButton;
 
 
 @property (strong, nonatomic) CaptureController* captureController;
@@ -51,7 +60,10 @@
     self.zoomSliderAnimHelperWiget.frame = CGRectMake(0, 0, 100, 100);
     self.zoomSliderAnimHelperWiget.borderWidth = 1;
     self.zoomSliderAnimHelperWiget.borderColor = [UIColor.redColor CGColor];
+    self.zoomSliderAnimHelperWiget.hidden = TRUE;
     [self.view.layer addSublayer:self.zoomSliderAnimHelperWiget];
+    self.flashMeunView.alpha = 0;
+    [self runFlashMenuFadeAnimation:FALSE];
     
     //setup capture mode switch view controller
     UIImageView* barItemSelectedIndicator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"select_indicator"]];
@@ -102,11 +114,36 @@
     
     self.cameraSwitchButton.hidden = !self.captureController.switchCameraSupported;
     self.captureController.switchCameraEnabled = self.captureController.switchCameraSupported;
+    
+    self.captureController.flashModeSwitchEnabled = self.captureController.flashModeSwitchSupported;
 }
 
 - (void)syncZoomSliderWithDeviceZoomLevel {
     float percent = (self.captureController.cameraZoomFactor - self.captureController.cameraMinZoomFactor) / (self.captureController.cameraMaxZoomFactor - self.captureController.cameraMinZoomFactor);
     [self.zoomSlider setValue:percent animated:FALSE];
+}
+
+- (void)updatePhotoCaptureSettingView {
+   // if (!self.flashSwitchButton.hidden) {
+        self.flashAutoButton.titleLabel.textColor = UIColor.whiteColor;
+        self.flashOnButton.titleLabel.textColor = UIColor.whiteColor;
+        self.flashOffButton.titleLabel.textColor = UIColor.whiteColor;
+        
+        NSString* flashStateImage = @"";
+        if (self.captureController.flashMode == AVCaptureFlashModeOff) {
+            flashStateImage = @"flash_off";
+            self.flashOffButton.titleLabel.textColor = UIColor.redColor;
+        } else if (self.captureController.flashMode == AVCaptureFlashModeOn) {
+            flashStateImage = @"flash_on";
+            self.flashOnButton.titleLabel.textColor = UIColor.redColor;
+        } else if (self.captureController.flashMode == AVCaptureFlashModeAuto) {
+            flashStateImage = @"flash_auto";
+            self.flashAutoButton.titleLabel.textColor = UIColor.redColor;
+        }
+        [self.flashSwitchButton setImage:[UIImage imageNamed:flashStateImage]
+                                forState:UIControlStateNormal];
+        
+  //  }
 }
 
 - (void)runZoomSliderFadeAnimaton:(BOOL)visible {
@@ -138,6 +175,34 @@
         }];
         self.zoomSliderAnimHelperWiget.transform = CATransform3DIdentity;
         [self.zoomSliderAnimator startAnimation];
+    }
+}
+
+- (void)runFlashMenuFadeAnimation:(BOOL)visible {
+    if (visible && self.flashMeunView.hidden) {
+        self.flashMeunView.hidden = FALSE;
+        self.flashMeunView.alpha = 0;
+        CGPoint targetCenter = self.captureSettingContainerView.center;
+        targetCenter.y = self.captureSettingContainerView.bounds.size.height + self.flashMeunView.bounds.size.height * 0.5;
+        [UIView animateWithDuration:0.25
+                         animations:^{
+                             self.flashMeunView.center = targetCenter;
+                             self.flashMeunView.alpha = 1;
+                         }];
+    }
+    
+    if (!visible && !self.flashMeunView.hidden) {
+        CGPoint targetCenter = self.captureSettingContainerView.center;
+        targetCenter.y = self.captureSettingContainerView.bounds.size.height - self.flashMeunView.bounds.size.height;
+        [UIView animateWithDuration:0.25
+                         animations:^{
+                             self.flashMeunView.center = targetCenter;
+                             self.flashMeunView.alpha = 0;
+                         }
+                         completion:^(BOOL finished) {
+                             [self updatePhotoCaptureSettingView];
+                             self.flashMeunView.hidden = TRUE;
+                         }];
     }
 }
 
@@ -220,6 +285,45 @@
     [self runZoomSliderFadeAnimaton:FALSE];
 }
 
+- (IBAction)handleFlashSwitchButtonTap:(UIButton *)sender {
+    NSLog(@"toggle flash mode");
+    [self runFlashMenuFadeAnimation:self.flashMeunView.hidden];
+
+}
+
+- (IBAction)handleLivePhotoSwitchButtonTap:(UIButton *)sender {
+    NSLog(@"toggle live photo mode");
+}
+
+- (IBAction)handleDHRSwitchButtonTap:(UIButton *)sender {
+    NSLog(@"toggle dhr mode");
+}
+
+- (IBAction)handleFlashAutoButtonTap:(UIButton *)sender {
+    if (self.captureController.flashMode != AVCaptureFlashModeAuto) {
+        [self.captureController switchFlashMoe:AVCaptureFlashModeAuto];
+    } else {
+        [self runFlashMenuFadeAnimation:FALSE];
+    }
+}
+
+- (IBAction)handleFlashOnButtonTap:(UIButton *)sender {
+   // [self runFlashMenuFadeAnimation:FALSE];
+    if (self.captureController.flashMode != AVCaptureFlashModeOn) {
+        [self.captureController switchFlashMoe:AVCaptureFlashModeOn];
+    } else {
+        [self runFlashMenuFadeAnimation:FALSE];
+    }
+}
+
+- (IBAction)handleFlashModeOffTap:(UIButton *)sender {
+    //[self runFlashMenuFadeAnimation:FALSE];
+    if (self.captureController.flashMode != AVCaptureFlashModeOff) {
+        [self.captureController switchFlashMoe:AVCaptureFlashModeOff];
+    } else {
+        [self runFlashMenuFadeAnimation:FALSE];
+    }
+}
 
 //
 // MARK: - scrollable tab bar delegate
@@ -239,15 +343,24 @@
 - (void)videoPreviewView:(VideoPreviewView *)view TapToFocusAndExposureAtPoint:(CGPoint)point {
     [self.captureController tapToFocusAtInterestPoint:point];
     [self.captureController tapToExposureAtInterestPoint:point];
+    if (!self.flashMeunView.hidden) {
+        [self runFlashMenuFadeAnimation:FALSE];
+    }
 }
 
 - (void)videoPreviewView:(VideoPreviewView *)view TapToResetFocusAndExposure:(CGPoint)point {
     [self.captureController resetFocus];
     [self.captureController resetExposure];
+    if (!self.flashMeunView.hidden) {
+        [self runFlashMenuFadeAnimation:FALSE];
+    }
 }
 
 - (void)videoPreviewView:(VideoPreviewView *)view BeginCameraZoom:(CGFloat)scale {
     [self runZoomSliderFadeAnimaton:TRUE];
+    if (!self.flashMeunView.hidden) {
+        [self runFlashMenuFadeAnimation:FALSE];
+    }
 }
 
 - (void)videoPreviewView:(VideoPreviewView *)view CameraZooming:(CGFloat)scale {
@@ -303,6 +416,10 @@
         self.captureButton.userInteractionEnabled = FALSE;
         self.albumButton.userInteractionEnabled = FALSE;
         self.blurEffectView.hidden = FALSE;
+        
+        if (mode == CaptureModePhoto && !self.flashMeunView.hidden) {
+            [self runFlashMenuFadeAnimation:FALSE];
+        }
     });
 }
 
@@ -319,13 +436,19 @@
             self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
             UIImage* whiteCircle = [UIImage imageNamed:@"circle_white"];
             [self.captureButton setImage:whiteCircle forState:UIControlStateNormal];
-            self.scrollableTabBarContainer.alpha = 1;
+            [self.scrollableTabBarContainer setBackgroundColor:[UIColor colorWithWhite:0 alpha:1]];
+            [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:1]];
+            self.photoSettingView.hidden = FALSE;
+            self.flashSwitchButton.hidden = !(self.captureController.flashModeSwitchSupported && self.captureController.flashModeSwitchEnabled);
+            [self updatePhotoCaptureSettingView];
          
         } else if (self.currentCaptureMode == CaptureModeVideo) {
             self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
             UIImage* redCircle = [UIImage imageNamed:@"circle_red"];
             [self.captureButton setImage:redCircle forState:UIControlStateNormal];
-            self.scrollableTabBarContainer.alpha = 0.5;
+            [self.scrollableTabBarContainer setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
+            [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
+            self.photoSettingView.hidden = TRUE;
        }
     });
 }
@@ -380,6 +503,12 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         //NSLog(@"camera zoom factor: %f", factor);
         [self syncZoomSliderWithDeviceZoomLevel];
+    });
+}
+
+- (void)captureController:(CaptureController *)controller DidSwitchFlashModeTo:(AVCaptureFlashMode)mode {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self runFlashMenuFadeAnimation:FALSE];
     });
 }
 
