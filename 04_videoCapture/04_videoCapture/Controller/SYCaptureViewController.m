@@ -32,6 +32,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *flashAutoButton;
 @property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
 @property (weak, nonatomic) IBOutlet UIButton *flashOffButton;
+@property (weak, nonatomic) IBOutlet UILabel *liveLable;
 
 
 @property (strong, nonatomic) CaptureController* captureController;
@@ -54,6 +55,7 @@
     self.albumButton.layer.cornerRadius = 4;
     self.albumButton.layer.masksToBounds = true;
     self.blurEffectView.hidden = FALSE;
+    self.liveLable.hidden = TRUE;
    
     self.zoomSliderContainer.alpha = 0;
     self.zoomSliderAnimHelperWiget = [UIView new];
@@ -115,7 +117,13 @@
     self.cameraSwitchButton.hidden = !self.captureController.switchCameraSupported;
     self.captureController.switchCameraEnabled = self.captureController.switchCameraSupported;
     
+    self.flashSwitchButton.hidden = !self.captureController.flashModeSwitchSupported;
     self.captureController.flashModeSwitchEnabled = self.captureController.flashModeSwitchSupported;
+    self.flashSwitchButton.enabled = self.captureController.flashModeSwitchEnabled;
+    
+    self.livePhotoSwitchButton.hidden = !self.captureController.livePhotoCaptureSupported;
+    self.captureController.livePhotoCaptureEnabled = self.captureController.livePhotoCaptureSupported;
+    self.livePhotoSwitchButton.enabled = self.captureController.livePhotoCaptureEnabled;
 }
 
 - (void)syncZoomSliderWithDeviceZoomLevel {
@@ -293,6 +301,7 @@
 
 - (IBAction)handleLivePhotoSwitchButtonTap:(UIButton *)sender {
     NSLog(@"toggle live photo mode");
+    self.captureController.livePhotoMode = self.captureController.livePhotoMode == LivePhotoModeOn ? LivePhotoModeOff : LivePhotoModeOn;
 }
 
 - (IBAction)handleDHRSwitchButtonTap:(UIButton *)sender {
@@ -417,8 +426,11 @@
         self.albumButton.userInteractionEnabled = FALSE;
         self.blurEffectView.hidden = FALSE;
         
-        if (mode == CaptureModePhoto && !self.flashMeunView.hidden) {
-            [self runFlashMenuFadeAnimation:FALSE];
+        if (mode == CaptureModePhoto) {
+            if (!self.flashMeunView.hidden) {
+                [self runFlashMenuFadeAnimation:FALSE];
+            }
+            self.liveLable.hidden = TRUE;
         }
     });
 }
@@ -440,6 +452,7 @@
             [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:1]];
             self.photoSettingView.hidden = FALSE;
             self.flashSwitchButton.hidden = !(self.captureController.flashModeSwitchSupported && self.captureController.flashModeSwitchEnabled);
+            self.liveLable.hidden = !(self.captureController.livePhotoMode == LivePhotoModeOn);
             [self updatePhotoCaptureSettingView];
          
         } else if (self.currentCaptureMode == CaptureModeVideo) {
@@ -469,9 +482,13 @@
     });
 }
 
-- (void)captureController:(CaptureController *)controller SavePhoto:(NSData *)data ToLibraryWithResult:(AssetSavedResult)result Error:(NSError *)error {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (result == AssetSavedResultUnAuthorized) {
+- (void)captureController:(CaptureController *)controller
+SaveCapturePhotoWithSessionID:(int64_t)Id
+      ToLibraryWithResult:(AssetSavedResult)result
+                    Error:(NSError *)error {
+    if (result == AssetSavedResultUnAuthorized) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
             UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Save Error"
                                                                                      message:@"please go to settings > videoCapture > Photos to allow we access to photo library to save your content"
                                                                               preferredStyle:UIAlertControllerStyleAlert];
@@ -479,8 +496,8 @@
                                                                 style:UIAlertActionStyleDefault
                                                               handler:nil]];
             [self presentViewController:alertController animated:TRUE completion:nil];
-        }
-    });
+        });
+    }
 }
 
 - (void)captureController:(CaptureController *)controller DidStartRecordingToFileURL:(NSURL *)url {
@@ -512,5 +529,15 @@
     });
 }
 
+- (void)captureController:(CaptureController *)controller DidToggleLivePhotoModeTo:(LivePhotoMode)mode {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!self.livePhotoSwitchButton.hidden) {
+            NSString* liveModeImageName = mode == LivePhotoModeOn ? @"live_on" : @"live_off";
+            [self.livePhotoSwitchButton setImage:[UIImage imageNamed:liveModeImageName]
+                                        forState:UIControlStateNormal];
+            self.liveLable.hidden = !(mode == LivePhotoModeOn);
+        }
+    });
+}
 
 @end

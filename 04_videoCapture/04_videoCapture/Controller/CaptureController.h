@@ -40,6 +40,23 @@ typedef enum : NSUInteger {
 } CaptureMode;
 
 
+typedef enum : NSUInteger {
+    LivePhotoModeUnkonwed,
+    LivePhotoModeOn,
+    LivePhotoModeOff,
+} LivePhotoMode;
+
+
+@interface PhotoCaptureData : NSObject
+
+@property (strong, nonatomic) AVCapturePhotoSettings* captureSettings;
+@property (strong, nonatomic) NSData* photoData;
+@property (strong, nonatomic) NSURL* livePhotoMovieCompanionURL;
+
+@end
+
+
+
 
 @protocol CaptureControllerDelegate <NSObject>
 
@@ -58,10 +75,10 @@ typedef enum : NSUInteger {
 // photo/video capture
 //
 - (void)captureController:(CaptureController *)controller InavailbleCaptureRequestForMode:(CaptureMode)mode;
-- (void)captureController:(CaptureController *)controller WillCapturePhotoWithSettings:(AVCaptureResolvedPhotoSettings*)settings;
-- (void)captureController:(CaptureController *)controller DidCapturePhotoWithSettings:(AVCaptureResolvedPhotoSettings *)settings;
-- (void)captureController:(CaptureController *)controller DidFinishCapturePhotoWithSettings:(AVCaptureResolvedPhotoSettings *)settings Error:(NSError*)error;
-- (void)captureController:(CaptureController *)controller SavePhoto:(NSData* _Nullable)data ToLibraryWithResult:(AssetSavedResult)result Error:(NSError* _Nullable)error;
+- (void)captureController:(CaptureController *)controller WillCapturePhotoWithPhotoSessionID:(int64_t)Id;
+- (void)captureController:(CaptureController *)controller BeginCapturePhotoWithPhotoSessionID:(int64_t)Id;
+- (void)captureController:(CaptureController *)controller DidFinishCapturePhotoWithPhotoSessionID:(int64_t)Id Error:(NSError* _Nullable)error;
+- (void)captureController:(CaptureController *)controller SaveCapturePhotoWithSessionID:(int64_t)Id ToLibraryWithResult:(AssetSavedResult)result Error:(NSError* _Nullable)error;
 - (void)captureController:(CaptureController *)controller DidStartRecordingToFileURL:(NSURL*)url;
 - (void)captureController:(CaptureController *)controller DidFinishRecordingToFileURL:(NSURL*)url Error:(NSError*)error;
 - (void)captureController:(CaptureController *)controller SaveVideo:(NSURL* _Nullable)url ToLibraryWithResult:(AssetSavedResult)result Error:(NSError* _Nullable)error;
@@ -72,6 +89,7 @@ typedef enum : NSUInteger {
 - (void)captureController:(CaptureController *)controller DidCameraZoomToFactor:(CGFloat)factor;
 - (void)captureController:(CaptureController*)controller WillSwitchFlashModeFrom:(AVCaptureFlashMode)mode;
 - (void)captureController:(CaptureController*)controller DidSwitchFlashModeTo:(AVCaptureFlashMode)mode;
+- (void)captureController:(CaptureController *)controller DidToggleLivePhotoModeTo:(LivePhotoMode)mode;
 
 @required
 
@@ -102,6 +120,10 @@ typedef enum : NSUInteger {
 @property (nonatomic, readonly) BOOL flashModeSwitchSupported;
 @property (nonatomic) BOOL flashModeSwitchEnabled;
 @property (nonatomic, readonly) AVCaptureFlashMode flashMode;
+
+@property (nonatomic, readonly) BOOL livePhotoCaptureSupported;
+@property (nonatomic) BOOL livePhotoCaptureEnabled;
+@property (nonatomic, assign) LivePhotoMode livePhotoMode;
 //
 // configurate session
 //

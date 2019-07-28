@@ -38,7 +38,13 @@
                                     <constraint firstAttribute="trailing" secondItem="G4l-11-h6A" secondAttribute="trailing" id="u40-cc-rYu"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3TB-3Y-58G" userLabel="flash menu">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Live" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CKX-Gz-Hsh" userLabel="live lable">
+                                <rect key="frame" x="176" y="74" width="23" height="14.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" red="0.90588235289999997" green="0.29803921570000003" blue="0.23529411759999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3TB-3Y-58G" userLabel="flash menu" colorLabel="IBBuiltInLabel-Yellow">
                                 <rect key="frame" x="0.0" y="62" width="375" height="40"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D5d-hs-ge1" userLabel="flash_auto">
@@ -241,6 +247,7 @@
                             <constraint firstItem="H4I-Wv-7zF" firstAttribute="trailing" secondItem="8Gh-0s-UNP" secondAttribute="trailing" constant="50" id="4lh-Et-UlG"/>
                             <constraint firstItem="5mJ-xG-bz8" firstAttribute="top" secondItem="H4I-Wv-7zF" secondAttribute="top" id="82X-w4-XXd"/>
                             <constraint firstItem="3TB-3Y-58G" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="9zd-pH-pm7"/>
+                            <constraint firstItem="CKX-Gz-Hsh" firstAttribute="centerY" secondItem="5mJ-xG-bz8" secondAttribute="centerY" constant="40" id="CIE-TZ-YxG"/>
                             <constraint firstItem="AMr-6p-1d6" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="Fu1-CI-wup"/>
                             <constraint firstItem="yKm-cY-ayC" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="Grh-Tb-puo"/>
                             <constraint firstItem="H4I-Wv-7zF" firstAttribute="trailing" secondItem="5mJ-xG-bz8" secondAttribute="trailing" id="HYp-th-Sg9"/>
@@ -257,6 +264,7 @@
                             <constraint firstItem="H4I-Wv-7zF" firstAttribute="trailing" secondItem="ip0-lJ-xkQ" secondAttribute="trailing" constant="20" id="v9W-gT-sf3"/>
                             <constraint firstItem="VNv-QK-Md4" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="vt4-VK-Nv0"/>
                             <constraint firstItem="3TB-3Y-58G" firstAttribute="trailing" secondItem="H4I-Wv-7zF" secondAttribute="trailing" id="yKg-OB-obL"/>
+                            <constraint firstItem="CKX-Gz-Hsh" firstAttribute="centerX" secondItem="hne-uj-s8C" secondAttribute="centerX" id="yvC-84-Soz"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="H4I-Wv-7zF"/>
                     </view>
@@ -272,6 +280,7 @@
                         <outlet property="flashOnButton" destination="Mhb-fl-ZBa" id="ta2-Yl-LGA"/>
                         <outlet property="flashSwitchButton" destination="z47-hy-FZX" id="0Fj-dQ-6vs"/>
                         <outlet property="hdrSwitchButton" destination="8K4-fV-uiR" id="xUw-qD-9YG"/>
+                        <outlet property="liveLable" destination="CKX-Gz-Hsh" id="ONc-1z-ukG"/>
                         <outlet property="livePhotoSwitchButton" destination="WTE-br-hx6" id="FzO-eR-dXl"/>
                         <outlet property="photoSettingView" destination="pTv-J4-aDJ" id="HPH-SO-5OD"/>
                         <outlet property="scrollableTabBarContainer" destination="yKm-cY-ayC" id="HeS-jQ-9JG"/>
