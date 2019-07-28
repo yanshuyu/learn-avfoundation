@@ -38,7 +38,7 @@
 @property (strong, nonatomic) ScrollableTabBar* scrollableTabBar;
 @property (nonatomic) CaptureMode currentCaptureMode;
 @property (strong, nonatomic) UIViewPropertyAnimator* zoomSliderAnimator;
-@property (strong, nonatomic) CALayer*  zoomSliderAnimHelperWiget;
+@property (strong, nonatomic) UIView*  zoomSliderAnimHelperWiget;
 
 @end
 
@@ -56,12 +56,12 @@
     self.blurEffectView.hidden = FALSE;
    
     self.zoomSliderContainer.alpha = 0;
-    self.zoomSliderAnimHelperWiget = [CALayer new];
+    self.zoomSliderAnimHelperWiget = [UIView new];
     self.zoomSliderAnimHelperWiget.frame = CGRectMake(0, 0, 100, 100);
-    self.zoomSliderAnimHelperWiget.borderWidth = 1;
-    self.zoomSliderAnimHelperWiget.borderColor = [UIColor.redColor CGColor];
     self.zoomSliderAnimHelperWiget.hidden = TRUE;
-    [self.view.layer addSublayer:self.zoomSliderAnimHelperWiget];
+    self.zoomSliderAnimHelperWiget.layer.borderWidth = 1;
+    self.zoomSliderAnimHelperWiget.layer.borderColor = [UIColor.redColor CGColor];
+    [self.view addSubview:self.zoomSliderAnimHelperWiget];
     self.flashMeunView.alpha = 0;
     [self runFlashMenuFadeAnimation:FALSE];
     
@@ -157,10 +157,10 @@
                              NSLog(@"show zoom slider");
                          }];
     } else {
-        self.zoomSliderAnimator = [[UIViewPropertyAnimator alloc] initWithDuration:4
+        self.zoomSliderAnimator = [[UIViewPropertyAnimator alloc] initWithDuration:2
                                                                              curve:UIViewAnimationCurveEaseInOut
                                                                         animations:^{
-                                                                            self.zoomSliderAnimHelperWiget.transform = CATransform3DMakeScale(0.5, 0.5, 0.5);
+                                                                            self.zoomSliderAnimHelperWiget.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.5, 0.5);
                                                                         }];
         __weak SYCaptureViewController* weakSelf = self;
         [self.zoomSliderAnimator addCompletion:^(UIViewAnimatingPosition finalPosition) {
@@ -173,7 +173,7 @@
                                  }];
             }
         }];
-        self.zoomSliderAnimHelperWiget.transform = CATransform3DIdentity;
+        self.zoomSliderAnimHelperWiget.transform = CGAffineTransformIdentity;
         [self.zoomSliderAnimator startAnimation];
     }
 }
