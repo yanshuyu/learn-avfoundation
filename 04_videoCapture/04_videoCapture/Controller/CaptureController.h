@@ -98,7 +98,7 @@ typedef enum : NSUInteger {
 
 
 @interface CaptureController : NSObject
-
+@property (readonly, nonatomic) AVCaptureSession* session;
 @property (weak, nonatomic) id<CaptureControllerDelegate> delegate;
 @property (readonly, nonatomic) BOOL recording; // whether session is currently recording video
 

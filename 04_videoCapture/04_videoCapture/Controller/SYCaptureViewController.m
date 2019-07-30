@@ -5,17 +5,24 @@
 //  Created by sy on 2019/7/9.
 //  Copyright © 2019 sy. All rights reserved.
 //
-#import <MobileCoreServices/MobileCoreServices.h>
 #import "SYCaptureViewController.h"
 #import "../View/VideoPreviewView.h"
+#import "../View/VideoGestureLayer.h"
 #import "../Controller/CaptureController.h"
 #import "../Supported/ScrollableTabBar.h"
 #import "../Supported/SYScrollableTabBarItem.h"
 #import <Photos/Photos.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 
-@interface SYCaptureViewController () <CaptureControllerDelegate, ScrollableTabBarDelegate, VideoPreviewViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface SYCaptureViewController () <CaptureControllerDelegate,
+                                        ScrollableTabBarDelegate,
+                                        VideoGestureLayerDelegate,
+                                        UIImagePickerControllerDelegate,
+                                        UINavigationControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet VideoPreviewView *videoPreviewView;
+@property (weak, nonatomic) IBOutlet VideoGestureLayer *videoGestureView;
+@property (weak, nonatomic) IBOutlet UIView *videoOverlayView;
 @property (weak, nonatomic) IBOutlet UIView *scrollableTabBarContainer;
 @property (weak, nonatomic) IBOutlet UIStackView *zoomSliderContainer;
 @property (weak, nonatomic) IBOutlet UIButton *captureButton;
@@ -36,6 +43,7 @@
 
 
 @property (strong, nonatomic) CaptureController* captureController;
+@property (strong, nonatomic) VideoGestureLayer* captureGestureLayer;
 @property (strong, nonatomic) ScrollableTabBar* scrollableTabBar;
 @property (nonatomic) CaptureMode currentCaptureMode;
 @property (strong, nonatomic) UIViewPropertyAnimator* zoomSliderAnimator;
@@ -48,24 +56,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.scrollableTabBarContainer.backgroundColor = [UIColor blackColor];
-    [self.captureButton setImage:[UIImage imageNamed:@"square"] forState:UIControlStateSelected];
-    self.albumButton.layer.borderWidth = 1;
-    self.albumButton.layer.borderColor = [UIColor redColor].CGColor;
-    self.albumButton.layer.cornerRadius = 4;
-    self.albumButton.layer.masksToBounds = true;
-    self.blurEffectView.hidden = FALSE;
-    self.liveLable.hidden = TRUE;
-   
-    self.zoomSliderContainer.alpha = 0;
-    self.zoomSliderAnimHelperWiget = [UIView new];
-    self.zoomSliderAnimHelperWiget.frame = CGRectMake(0, 0, 100, 100);
-    self.zoomSliderAnimHelperWiget.hidden = TRUE;
-    self.zoomSliderAnimHelperWiget.layer.borderWidth = 1;
-    self.zoomSliderAnimHelperWiget.layer.borderColor = [UIColor.redColor CGColor];
-    [self.view addSubview:self.zoomSliderAnimHelperWiget];
-    self.flashMeunView.alpha = 0;
-    [self runFlashMenuFadeAnimation:FALSE];
+    [self setUpView];
+    
+    // add capture gesture layer
+//    self.captureGestureLayer = [[VideoGestureLayer alloc] initWithFrame:self.view.bounds];
+//    self.captureGestureLayer.delegate = self;
+//    [self.view insertSubview:self.captureGestureLayer belowSubview:self.videoOverlayView];
     
     //setup capture mode switch view controller
     UIImageView* barItemSelectedIndicator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"select_indicator"]];
@@ -79,15 +75,14 @@
                                               SelectedItemIndicator:barItemSelectedIndicator
                                                            Delegate:self];
     [self.scrollableTabBarContainer addSubview:self.scrollableTabBar];
-   
-    self.videoPreviewView.delegate = self;
     
     //setup capture session
     self.captureController = [CaptureController new];
     self.captureController.delegate = self;
-    [self.captureController setPreviewLayer:self.videoPreviewView.previewLayer];
+    //[self.captureController setPreviewLayer:self.videoPreviewView.previewLayer];
     [self.captureController setupSessionWithCompletionHandle:^{
         dispatch_async(dispatch_get_main_queue(), ^{
+            self.videoPreviewView.captureSession = self.captureController.session;
             [self.captureController switchToMode:barItems.firstObject.mode];
             self.blurEffectView.hidden = TRUE;
             [self syncZoomSliderWithDeviceZoomLevel];
@@ -95,6 +90,33 @@
         });
     }];
 
+}
+
+- (void)setUpView {
+    self.scrollableTabBarContainer.backgroundColor = [UIColor blackColor];
+    [self.captureButton setImage:[UIImage imageNamed:@"square"] forState:UIControlStateSelected];
+    self.albumButton.layer.borderWidth = 1;
+    self.albumButton.layer.borderColor = [UIColor redColor].CGColor;
+    self.albumButton.layer.cornerRadius = 4;
+    self.albumButton.layer.masksToBounds = true;
+    self.blurEffectView.hidden = FALSE;
+    self.liveLable.hidden = TRUE;
+    
+    self.zoomSliderContainer.alpha = 0;
+    self.zoomSliderAnimHelperWiget = [UIView new];
+    self.zoomSliderAnimHelperWiget.frame = CGRectMake(0, 0, 100, 100);
+    self.zoomSliderAnimHelperWiget.hidden = TRUE;
+    self.zoomSliderAnimHelperWiget.layer.borderWidth = 1;
+    self.zoomSliderAnimHelperWiget.layer.borderColor = [UIColor.redColor CGColor];
+    [self.view addSubview:self.zoomSliderAnimHelperWiget];
+    
+    self.videoPreviewView.layer.anchorPoint = CGPointMake(0, 0);
+    [self updatePreviewViewFrameForCaptureMode:CaptureModeVideo];
+    
+    self.videoGestureView.delegate = self;
+    
+    self.flashMeunView.alpha = 0;
+    [self runFlashMenuFadeAnimation:FALSE];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -107,11 +129,13 @@
 
 - (void)EnumerateCaptureDeviceCapbilites {
     BOOL tapToFocusAndExposureEnable = self.captureController.tapToFocusSupported && self.captureController.tapToExposureSupported;
-    self.videoPreviewView.tapToFocusAndExposureEnabled = tapToFocusAndExposureEnable;
+    //self.videoPreviewView.tapToFocusAndExposureEnabled = tapToFocusAndExposureEnable;
+    self.videoGestureView.tapToFocusAndExposureEnabled = tapToFocusAndExposureEnable;
     self.captureController.tapToFocusEnabled = tapToFocusAndExposureEnable;
     self.captureController.tapToExposureEnabled = tapToFocusAndExposureEnable;
 
-    self.videoPreviewView.pinchToZoomCameraEnabled = self.captureController.cameraZoomSupported;
+    //self.videoPreviewView.pinchToZoomCameraEnabled = self.captureController.cameraZoomSupported;
+    self.videoGestureView.pinchToZoomCameraEnabled = self.captureController.cameraZoomSupported;
     self.captureController.cameraZoomEnabled = self.captureController.cameraZoomSupported;
     
     self.cameraSwitchButton.hidden = !self.captureController.switchCameraSupported;
@@ -152,6 +176,24 @@
                                 forState:UIControlStateNormal];
         
   //  }
+}
+
+- (void)updatePreviewViewFrameForCaptureMode:(CaptureMode)mode {
+    if (mode == CaptureModePhoto) {
+        CGPoint position = [self.captureSettingContainerView convertPoint:CGPointMake(self.photoSettingView.frame.origin.x, self.photoSettingView.frame.origin.y + self.photoSettingView.frame.size.height)
+                                                                   toView:self.view];
+        [UIView animateWithDuration:0.25 animations:^{
+            self.videoPreviewView.frame = CGRectMake(0, 0, self.videoOverlayView.frame.size.width,
+                                                     self.videoOverlayView.frame.size.height  - self.scrollableTabBarContainer.frame.size.height - self.captureSettingContainerView.frame.size.height);
+            self.videoPreviewView.center = position;
+        }];
+    } else if (mode == CaptureModeVideo) {
+        [UIView animateWithDuration:0.25 animations:^{
+            self.videoPreviewView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+            self.videoPreviewView.center =  CGPointMake(0, 0);
+        }];
+    }
+    
 }
 
 - (void)runZoomSliderFadeAnimaton:(BOOL)visible {
@@ -347,17 +389,38 @@
 
 
 //
-// MARK: - videoPreview delegate
+// MARK: - capture gesture delegate
 //
-- (void)videoPreviewView:(VideoPreviewView *)view TapToFocusAndExposureAtPoint:(CGPoint)point {
-    [self.captureController tapToFocusAtInterestPoint:point];
-    [self.captureController tapToExposureAtInterestPoint:point];
+
+//- (void)videoPreviewView:(VideoPreviewView *)view TapToFocusAndExposureAtPoint:(CGPoint)point {
+//    [self.captureController tapToFocusAtInterestPoint:point];
+//    [self.captureController tapToExposureAtInterestPoint:point];
+//    if (!self.flashMeunView.hidden) {
+//        [self runFlashMenuFadeAnimation:FALSE];
+//    }
+//}
+
+- (void)videoGestureLayer:(VideoGestureLayer *)layer TapToFocusAndExposureAtLayerPoint:(CGPoint)point {
+    CGPoint pointAtPreviewLayer = [layer convertPoint:point toView:self.videoPreviewView];
+    CGPoint pointAtDeviceSpace = [self.videoPreviewView.previewLayer captureDevicePointOfInterestForPoint:pointAtPreviewLayer];
+    [self.captureController tapToFocusAtInterestPoint:pointAtDeviceSpace];
+    [self.captureController tapToExposureAtInterestPoint:pointAtDeviceSpace];
     if (!self.flashMeunView.hidden) {
         [self runFlashMenuFadeAnimation:FALSE];
     }
 }
 
-- (void)videoPreviewView:(VideoPreviewView *)view TapToResetFocusAndExposure:(CGPoint)point {
+//- (void)videoPreviewView:(VideoPreviewView *)view TapToResetFocusAndExposure:(CGPoint)point {
+//    [self.captureController resetFocus];
+//    [self.captureController resetExposure];
+//    if (!self.flashMeunView.hidden) {
+//        [self runFlashMenuFadeAnimation:FALSE];
+//    }
+//}
+
+- (void)videoGestureLayer:(VideoGestureLayer *)layer
+TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
+         RecommandedPoint:(CGPoint)recommandedpoint {
     [self.captureController resetFocus];
     [self.captureController resetExposure];
     if (!self.flashMeunView.hidden) {
@@ -365,20 +428,36 @@
     }
 }
 
-- (void)videoPreviewView:(VideoPreviewView *)view BeginCameraZoom:(CGFloat)scale {
+//- (void)videoPreviewView:(VideoPreviewView *)view BeginCameraZoom:(CGFloat)scale {
+//    [self runZoomSliderFadeAnimaton:TRUE];
+//    if (!self.flashMeunView.hidden) {
+//        [self runFlashMenuFadeAnimation:FALSE];
+//    }
+//}
+
+- (void)videoGestureLayer:(VideoGestureLayer *)layer BeginCameraZoom:(CGFloat)scale {
     [self runZoomSliderFadeAnimaton:TRUE];
     if (!self.flashMeunView.hidden) {
         [self runFlashMenuFadeAnimation:FALSE];
     }
 }
 
-- (void)videoPreviewView:(VideoPreviewView *)view CameraZooming:(CGFloat)scale {
+//- (void)videoPreviewView:(VideoPreviewView *)view CameraZooming:(CGFloat)scale {
+//    CGFloat currentZoomFactor = self.captureController.cameraZoomFactor;
+//    [self.captureController setVideoZoomWithFactor:(currentZoomFactor + scale * 0.1)];
+//    //[self syncZoomSliderWithDeviceZoomLevel];
+//}
+
+- (void)videoGestureLayer:(VideoGestureLayer *)layer CameraZoomingWithDetalScale:(CGFloat)scale {
     CGFloat currentZoomFactor = self.captureController.cameraZoomFactor;
     [self.captureController setVideoZoomWithFactor:(currentZoomFactor + scale * 0.1)];
-    //[self syncZoomSliderWithDeviceZoomLevel];
 }
 
-- (void)videoPreviewView:(VideoPreviewView *)view DidFinishCameraZoom:(CGFloat)scale {
+//- (void)videoPreviewView:(VideoPreviewView *)view DidFinishCameraZoom:(CGFloat)scale {
+//    [self runZoomSliderFadeAnimaton:FALSE];
+//}
+
+- (void)videoGestureLayer:(VideoGestureLayer *)layer DidFinishCameraZoom:(CGFloat)scale {
     [self runZoomSliderFadeAnimaton:FALSE];
 }
 
@@ -442,18 +521,19 @@
         self.cameraSwitchButton.userInteractionEnabled = TRUE;
         self.captureButton.userInteractionEnabled = TRUE;
         self.albumButton.userInteractionEnabled = TRUE;
-        self.blurEffectView.hidden = TRUE;
+        [self updatePreviewViewFrameForCaptureMode:mode];
         
         if (self.currentCaptureMode == CaptureModePhoto) {
             self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
             UIImage* whiteCircle = [UIImage imageNamed:@"circle_white"];
             [self.captureButton setImage:whiteCircle forState:UIControlStateNormal];
-            [self.scrollableTabBarContainer setBackgroundColor:[UIColor colorWithWhite:0 alpha:1]];
-            [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:1]];
+            [self.scrollableTabBarContainer setBackgroundColor:[UIColor colorWithWhite:0 alpha:0]];
+            [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0]];
             self.photoSettingView.hidden = FALSE;
             self.flashSwitchButton.hidden = !(self.captureController.flashModeSwitchSupported && self.captureController.flashModeSwitchEnabled);
             self.liveLable.hidden = !(self.captureController.livePhotoMode == LivePhotoModeOn);
             [self updatePhotoCaptureSettingView];
+
          
         } else if (self.currentCaptureMode == CaptureModeVideo) {
             self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
@@ -463,6 +543,8 @@
             [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
             self.photoSettingView.hidden = TRUE;
        }
+        
+        self.blurEffectView.hidden = TRUE;
     });
 }
 

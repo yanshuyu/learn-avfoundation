@@ -18,6 +18,7 @@
 		1197BFB722D7355700A30CF6 /* ScrollableTabBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1197BFB622D7355700A30CF6 /* ScrollableTabBarItem.m */; };
 		1197BFBA22D7363300A30CF6 /* ScrollableTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1197BFB922D7363300A30CF6 /* ScrollableTabBar.m */; };
 		1197BFBD22D88DB800A30CF6 /* SYScrollableTabBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1197BFBC22D88DB800A30CF6 /* SYScrollableTabBarItem.m */; };
+		11D8C62F22F02B95000B3495 /* VideoGestureLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 11D8C62E22F02B95000B3495 /* VideoGestureLayer.m */; };
 		11EE984E22D4EB760036A68C /* FocusWiget.m in Sources */ = {isa = PBXBuildFile; fileRef = 11EE984D22D4EB760036A68C /* FocusWiget.m */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +43,8 @@
 		1197BFB922D7363300A30CF6 /* ScrollableTabBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScrollableTabBar.m; sourceTree = "<group>"; };
 		1197BFBB22D88DB800A30CF6 /* SYScrollableTabBarItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SYScrollableTabBarItem.h; sourceTree = "<group>"; };
 		1197BFBC22D88DB800A30CF6 /* SYScrollableTabBarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SYScrollableTabBarItem.m; sourceTree = "<group>"; };
+		11D8C62D22F02B95000B3495 /* VideoGestureLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoGestureLayer.h; sourceTree = "<group>"; };
+		11D8C62E22F02B95000B3495 /* VideoGestureLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoGestureLayer.m; sourceTree = "<group>"; };
 		11EE984C22D4EB760036A68C /* FocusWiget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FocusWiget.h; sourceTree = "<group>"; };
 		11EE984D22D4EB760036A68C /* FocusWiget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FocusWiget.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -97,6 +100,8 @@
 				11EE984D22D4EB760036A68C /* FocusWiget.m */,
 				118AB80322D488FC0073C888 /* VideoPreviewView.h */,
 				118AB80422D488FC0073C888 /* VideoPreviewView.m */,
+				11D8C62D22F02B95000B3495 /* VideoGestureLayer.h */,
+				11D8C62E22F02B95000B3495 /* VideoGestureLayer.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -200,6 +205,7 @@
 				118AB7FC22D486BD0073C888 /* main.m in Sources */,
 				1197BFB722D7355700A30CF6 /* ScrollableTabBarItem.m in Sources */,
 				118AB7EE22D486BA0073C888 /* AppDelegate.m in Sources */,
+				11D8C62F22F02B95000B3495 /* VideoGestureLayer.m in Sources */,
 				1197BFBA22D7363300A30CF6 /* ScrollableTabBar.m in Sources */,
 				11EE984E22D4EB760036A68C /* FocusWiget.m in Sources */,
 				118AB80D22D48CF50073C888 /* SYCaptureViewController.m in Sources */,
