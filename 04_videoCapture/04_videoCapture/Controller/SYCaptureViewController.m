@@ -22,7 +22,6 @@
 
 @property (weak, nonatomic) IBOutlet VideoPreviewView *videoPreviewView;
 @property (weak, nonatomic) IBOutlet VideoGestureLayer *videoGestureView;
-@property (weak, nonatomic) IBOutlet UIView *videoOverlayView;
 @property (weak, nonatomic) IBOutlet UIView *scrollableTabBarContainer;
 @property (weak, nonatomic) IBOutlet UIStackView *zoomSliderContainer;
 @property (weak, nonatomic) IBOutlet UIButton *captureButton;
@@ -111,7 +110,9 @@
     [self.view addSubview:self.zoomSliderAnimHelperWiget];
     
     self.videoPreviewView.layer.anchorPoint = CGPointMake(0, 0);
+    self.videoGestureView.layer.anchorPoint = CGPointMake(0, 0);
     [self updatePreviewViewFrameForCaptureMode:CaptureModeVideo];
+    
     
     self.videoGestureView.delegate = self;
     
@@ -180,18 +181,29 @@
 
 - (void)updatePreviewViewFrameForCaptureMode:(CaptureMode)mode {
     if (mode == CaptureModePhoto) {
-        CGPoint position = [self.captureSettingContainerView convertPoint:CGPointMake(self.photoSettingView.frame.origin.x, self.photoSettingView.frame.origin.y + self.photoSettingView.frame.size.height)
-                                                                   toView:self.view];
-        [UIView animateWithDuration:0.25 animations:^{
-            self.videoPreviewView.frame = CGRectMake(0, 0, self.videoOverlayView.frame.size.width,
-                                                     self.videoOverlayView.frame.size.height  - self.scrollableTabBarContainer.frame.size.height - self.captureSettingContainerView.frame.size.height);
+        CGPoint position = CGPointMake(self.photoSettingView.frame.origin.x, self.photoSettingView.frame.origin.y + self.photoSettingView.frame.size.height);
+        [UIView animateWithDuration:0.25
+                         animations:^{
+            self.videoPreviewView.frame = CGRectMake(0, 0, self.view.bounds.size.width,
+                                                     self.view.bounds.size.height  - self.scrollableTabBarContainer.frame.size.height - self.captureSettingContainerView.frame.size.height);
             self.videoPreviewView.center = position;
-        }];
+        }
+                         completion:^(BOOL finished) {
+                             self.videoGestureView.frame = self.videoPreviewView.frame;
+                             NSLog(@"preview layer rectect:[x=%f, y=%f, w=%f, h=%f]", self.videoPreviewView.frame.origin.x, self.videoPreviewView.frame.origin.y, self.videoPreviewView.frame.size.width, self.videoPreviewView.frame.size.height);
+                             
+                         }];
     } else if (mode == CaptureModeVideo) {
-        [UIView animateWithDuration:0.25 animations:^{
+        [UIView animateWithDuration:0.25
+                         animations:^{
             self.videoPreviewView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
             self.videoPreviewView.center =  CGPointMake(0, 0);
-        }];
+        }
+                         completion:^(BOOL finished) {
+                             self.videoPreviewView.frame = self.videoPreviewView.frame;
+                             NSLog(@"preview layer rectect:[x=%f, y=%f, w=%f, h=%f]", self.videoPreviewView.frame.origin.x, self.videoPreviewView.frame.origin.y, self.videoPreviewView.frame.size.width, self.videoPreviewView.frame.size.height);
+                             
+                         }];
     }
     
 }
@@ -391,15 +403,6 @@
 //
 // MARK: - capture gesture delegate
 //
-
-//- (void)videoPreviewView:(VideoPreviewView *)view TapToFocusAndExposureAtPoint:(CGPoint)point {
-//    [self.captureController tapToFocusAtInterestPoint:point];
-//    [self.captureController tapToExposureAtInterestPoint:point];
-//    if (!self.flashMeunView.hidden) {
-//        [self runFlashMenuFadeAnimation:FALSE];
-//    }
-//}
-
 - (void)videoGestureLayer:(VideoGestureLayer *)layer TapToFocusAndExposureAtLayerPoint:(CGPoint)point {
     CGPoint pointAtPreviewLayer = [layer convertPoint:point toView:self.videoPreviewView];
     CGPoint pointAtDeviceSpace = [self.videoPreviewView.previewLayer captureDevicePointOfInterestForPoint:pointAtPreviewLayer];
@@ -409,14 +412,6 @@
         [self runFlashMenuFadeAnimation:FALSE];
     }
 }
-
-//- (void)videoPreviewView:(VideoPreviewView *)view TapToResetFocusAndExposure:(CGPoint)point {
-//    [self.captureController resetFocus];
-//    [self.captureController resetExposure];
-//    if (!self.flashMeunView.hidden) {
-//        [self runFlashMenuFadeAnimation:FALSE];
-//    }
-//}
 
 - (void)videoGestureLayer:(VideoGestureLayer *)layer
 TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
@@ -428,13 +423,6 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
     }
 }
 
-//- (void)videoPreviewView:(VideoPreviewView *)view BeginCameraZoom:(CGFloat)scale {
-//    [self runZoomSliderFadeAnimaton:TRUE];
-//    if (!self.flashMeunView.hidden) {
-//        [self runFlashMenuFadeAnimation:FALSE];
-//    }
-//}
-
 - (void)videoGestureLayer:(VideoGestureLayer *)layer BeginCameraZoom:(CGFloat)scale {
     [self runZoomSliderFadeAnimaton:TRUE];
     if (!self.flashMeunView.hidden) {
@@ -442,20 +430,11 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
     }
 }
 
-//- (void)videoPreviewView:(VideoPreviewView *)view CameraZooming:(CGFloat)scale {
-//    CGFloat currentZoomFactor = self.captureController.cameraZoomFactor;
-//    [self.captureController setVideoZoomWithFactor:(currentZoomFactor + scale * 0.1)];
-//    //[self syncZoomSliderWithDeviceZoomLevel];
-//}
-
 - (void)videoGestureLayer:(VideoGestureLayer *)layer CameraZoomingWithDetalScale:(CGFloat)scale {
     CGFloat currentZoomFactor = self.captureController.cameraZoomFactor;
     [self.captureController setVideoZoomWithFactor:(currentZoomFactor + scale * 0.1)];
 }
 
-//- (void)videoPreviewView:(VideoPreviewView *)view DidFinishCameraZoom:(CGFloat)scale {
-//    [self runZoomSliderFadeAnimaton:FALSE];
-//}
 
 - (void)videoGestureLayer:(VideoGestureLayer *)layer DidFinishCameraZoom:(CGFloat)scale {
     [self runZoomSliderFadeAnimaton:FALSE];
