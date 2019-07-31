@@ -37,6 +37,7 @@ typedef enum : NSUInteger {
     CaptureModeUnkonwed,
     CaptureModeVideo,
     CaptureModePhoto,
+    CaptureModeRealTimeFilterVideo,
 } CaptureMode;
 
 
@@ -82,6 +83,7 @@ typedef enum : NSUInteger {
 - (void)captureController:(CaptureController *)controller DidStartRecordingToFileURL:(NSURL*)url;
 - (void)captureController:(CaptureController *)controller DidFinishRecordingToFileURL:(NSURL*)url Error:(NSError*)error;
 - (void)captureController:(CaptureController *)controller SaveVideo:(NSURL* _Nullable)url ToLibraryWithResult:(AssetSavedResult)result Error:(NSError* _Nullable)error;
+- (void)captureController:(CaptureController *)controller DidCaptureVideoFrame:(CIImage*)image;
 
 // device capbilities
 - (void)captureControllerBeginSwitchCamera;

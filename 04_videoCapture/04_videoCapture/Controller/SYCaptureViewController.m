@@ -39,6 +39,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
 @property (weak, nonatomic) IBOutlet UIButton *flashOffButton;
 @property (weak, nonatomic) IBOutlet UILabel *liveLable;
+@property (weak, nonatomic) IBOutlet UIView *framePreviewView;
+@property (weak, nonatomic) IBOutlet UIImageView *framePreviewImage;
+
 
 
 @property (strong, nonatomic) CaptureController* captureController;
@@ -57,17 +60,13 @@
     [super viewDidLoad];
     [self setUpView];
     
-    // add capture gesture layer
-//    self.captureGestureLayer = [[VideoGestureLayer alloc] initWithFrame:self.view.bounds];
-//    self.captureGestureLayer.delegate = self;
-//    [self.view insertSubview:self.captureGestureLayer belowSubview:self.videoOverlayView];
-    
     //setup capture mode switch view controller
     UIImageView* barItemSelectedIndicator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"select_indicator"]];
     barItemSelectedIndicator.frame = CGRectMake(0, 0, 12, 12);
     SYScrollableTabBarItem* photoBarItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Photo" CaptureMode:CaptureModePhoto];
     SYScrollableTabBarItem* videoBarItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Video" CaptureMode:CaptureModeVideo];
-    NSArray<SYScrollableTabBarItem*>* barItems = [NSArray arrayWithObjects:photoBarItem, videoBarItem, nil];
+    SYScrollableTabBarItem* filterVideoItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Video FX" CaptureMode:CaptureModeRealTimeFilterVideo];
+    NSArray<SYScrollableTabBarItem*>* barItems = [NSArray arrayWithObjects:photoBarItem, videoBarItem, filterVideoItem, nil];
     self.scrollableTabBar = [[ScrollableTabBar alloc] initWithFrame:self.scrollableTabBarContainer.bounds
                                                               Items:barItems
                                                           ItemSpace:5
@@ -81,7 +80,8 @@
     //[self.captureController setPreviewLayer:self.videoPreviewView.previewLayer];
     [self.captureController setupSessionWithCompletionHandle:^{
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.videoPreviewView.captureSession = self.captureController.session;
+            [self.captureController setPreviewLayer:self.videoPreviewView.previewLayer];
+            [self.captureController startSession];
             [self.captureController switchToMode:barItems.firstObject.mode];
             self.blurEffectView.hidden = TRUE;
             [self syncZoomSliderWithDeviceZoomLevel];
@@ -111,8 +111,8 @@
     
     self.videoPreviewView.layer.anchorPoint = CGPointMake(0, 0);
     self.videoGestureView.layer.anchorPoint = CGPointMake(0, 0);
+    self.framePreviewImage.contentMode = UIViewContentModeScaleAspectFill;
     [self updatePreviewViewFrameForCaptureMode:CaptureModeVideo];
-    
     
     self.videoGestureView.delegate = self;
     
@@ -193,7 +193,7 @@
                              NSLog(@"preview layer rectect:[x=%f, y=%f, w=%f, h=%f]", self.videoPreviewView.frame.origin.x, self.videoPreviewView.frame.origin.y, self.videoPreviewView.frame.size.width, self.videoPreviewView.frame.size.height);
                              
                          }];
-    } else if (mode == CaptureModeVideo) {
+    } else if (mode == CaptureModeVideo || mode == CaptureModeRealTimeFilterVideo) {
         [UIView animateWithDuration:0.25
                          animations:^{
             self.videoPreviewView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
@@ -201,7 +201,7 @@
         }
                          completion:^(BOOL finished) {
                              self.videoPreviewView.frame = self.videoPreviewView.frame;
-                             NSLog(@"preview layer rectect:[x=%f, y=%f, w=%f, h=%f]", self.videoPreviewView.frame.origin.x, self.videoPreviewView.frame.origin.y, self.videoPreviewView.frame.size.width, self.videoPreviewView.frame.size.height);
+                             NSLog(@"preview layer Rectect:[x=%f, y=%f, w=%f, h=%f]", self.videoPreviewView.frame.origin.x, self.videoPreviewView.frame.origin.y, self.videoPreviewView.frame.size.width, self.videoPreviewView.frame.size.height);
                              
                          }];
     }
@@ -500,10 +500,13 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
         self.cameraSwitchButton.userInteractionEnabled = TRUE;
         self.captureButton.userInteractionEnabled = TRUE;
         self.albumButton.userInteractionEnabled = TRUE;
+        self.videoGestureView.tapToFocusAndExposureEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
+        self.videoGestureView.pinchToZoomCameraEnabled = self.captureController.cameraZoomEnabled;
         [self updatePreviewViewFrameForCaptureMode:mode];
+        self.framePreviewView.hidden = (mode != CaptureModeRealTimeFilterVideo);
+        //self.videoPreviewView.hidden = !self.framePreviewView.hidden;
         
         if (self.currentCaptureMode == CaptureModePhoto) {
-            self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
             UIImage* whiteCircle = [UIImage imageNamed:@"circle_white"];
             [self.captureButton setImage:whiteCircle forState:UIControlStateNormal];
             [self.scrollableTabBarContainer setBackgroundColor:[UIColor colorWithWhite:0 alpha:0]];
@@ -515,14 +518,12 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
 
          
         } else if (self.currentCaptureMode == CaptureModeVideo) {
-            self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
             UIImage* redCircle = [UIImage imageNamed:@"circle_red"];
             [self.captureButton setImage:redCircle forState:UIControlStateNormal];
             [self.scrollableTabBarContainer setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
             [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
             self.photoSettingView.hidden = TRUE;
        }
-        
         self.blurEffectView.hidden = TRUE;
     });
 }
@@ -598,6 +599,14 @@ SaveCapturePhotoWithSessionID:(int64_t)Id
                                         forState:UIControlStateNormal];
             self.liveLable.hidden = !(mode == LivePhotoModeOn);
         }
+    });
+}
+
+- (void)captureController:(CaptureController *)controller DidCaptureVideoFrame:(CIImage *)image {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIImage* content = [UIImage imageWithCIImage:image];
+        self.framePreviewImage.image = content;
+
     });
 }
 

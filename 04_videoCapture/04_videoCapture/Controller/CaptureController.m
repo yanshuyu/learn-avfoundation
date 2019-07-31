@@ -13,7 +13,9 @@
 
 @end
 
-@interface CaptureController () <AVCapturePhotoCaptureDelegate, AVCaptureFileOutputRecordingDelegate>
+@interface CaptureController () <AVCapturePhotoCaptureDelegate,
+                                    AVCaptureFileOutputRecordingDelegate,
+                                    AVCaptureVideoDataOutputSampleBufferDelegate>
 //
 // session configuration
 //
@@ -24,6 +26,7 @@
 @property (strong, nonatomic) AVCaptureDeviceInput* audioDeviceInput;
 @property (strong, nonatomic) AVCaptureMovieFileOutput* movieOutput;
 @property (strong, nonatomic) AVCapturePhotoOutput* photoOutput;
+@property (strong, nonatomic) AVCaptureVideoDataOutput* videoDataOutput;
 @property (nonatomic) CaptureMode currentCaptureMode;
 @property (strong, nonatomic) dispatch_queue_t sessionQueue;
 
@@ -237,7 +240,7 @@
         self.movieOutput.movieFragmentInterval = CMTimeMakeWithSeconds(5, NSEC_PER_SEC);
         
         [self.session commitConfiguration];
-        [self startSession];
+        //[self startSession];
         
         // enable all avaliable device capbilities at default
         self.tapToFocusEnabled = self.tapToFocusSupported;
@@ -376,8 +379,16 @@
             //self.movieOutput = nil;
         }
         
+        if (self.videoDataOutput) {
+            [self.session removeOutput:self.videoDataOutput];
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] remove output: %@", self.videoDataOutput);
+            }
+        }
+        
         AVCaptureConnection* photoOutputConnection = [self.photoOutput connectionWithMediaType:AVMediaTypeVideo];
         photoOutputConnection.enabled = TRUE;
+        self.videoPreviewLayer.connection.enabled = TRUE;
         
         [self.session commitConfiguration];
     }
@@ -385,11 +396,24 @@
     
     
     else if (mode == CaptureModeVideo) {
-        [self.session beginConfiguration];
-        self.session.sessionPreset = AVCaptureSessionPresetHigh;
         if (!self.movieOutput) {
             self.movieOutput = [AVCaptureMovieFileOutput new];
         }
+        
+        [self.session beginConfiguration];
+        self.session.sessionPreset = AVCaptureSessionPresetHigh;
+        
+        if (self.videoDataOutput) {
+            [self.session removeOutput:self.videoDataOutput];
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] remove output: %@", self.videoDataOutput);
+            }
+        }
+        if (self.photoOutput) {
+            AVCaptureConnection* photoOutputConnection = [self.photoOutput connectionWithMediaType:AVMediaTypeVideo];
+            photoOutputConnection.enabled = FALSE;
+        }
+    
         if ([self.session canAddOutput:self.movieOutput]) {
             [self.session addOutput:self.movieOutput];
             if (SESSION_DEBUG_INFO) {
@@ -399,11 +423,52 @@
             [self.session commitConfiguration];
             return FALSE;
         }
-        if (self.photoOutput) {
-            AVCaptureConnection* photoOutputConnection = [self.photoOutput connectionWithMediaType:AVMediaTypeVideo];
-            photoOutputConnection.enabled = FALSE;
-        }
+        
+        self.videoPreviewLayer.connection.enabled = TRUE;
+        
         [self.session commitConfiguration];
+    }
+    
+    else if (mode == CaptureModeRealTimeFilterVideo) {
+        if (!self.videoDataOutput) {
+            self.videoDataOutput = [AVCaptureVideoDataOutput new];
+            self.videoDataOutput.videoSettings = @{(id)kCVPixelBufferPixelFormatTypeKey:@(kCVPixelFormatType_32BGRA)};
+        }
+        [self.session beginConfiguration];
+        self.session.sessionPreset = AVCaptureSessionPresetHigh;
+        
+        if (self.movieOutput) {
+            [self.session removeOutput:self.movieOutput];
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] remove output: %@", self.movieOutput);
+            }
+        }
+        
+        if ([self.session canAddOutput:self.videoDataOutput]) {
+            [self.session addOutput:self.videoDataOutput];
+            if (SESSION_DEBUG_INFO) {
+                NSLog(@"[CaptureController debug info] session add output: %@", self.videoDataOutput);
+            }
+        } else {
+            [self.session commitConfiguration];
+            return FALSE;
+        }
+
+        AVCaptureConnection* photoOutputConnection = [self.photoOutput connectionWithMediaType:AVMediaTypeVideo];
+        photoOutputConnection.enabled = FALSE;
+        
+        self.videoPreviewLayer.connection.enabled = FALSE;
+        
+        [self.session commitConfiguration];
+        self.videoDataOutput.alwaysDiscardsLateVideoFrames = FALSE;
+        AVCaptureConnection* videoDataOutputConnection = [self.videoDataOutput connectionWithMediaType:AVMediaTypeVideo];
+        if (videoDataOutputConnection.supportsVideoOrientation) {
+            videoDataOutputConnection.videoOrientation = [self currentVideoOrientationWithCureentDevice];
+        }
+        if (videoDataOutputConnection.supportsVideoMirroring) {
+            videoDataOutputConnection.videoMirrored = self.videoDeviceInput.device.position == AVCaptureDevicePositionFront;
+        }
+        [self.videoDataOutput setSampleBufferDelegate:self queue:self.sessionQueue];
     }
     
     return TRUE;
@@ -414,9 +479,15 @@
         self.photoOutput.livePhotoCaptureEnabled = self.photoOutput.livePhotoCaptureSupported;
         self.livePhotoMode = self.photoOutput.livePhotoCaptureEnabled ? LivePhotoModeOn : LivePhotoModeOff;
         
-    } else if (mode == CaptureModeVideo) {
-        
-        
+    } else if (mode == CaptureModeRealTimeFilterVideo) {
+        self.videoPreviewLayer.connection.enabled = FALSE;
+        AVCaptureConnection* videoDataOutputConnection = [self.videoDataOutput connectionWithMediaType:AVMediaTypeVideo];
+        if (videoDataOutputConnection.supportsVideoOrientation) {
+            videoDataOutputConnection.videoOrientation = [self currentVideoOrientationWithCureentDevice];
+        }
+        if (videoDataOutputConnection.supportsVideoMirroring) {
+            videoDataOutputConnection.videoMirrored = self.videoDeviceInput.device.position == AVCaptureDevicePositionFront;
+        }
     }
 }
 
@@ -1139,6 +1210,20 @@ didFinishCaptureForResolvedSettings:(AVCaptureResolvedPhotoSettings *)resolvedSe
 }
 
 
+//
+// video data output delegate
+//
+- (void)captureOutput:(AVCaptureOutput *)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
+    CVImageBufferRef piexlBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    CIImage* image = [CIImage imageWithCVImageBuffer:piexlBuffer];
+    if ([self.delegate respondsToSelector:@selector(captureController:DidCaptureVideoFrame:)]) {
+        [self.delegate captureController:self
+                    DidCaptureVideoFrame:image];
+    }
+}
+- (void)captureOutput:(AVCaptureOutput *)output didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
+    
+}
 
 
 @end
