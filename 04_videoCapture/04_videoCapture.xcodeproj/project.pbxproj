@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		11821EF622F2D12C00620228 /* BasicMovieWritter.m in Sources */ = {isa = PBXBuildFile; fileRef = 11821EF522F2D12C00620228 /* BasicMovieWritter.m */; };
+		11821EFA22F2D2C700620228 /* NSURL+SYAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 11821EF922F2D2C700620228 /* NSURL+SYAddition.m */; };
 		118AB7EE22D486BA0073C888 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AB7ED22D486BA0073C888 /* AppDelegate.m */; };
 		118AB7F422D486BA0073C888 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 118AB7F222D486BA0073C888 /* Main.storyboard */; };
 		118AB7F622D486BD0073C888 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 118AB7F522D486BD0073C888 /* Assets.xcassets */; };
@@ -23,6 +25,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		11821EF422F2D12C00620228 /* BasicMovieWritter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasicMovieWritter.h; sourceTree = "<group>"; };
+		11821EF522F2D12C00620228 /* BasicMovieWritter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BasicMovieWritter.m; sourceTree = "<group>"; };
+		11821EF822F2D2C700620228 /* NSURL+SYAddition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+SYAddition.h"; sourceTree = "<group>"; };
+		11821EF922F2D2C700620228 /* NSURL+SYAddition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+SYAddition.m"; sourceTree = "<group>"; };
 		118AB7E922D486BA0073C888 /* 04_videoCapture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 04_videoCapture.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		118AB7EC22D486BA0073C888 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		118AB7ED22D486BA0073C888 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -60,6 +66,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		11821EF722F2D26800620228 /* Caeogory */ = {
+			isa = PBXGroup;
+			children = (
+				11821EF822F2D2C700620228 /* NSURL+SYAddition.h */,
+				11821EF922F2D2C700620228 /* NSURL+SYAddition.m */,
+			);
+			path = Caeogory;
+			sourceTree = "<group>";
+		};
 		118AB7E022D486BA0073C888 = {
 			isa = PBXGroup;
 			children = (
@@ -79,14 +94,15 @@
 		118AB7EB22D486BA0073C888 /* 04_videoCapture */ = {
 			isa = PBXGroup;
 			children = (
+				11821EF722F2D26800620228 /* Caeogory */,
 				1197BFB422D734D000A30CF6 /* Supported */,
 				118AB80722D48C3F0073C888 /* Controller */,
 				118AB80222D488C30073C888 /* View */,
 				118AB7EC22D486BA0073C888 /* AppDelegate.h */,
 				118AB7ED22D486BA0073C888 /* AppDelegate.m */,
-				118AB7F222D486BA0073C888 /* Main.storyboard */,
 				118AB7F722D486BD0073C888 /* LaunchScreen.storyboard */,
 				118AB7F522D486BD0073C888 /* Assets.xcassets */,
+				118AB7F222D486BA0073C888 /* Main.storyboard */,
 				118AB7FA22D486BD0073C888 /* Info.plist */,
 				118AB7FB22D486BD0073C888 /* main.m */,
 			);
@@ -126,6 +142,8 @@
 				1197BFB622D7355700A30CF6 /* ScrollableTabBarItem.m */,
 				1197BFB822D7363300A30CF6 /* ScrollableTabBar.h */,
 				1197BFB922D7363300A30CF6 /* ScrollableTabBar.m */,
+				11821EF422F2D12C00620228 /* BasicMovieWritter.h */,
+				11821EF522F2D12C00620228 /* BasicMovieWritter.m */,
 			);
 			path = Supported;
 			sourceTree = "<group>";
@@ -208,6 +226,8 @@
 				11D8C62F22F02B95000B3495 /* VideoGestureLayer.m in Sources */,
 				1197BFBA22D7363300A30CF6 /* ScrollableTabBar.m in Sources */,
 				11EE984E22D4EB760036A68C /* FocusWiget.m in Sources */,
+				11821EFA22F2D2C700620228 /* NSURL+SYAddition.m in Sources */,
+				11821EF622F2D12C00620228 /* BasicMovieWritter.m in Sources */,
 				118AB80D22D48CF50073C888 /* SYCaptureViewController.m in Sources */,
 				118AB80522D488FC0073C888 /* VideoPreviewView.m in Sources */,
 			);

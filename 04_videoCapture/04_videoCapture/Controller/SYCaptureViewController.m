@@ -50,6 +50,7 @@
 @property (nonatomic) CaptureMode currentCaptureMode;
 @property (strong, nonatomic) UIViewPropertyAnimator* zoomSliderAnimator;
 @property (strong, nonatomic) UIView*  zoomSliderAnimHelperWiget;
+@property (strong, nonatomic) CIContext* ciContext;
 
 @end
 
@@ -274,7 +275,7 @@
         [self.captureController capturePhoto];
     }
     
-    if (self.currentCaptureMode == CaptureModeVideo) {
+    if (self.currentCaptureMode == CaptureModeVideo || self.currentCaptureMode == CaptureModeRealTimeFilterVideo) {
         if (self.captureController.recording) {
             [self.captureController stopRecording];
         } else {
@@ -517,7 +518,7 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
             [self updatePhotoCaptureSettingView];
 
          
-        } else if (self.currentCaptureMode == CaptureModeVideo) {
+        } else if (self.currentCaptureMode == CaptureModeVideo || self.currentCaptureMode == CaptureModeRealTimeFilterVideo) {
             UIImage* redCircle = [UIImage imageNamed:@"circle_red"];
             [self.captureButton setImage:redCircle forState:UIControlStateNormal];
             [self.scrollableTabBarContainer setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
@@ -566,6 +567,7 @@ SaveCapturePhotoWithSessionID:(int64_t)Id
     dispatch_async(dispatch_get_main_queue(), ^{
         self.scrollableTabBar.interactionEnabled = FALSE;
         self.cameraSwitchButton.enabled = FALSE;
+        self.albumButton.enabled = FALSE;
         [self.captureButton setSelected:TRUE];
     });
 }
@@ -574,6 +576,29 @@ SaveCapturePhotoWithSessionID:(int64_t)Id
     dispatch_async(dispatch_get_main_queue(), ^{
         self.scrollableTabBar.interactionEnabled = TRUE;
         self.cameraSwitchButton.enabled = TRUE;
+        self.albumButton.enabled = TRUE;
+        [self.captureButton setSelected:FALSE];
+    });
+}
+
+- (void)captureController:(CaptureController *)controller BeginRealTimeFilterVideoRecordSession:(BOOL)ready {
+    if (ready) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.scrollableTabBar.interactionEnabled = FALSE;
+            self.cameraSwitchButton.enabled = FALSE;
+            self.albumButton.enabled = FALSE;
+            [self.captureButton setSelected:TRUE];
+        });
+    }
+}
+
+- (void)captureController:(CaptureController *)controller
+FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL *)url
+                    Error:(NSError *)error {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.scrollableTabBar.interactionEnabled = TRUE;
+        self.cameraSwitchButton.enabled = TRUE;
+        self.albumButton.enabled = TRUE;
         [self.captureButton setSelected:FALSE];
     });
 }
@@ -604,9 +629,15 @@ SaveCapturePhotoWithSessionID:(int64_t)Id
 
 - (void)captureController:(CaptureController *)controller DidCaptureVideoFrame:(CIImage *)image {
     dispatch_async(dispatch_get_main_queue(), ^{
-        UIImage* content = [UIImage imageWithCIImage:image];
-        self.framePreviewImage.image = content;
-
+        if (!self.ciContext) {
+            self.ciContext = [CIContext new];
+        }
+        //UIImage* content = [UIImage imageWithCIImage:image];
+        CGImageRef cgImage = [self.ciContext createCGImage:image fromRect:image.extent];
+        if (cgImage) {
+            self.framePreviewImage.image = [UIImage imageWithCGImage:cgImage];
+            CGImageRelease(cgImage);
+        }
     });
 }
 
