@@ -9,6 +9,7 @@
 #import "CaptureController.h"
 #import "../Supported/BasicMovieWritter.h"
 #import "../Caeogory/NSURL+SYAddition.h"
+#import "../Supported/ContextManager.h"
 #import <Photos/Photos.h>
 
 #define VIDEO_WRITTER_INPUT_CONTEXT @"video_track_writter_input"
@@ -39,7 +40,8 @@
 @property (strong, nonatomic) dispatch_queue_t sessionQueue;
 @property (readwrite, nonatomic) BOOL recording;
 @property (strong, nonatomic) BasicMovieWritter* movieWritter;
-
+@property (strong, nonatomic) AVAssetWriterInputPixelBufferAdaptor* writerInputPixelBufferAdaptor;
+@property (nonatomic) CGColorSpaceRef rgbColorSpace;
 //
 // photo/video capture
 //
@@ -68,6 +70,7 @@
         //self.photoCaptureSettingsOnProgressing = [NSMutableDictionary new];
         //self.photoCaptureDataOnProgressing = [NSMutableDictionary new];
         self.photoCaptureDataInProcessing = [NSMutableDictionary new];
+        self.rgbColorSpace = CGColorSpaceCreateDeviceRGB();
     }
     return self;
 }
@@ -288,6 +291,7 @@
     [self stopSession];
     [self removeVideoDeviceObserver];
     [self removeSessionObserver];
+    CGColorSpaceRelease(self.rgbColorSpace);
 }
 
 - (void)addSessionObserver {
@@ -941,8 +945,10 @@
                 return;
             }
             
+            // add video writer input
+            NSDictionary* videowriterInputSettings = [self.videoDataOutput recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeQuickTimeMovie];
             if(![self.movieWritter addWritterInputForMediaType:AVMediaTypeVideo
-                                                  Settings:[self.videoDataOutput recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeQuickTimeMovie]
+                                                  Settings:videowriterInputSettings
                                                    Context:VIDEO_WRITTER_INPUT_CONTEXT
                                                      Error:&error])
             {
@@ -952,8 +958,20 @@
                 return;
             }
             
+            // create pixel buffer adoptor fro video writer input
+            NSLog(@"video writer Input Settings: %@", videowriterInputSettings);
+            NSDictionary* sourcePixelBufferAtributesSettings = @{
+                                                                 (id)kCVPixelBufferPixelFormatTypeKey:@(kCVPixelFormatType_32BGRA),
+                                                                 (id)kCVPixelBufferWidthKey:videowriterInputSettings[AVVideoWidthKey],
+                                                                 (id)kCVPixelBufferHeightKey:videowriterInputSettings[AVVideoHeightKey],
+                                                                 };
+            self.writerInputPixelBufferAdaptor = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:[self.movieWritter writerInputWitnContext:VIDEO_WRITTER_INPUT_CONTEXT]
+                                                                                                                  sourcePixelBufferAttributes:sourcePixelBufferAtributesSettings];
+            
+            // add audio writer inoput
+            NSDictionary* audioWriterInputSettings = [self.audioDataOutput recommendedAudioSettingsForAssetWriterWithOutputFileType:AVFileTypeQuickTimeMovie];
             if (![self.movieWritter addWritterInputForMediaType:AVMediaTypeAudio
-                                                  Settings:[self.audioDataOutput recommendedAudioSettingsForAssetWriterWithOutputFileType:AVFileTypeQuickTimeMovie]
+                                                  Settings:audioWriterInputSettings
                                                    Context:AUDIO_WRITTER_INPUT_CONTEXT
                                                           Error:&error]) {
                 if (SESSION_DEBUG_INFO && error) {
@@ -962,6 +980,7 @@
                 return;
                 
             }
+            NSLog(@"audio Writer Input Settings: %@", audioWriterInputSettings);
             
             self.recording = [self.movieWritter startWritting];
             
@@ -985,6 +1004,7 @@
                 [self.movieOutput stopRecording];
             }
             else if (self.currentCaptureMode == CaptureModeRealTimeFilterVideo) {
+                self.recording = FALSE;
                 [self.movieWritter stopWrittingWithCompletionHandler:^(MovieWritterResult result, NSURL * _Nullable outputURL, NSError * _Nullable error) {
                     if (result == MovieWritterResultSuccess) {
                         if (SESSION_DEBUG_INFO) {
@@ -1315,14 +1335,37 @@ didFinishCaptureForResolvedSettings:(AVCaptureResolvedPhotoSettings *)resolvedSe
     AVCaptureConnection* audioDataOutputConnection = [self.audioDataOutput connectionWithMediaType:AVMediaTypeAudio];
     
     if (connection == videoDataOutputConnection) {
+        CMTime presentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
         CVImageBufferRef piexlBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-        CIImage* image = [CIImage imageWithCVImageBuffer:piexlBuffer];
-        if ([self.delegate respondsToSelector:@selector(captureController:DidCaptureVideoFrame:)]) {
-            [self.delegate captureController:self
-                        DidCaptureVideoFrame:image];
+        CIImage* scrImage = [CIImage imageWithCVImageBuffer:piexlBuffer];
+        CIImage* processImage = Nil;
+        if ([self.delegate respondsToSelector:@selector(captureController:ExpectedProcessingFilterVideoFrame:)]) {
+            processImage = [self.delegate captureController:self
+                         ExpectedProcessingFilterVideoFrame:scrImage];
         }
         if (self.recording) {
-            [self.movieWritter appendMediaSampleBuffer:sampleBuffer WithInputContext:VIDEO_WRITTER_INPUT_CONTEXT];
+            processImage = processImage == Nil ? scrImage : processImage;
+       
+            CVPixelBufferRef dstPixelBuffer;
+            CVReturn result = CVPixelBufferPoolCreatePixelBuffer(NULL, self.writerInputPixelBufferAdaptor.pixelBufferPool, &dstPixelBuffer);
+            if (result != kCVReturnSuccess) {
+                if (SESSION_DEBUG_INFO) {
+                    NSLog(@"[CaptureController debug info] Failed to create cvpixelbuffer to render processed image, drop frame: %@", processImage);
+                }
+                CVPixelBufferRelease(dstPixelBuffer);
+                return;
+            }
+            // draw ciimage to cvpixelbuffer via cicontext
+            [ContextManager.shareInstance.shareCIContext render:processImage
+                                                toCVPixelBuffer:dstPixelBuffer
+                                                         bounds:processImage.extent
+                                                     colorSpace:self.rgbColorSpace];
+            //[self.movieWritter appendMediaSampleBuffer:sampleBuffer WithInputContext:VIDEO_WRITTER_INPUT_CONTEXT];
+            [self.movieWritter appendPixelBuffer:dstPixelBuffer
+                                WithInputContext:VIDEO_WRITTER_INPUT_CONTEXT
+                                   AtPresentTime:presentTime
+                         UsingPixelBufferAdapter:self.writerInputPixelBufferAdaptor];
+            CVPixelBufferRelease(dstPixelBuffer);
         }
     } else if (connection == audioDataOutputConnection) {
         if (self.recording) {

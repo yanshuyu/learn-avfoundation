@@ -86,6 +86,10 @@
     return FALSE;
 }
 
+- (AVAssetWriterInput*)writerInputWitnContext:(NSString *)context {
+    return [self.assetWritterInputs objectForKey:context];
+}
+
 - (void)appendMediaSampleBuffer:(CMSampleBufferRef)sampleBuffer WithInputContext:(NSString *)context {
     if (!self.isWritting) {
         return;
@@ -112,6 +116,29 @@
             }
         }
         
+    }
+}
+
+- (void)appendPixelBuffer:(CVPixelBufferRef)piexlBuffer
+         WithInputContext:(NSString *)context
+           AtPresentTime:(CMTime)presetTime
+  UsingPixelBufferAdapter:(AVAssetWriterInputPixelBufferAdaptor *)pixelBufferAdaptor {
+    if (!self.isWritting) {
+        return;
+    }
+    
+    AVAssetWriterInput* writerInput = [self.assetWritterInputs objectForKey:context];
+    if (!writerInput || pixelBufferAdaptor.assetWriterInput != writerInput) {
+        return;
+    }
+    
+    if (self.isFirstSample) {
+        [self.assetWriter startSessionAtSourceTime:presetTime];
+        self.isFirstSample = FALSE;
+    }
+    
+    if (writerInput.isReadyForMoreMediaData) {
+        [pixelBufferAdaptor appendPixelBuffer:piexlBuffer withPresentationTime:presetTime];
     }
 }
 

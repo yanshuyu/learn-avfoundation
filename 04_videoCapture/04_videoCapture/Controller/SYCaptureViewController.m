@@ -11,6 +11,7 @@
 #import "../Controller/CaptureController.h"
 #import "../Supported/ScrollableTabBar.h"
 #import "../Supported/SYScrollableTabBarItem.h"
+#import "../Supported/ContextManager.h"
 #import <Photos/Photos.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
@@ -50,7 +51,6 @@
 @property (nonatomic) CaptureMode currentCaptureMode;
 @property (strong, nonatomic) UIViewPropertyAnimator* zoomSliderAnimator;
 @property (strong, nonatomic) UIView*  zoomSliderAnimHelperWiget;
-@property (strong, nonatomic) CIContext* ciContext;
 
 @end
 
@@ -603,6 +603,13 @@ FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL *)url
     });
 }
 
+- (CIImage *)captureController:(CaptureController *)controller ExpectedProcessingFilterVideoFrame:(CIImage *)frame {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.framePreviewImage.image = [UIImage imageWithCIImage:frame];
+    });
+    return frame;
+}
+
 - (void)captureController:(CaptureController *)controller DidCameraZoomToFactor:(CGFloat)factor {
     dispatch_async(dispatch_get_main_queue(), ^{
         //NSLog(@"camera zoom factor: %f", factor);
@@ -627,18 +634,18 @@ FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL *)url
     });
 }
 
-- (void)captureController:(CaptureController *)controller DidCaptureVideoFrame:(CIImage *)image {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!self.ciContext) {
-            self.ciContext = [CIContext new];
-        }
-        //UIImage* content = [UIImage imageWithCIImage:image];
-        CGImageRef cgImage = [self.ciContext createCGImage:image fromRect:image.extent];
-        if (cgImage) {
-            self.framePreviewImage.image = [UIImage imageWithCGImage:cgImage];
-            CGImageRelease(cgImage);
-        }
-    });
-}
+//- (void)captureController:(CaptureController *)controller DidCaptureVideoFrame:(CIImage *)image {
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        if (!self.ciContext) {
+//            self.ciContext = [CIContext new];
+//        }
+//        //UIImage* content = [UIImage imageWithCIImage:image];
+//        CGImageRef cgImage = [self.ciContext createCGImage:image fromRect:image.extent];
+//        if (cgImage) {
+//            self.framePreviewImage.image = [UIImage imageWithCGImage:cgImage];
+//            CGImageRelease(cgImage);
+//        }
+//    });
+//}
 
 @end

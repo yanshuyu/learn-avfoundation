@@ -24,8 +24,16 @@ typedef void(^AssetWritterCompletionHandler)(MovieWritterResult result, NSURL* _
 @interface BasicMovieWritter : NSObject
 
 - (instancetype)initWithFileType:(AVFileType)outputFileType Error:(NSError* _Nullable*)error;
-- (BOOL)addWritterInputForMediaType:(AVMediaType)mediaType Settings:(NSDictionary*)settings Context:(NSString*)context Error:(NSError* _Nullable*)error;
+- (BOOL)addWritterInputForMediaType:(AVMediaType)mediaType
+                           Settings:(NSDictionary*)settings
+                            Context:(NSString*)context
+                              Error:(NSError* _Nullable*)error;
+- (AVAssetWriterInput*)writerInputWitnContext:(NSString*)context;
 - (void)appendMediaSampleBuffer:(CMSampleBufferRef)sampleBuffer WithInputContext:(NSString*)context;
+- (void)appendPixelBuffer:(CVPixelBufferRef)piexlBuffer
+         WithInputContext:(NSString*)context
+              AtPresentTime:(CMTime)presetTime
+  UsingPixelBufferAdapter:(AVAssetWriterInputPixelBufferAdaptor* _Nonnull)pixelBufferAdaptor;
 - (BOOL)startWritting;
 - (void)stopWrittingWithCompletionHandler:(AssetWritterCompletionHandler)completionHander;
 
