@@ -12,6 +12,7 @@
 #import "../Supported/ScrollableTabBar.h"
 #import "../Supported/SYScrollableTabBarItem.h"
 #import "../Supported/ContextManager.h"
+#import "../Supported/BuildInFilterLibrary.h"
 #import <Photos/Photos.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
@@ -60,6 +61,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setUpView];
+    NSLog(@"video filters: %@", [[BuildInFilterLibrary shareInstance] filterNamesInCategory:kCICategoryStylize]);
+    
     
     //setup capture mode switch view controller
     UIImageView* barItemSelectedIndicator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"select_indicator"]];
@@ -122,6 +125,7 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
     [self.captureController cleanUpSession];
 }
 
@@ -604,10 +608,19 @@ FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL *)url
 }
 
 - (CIImage *)captureController:(CaptureController *)controller ExpectedProcessingFilterVideoFrame:(CIImage *)frame {
+    CIFilter* filter = [CIFilter filterWithName:@"CIComicEffect"];
+    CIImage* processImage = Nil;
+    if (filter) {
+        [filter setValue:frame forKey:kCIInputImageKey];
+        processImage = filter.outputImage;
+    }
+    
+    processImage = processImage == Nil ? frame : processImage;
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.framePreviewImage.image = [UIImage imageWithCIImage:frame];
+        self.framePreviewImage.image = [UIImage imageWithCIImage:processImage];
     });
-    return frame;
+    
+    return processImage;
 }
 
 - (void)captureController:(CaptureController *)controller DidCameraZoomToFactor:(CGFloat)factor {

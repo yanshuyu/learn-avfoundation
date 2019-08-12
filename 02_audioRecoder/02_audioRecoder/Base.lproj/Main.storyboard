@@ -113,15 +113,15 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="NY6-QR-pXt" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="8QF-xj-zHV"/>
-                            <constraint firstAttribute="trailing" secondItem="NY6-QR-pXt" secondAttribute="trailing" id="9lF-la-pUj"/>
+                            <constraint firstItem="NY6-QR-pXt" firstAttribute="leading" secondItem="bfH-1Y-tyF" secondAttribute="leading" id="8QF-xj-zHV"/>
+                            <constraint firstItem="bfH-1Y-tyF" firstAttribute="trailing" secondItem="NY6-QR-pXt" secondAttribute="trailing" id="9lF-la-pUj"/>
                             <constraint firstItem="z30-LO-Fdt" firstAttribute="top" secondItem="NY6-QR-pXt" secondAttribute="bottom" id="bkD-GN-S9F"/>
-                            <constraint firstItem="z30-LO-Fdt" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="fkk-0m-vUV"/>
-                            <constraint firstAttribute="trailing" secondItem="z30-LO-Fdt" secondAttribute="trailing" id="gFD-IK-EAy"/>
+                            <constraint firstItem="z30-LO-Fdt" firstAttribute="leading" secondItem="bfH-1Y-tyF" secondAttribute="leading" id="fkk-0m-vUV"/>
+                            <constraint firstItem="bfH-1Y-tyF" firstAttribute="trailing" secondItem="z30-LO-Fdt" secondAttribute="trailing" id="gFD-IK-EAy"/>
                             <constraint firstItem="NY6-QR-pXt" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="hw3-7b-vYq"/>
                             <constraint firstAttribute="bottom" secondItem="z30-LO-Fdt" secondAttribute="bottom" id="oXK-fl-kvn"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <viewLayoutGuide key="safeArea" id="bfH-1Y-tyF"/>
                     </view>
                     <connections>
                         <outlet property="recordButton" destination="jgg-kQ-fA1" id="MF3-Tz-dYN"/>

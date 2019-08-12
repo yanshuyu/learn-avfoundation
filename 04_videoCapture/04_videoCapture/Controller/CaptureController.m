@@ -39,6 +39,7 @@
 @property (nonatomic) CaptureMode currentCaptureMode;
 @property (strong, nonatomic) dispatch_queue_t sessionQueue;
 @property (readwrite, nonatomic) BOOL recording;
+@property (strong, nonatomic) dispatch_queue_t movieQueue;
 @property (strong, nonatomic) BasicMovieWritter* movieWritter;
 @property (strong, nonatomic) AVAssetWriterInputPixelBufferAdaptor* writerInputPixelBufferAdaptor;
 @property (nonatomic) CGColorSpaceRef rgbColorSpace;
@@ -66,11 +67,12 @@
         self.session = [AVCaptureSession new];
         [self addSessionObserver];
         self.currentCaptureMode = CaptureModeUnkonwed;
-        self.sessionQueue = dispatch_queue_create("com.sy.learn-avfoundation.video-capture", DISPATCH_QUEUE_SERIAL);
+        self.sessionQueue = dispatch_queue_create("com.sy.learn-avfoundation.video-capture-session", DISPATCH_QUEUE_SERIAL);
+        self.movieQueue = dispatch_queue_create("com.sy.learn-avfoundation.video-capture-movie", DISPATCH_QUEUE_SERIAL);
         //self.photoCaptureSettingsOnProgressing = [NSMutableDictionary new];
         //self.photoCaptureDataOnProgressing = [NSMutableDictionary new];
         self.photoCaptureDataInProcessing = [NSMutableDictionary new];
-        self.rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+        _rgbColorSpace = CGColorSpaceCreateDeviceRGB();
     }
     return self;
 }
@@ -291,7 +293,7 @@
     [self stopSession];
     [self removeVideoDeviceObserver];
     [self removeSessionObserver];
-    CGColorSpaceRelease(self.rgbColorSpace);
+    CGColorSpaceRelease(_rgbColorSpace);
 }
 
 - (void)addSessionObserver {
@@ -743,7 +745,7 @@
     float clampPercent = MIN(percent, 1);
     clampPercent = MAX(clampPercent, 0);
     //float factor = self.cameraMinZoomFactor + (self.cameraMaxZoomFactor - self.cameraMinZoomFactor) * percent;
-    float factor = MAX(powf(self.cameraMaxZoomFactor, percent) , self.cameraMinZoomFactor);
+    float factor = MAX(powf(self.cameraMaxZoomFactor, clampPercent) , self.cameraMinZoomFactor);
     [self setVideoZoomWithFactor:factor];
 }
 
@@ -1334,44 +1336,48 @@ didFinishCaptureForResolvedSettings:(AVCaptureResolvedPhotoSettings *)resolvedSe
     AVCaptureConnection* videoDataOutputConnection = [self.videoDataOutput connectionWithMediaType:AVMediaTypeVideo];
     AVCaptureConnection* audioDataOutputConnection = [self.audioDataOutput connectionWithMediaType:AVMediaTypeAudio];
     
-    if (connection == videoDataOutputConnection) {
-        CMTime presentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-        CVImageBufferRef piexlBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-        CIImage* scrImage = [CIImage imageWithCVImageBuffer:piexlBuffer];
-        CIImage* processImage = Nil;
-        if ([self.delegate respondsToSelector:@selector(captureController:ExpectedProcessingFilterVideoFrame:)]) {
-            processImage = [self.delegate captureController:self
-                         ExpectedProcessingFilterVideoFrame:scrImage];
-        }
-        if (self.recording) {
-            processImage = processImage == Nil ? scrImage : processImage;
-       
-            CVPixelBufferRef dstPixelBuffer;
-            CVReturn result = CVPixelBufferPoolCreatePixelBuffer(NULL, self.writerInputPixelBufferAdaptor.pixelBufferPool, &dstPixelBuffer);
-            if (result != kCVReturnSuccess) {
-                if (SESSION_DEBUG_INFO) {
-                    NSLog(@"[CaptureController debug info] Failed to create cvpixelbuffer to render processed image, drop frame: %@", processImage);
-                }
-                CVPixelBufferRelease(dstPixelBuffer);
-                return;
+    CFRetain(sampleBuffer);
+    dispatch_async(self.movieQueue, ^{
+        if (connection == videoDataOutputConnection) {
+            CMTime presentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+            CVImageBufferRef piexlBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+            CIImage* scrImage = [CIImage imageWithCVImageBuffer:piexlBuffer];
+            CIImage* processImage = Nil;
+            if ([self.delegate respondsToSelector:@selector(captureController:ExpectedProcessingFilterVideoFrame:)]) {
+                processImage = [self.delegate captureController:self
+                             ExpectedProcessingFilterVideoFrame:scrImage];
             }
-            // draw ciimage to cvpixelbuffer via cicontext
-            [ContextManager.shareInstance.shareCIContext render:processImage
-                                                toCVPixelBuffer:dstPixelBuffer
-                                                         bounds:processImage.extent
-                                                     colorSpace:self.rgbColorSpace];
-            //[self.movieWritter appendMediaSampleBuffer:sampleBuffer WithInputContext:VIDEO_WRITTER_INPUT_CONTEXT];
-            [self.movieWritter appendPixelBuffer:dstPixelBuffer
-                                WithInputContext:VIDEO_WRITTER_INPUT_CONTEXT
-                                   AtPresentTime:presentTime
-                         UsingPixelBufferAdapter:self.writerInputPixelBufferAdaptor];
-            CVPixelBufferRelease(dstPixelBuffer);
+            if (self.recording) {
+                processImage = processImage == Nil ? scrImage : processImage;
+                
+                CVPixelBufferRef dstPixelBuffer;
+                CVReturn result = CVPixelBufferPoolCreatePixelBuffer(NULL, self.writerInputPixelBufferAdaptor.pixelBufferPool, &dstPixelBuffer);
+                if (result != kCVReturnSuccess) {
+                    if (SESSION_DEBUG_INFO) {
+                        NSLog(@"[CaptureController debug info] Failed to create cvpixelbuffer to render processed image, drop frame: %@", processImage);
+                    }
+                    CVPixelBufferRelease(dstPixelBuffer);
+                    return;
+                }
+                // draw ciimage to cvpixelbuffer via cicontext
+                [[ContextManager shareInstance].shareCIContext render:processImage
+                                                      toCVPixelBuffer:dstPixelBuffer
+                                                               bounds:processImage.extent
+                                                           colorSpace:self.rgbColorSpace];
+                //[self.movieWritter appendMediaSampleBuffer:sampleBuffer WithInputContext:VIDEO_WRITTER_INPUT_CONTEXT];
+                [self.movieWritter appendPixelBuffer:dstPixelBuffer
+                                    WithInputContext:VIDEO_WRITTER_INPUT_CONTEXT
+                                       AtPresentTime:presentTime
+                             UsingPixelBufferAdapter:self.writerInputPixelBufferAdaptor];
+                CVPixelBufferRelease(dstPixelBuffer);
+            }
+        } else if (connection == audioDataOutputConnection) {
+            if (self.recording) {
+                [self.movieWritter appendMediaSampleBuffer:sampleBuffer WithInputContext:AUDIO_WRITTER_INPUT_CONTEXT];
+            }
         }
-    } else if (connection == audioDataOutputConnection) {
-        if (self.recording) {
-            [self.movieWritter appendMediaSampleBuffer:sampleBuffer WithInputContext:AUDIO_WRITTER_INPUT_CONTEXT];
-        }
-    }
+        CFRelease(sampleBuffer);
+    });
 }
 
 

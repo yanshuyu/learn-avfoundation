@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		113C6C7523013A190016D089 /* CameraRollManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 113C6C7423013A190016D089 /* CameraRollManager.m */; };
 		11821EF622F2D12C00620228 /* BasicMovieWritter.m in Sources */ = {isa = PBXBuildFile; fileRef = 11821EF522F2D12C00620228 /* BasicMovieWritter.m */; };
 		11821EFA22F2D2C700620228 /* NSURL+SYAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 11821EF922F2D2C700620228 /* NSURL+SYAddition.m */; };
 		118AB7EE22D486BA0073C888 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AB7ED22D486BA0073C888 /* AppDelegate.m */; };
@@ -21,11 +22,14 @@
 		1197BFBA22D7363300A30CF6 /* ScrollableTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1197BFB922D7363300A30CF6 /* ScrollableTabBar.m */; };
 		1197BFBD22D88DB800A30CF6 /* SYScrollableTabBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1197BFBC22D88DB800A30CF6 /* SYScrollableTabBarItem.m */; };
 		11CFE5F922F5E3EA00277E7D /* ContextManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 11CFE5F822F5E3EA00277E7D /* ContextManager.m */; };
+		11CFE61E22F7524F00277E7D /* BuildInFilterLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = 11CFE61D22F7524F00277E7D /* BuildInFilterLibrary.m */; };
 		11D8C62F22F02B95000B3495 /* VideoGestureLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 11D8C62E22F02B95000B3495 /* VideoGestureLayer.m */; };
 		11EE984E22D4EB760036A68C /* FocusWiget.m in Sources */ = {isa = PBXBuildFile; fileRef = 11EE984D22D4EB760036A68C /* FocusWiget.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		113C6C7323013A190016D089 /* CameraRollManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraRollManager.h; sourceTree = "<group>"; };
+		113C6C7423013A190016D089 /* CameraRollManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraRollManager.m; sourceTree = "<group>"; };
 		11821EF422F2D12C00620228 /* BasicMovieWritter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasicMovieWritter.h; sourceTree = "<group>"; };
 		11821EF522F2D12C00620228 /* BasicMovieWritter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BasicMovieWritter.m; sourceTree = "<group>"; };
 		11821EF822F2D2C700620228 /* NSURL+SYAddition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+SYAddition.h"; sourceTree = "<group>"; };
@@ -52,6 +56,8 @@
 		1197BFBC22D88DB800A30CF6 /* SYScrollableTabBarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SYScrollableTabBarItem.m; sourceTree = "<group>"; };
 		11CFE5F722F5E3EA00277E7D /* ContextManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContextManager.h; sourceTree = "<group>"; };
 		11CFE5F822F5E3EA00277E7D /* ContextManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContextManager.m; sourceTree = "<group>"; };
+		11CFE61C22F7524F00277E7D /* BuildInFilterLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuildInFilterLibrary.h; sourceTree = "<group>"; };
+		11CFE61D22F7524F00277E7D /* BuildInFilterLibrary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BuildInFilterLibrary.m; sourceTree = "<group>"; };
 		11D8C62D22F02B95000B3495 /* VideoGestureLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoGestureLayer.h; sourceTree = "<group>"; };
 		11D8C62E22F02B95000B3495 /* VideoGestureLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoGestureLayer.m; sourceTree = "<group>"; };
 		11EE984C22D4EB760036A68C /* FocusWiget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FocusWiget.h; sourceTree = "<group>"; };
@@ -149,6 +155,10 @@
 				11821EF522F2D12C00620228 /* BasicMovieWritter.m */,
 				11CFE5F722F5E3EA00277E7D /* ContextManager.h */,
 				11CFE5F822F5E3EA00277E7D /* ContextManager.m */,
+				11CFE61C22F7524F00277E7D /* BuildInFilterLibrary.h */,
+				11CFE61D22F7524F00277E7D /* BuildInFilterLibrary.m */,
+				113C6C7323013A190016D089 /* CameraRollManager.h */,
+				113C6C7423013A190016D089 /* CameraRollManager.m */,
 			);
 			path = Supported;
 			sourceTree = "<group>";
@@ -224,6 +234,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1197BFBD22D88DB800A30CF6 /* SYScrollableTabBarItem.m in Sources */,
+				113C6C7523013A190016D089 /* CameraRollManager.m in Sources */,
+				11CFE61E22F7524F00277E7D /* BuildInFilterLibrary.m in Sources */,
 				118AB80A22D48C780073C888 /* CaptureController.m in Sources */,
 				11CFE5F922F5E3EA00277E7D /* ContextManager.m in Sources */,
 				118AB7FC22D486BD0073C888 /* main.m in Sources */,
@@ -384,7 +396,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-4-videoCapture";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-3-videoPlayer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -401,7 +413,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-4-videoCapture";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-3-videoPlayer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
