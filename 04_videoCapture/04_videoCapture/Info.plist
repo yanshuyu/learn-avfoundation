@@ -21,9 +21,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>test your device's capture feture</string>
+	<string>test your device&apos;s capture feture</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>test your device's capture feture</string>
+	<string>test your device&apos;s capture feture</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>test your device capture feture</string>
 	<key>UILaunchStoryboardName</key>
@@ -37,6 +37,9 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>

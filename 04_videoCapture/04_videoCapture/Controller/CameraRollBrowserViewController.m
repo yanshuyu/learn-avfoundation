@@ -30,6 +30,7 @@ typedef enum : NSUInteger {
 
 @property (strong, nonatomic) NSMutableArray<CameraRollItem*>* allCameraRollItems;
 @property (strong, nonatomic) NSArray<CameraRollItem*>* currentViewingCameraRollItems;
+@property (strong, nonatomic) UIView* blurEffectView;
 
 @property (strong, nonatomic) UICollectionViewFlowLayout* basicFlowLayout;
 @property (strong, nonatomic) SYCollectionViewCoverFlowLayout* coverFlowLayout;
@@ -73,6 +74,17 @@ typedef enum : NSUInteger {
     [self.view insertSubview:segmentBlurOverlayView belowSubview:self.rollItemSegmentContrl];
     segmentBlurOverlayView.layer.cornerRadius = 4;
     segmentBlurOverlayView.layer.masksToBounds = TRUE;
+    self.blurEffectView = segmentBlurOverlayView;
+//    [self.rollItemSegmentContrl.leadingAnchor constraintEqualToAnchor:segmentBlurOverlayView.leadingAnchor constant:0].active = TRUE;
+//    [self.rollItemSegmentContrl.trailingAnchor constraintEqualToAnchor:segmentBlurOverlayView.trailingAnchor constant:0].active = TRUE;
+//    [self.rollItemSegmentContrl.topAnchor constraintEqualToAnchor:segmentBlurOverlayView.topAnchor constant:0].active = TRUE;
+//    [self.rollItemSegmentContrl.bottomAnchor constraintEqualToAnchor:segmentBlurOverlayView.bottomAnchor constant:0].active = TRUE;
+
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    self.blurEffectView.frame = self.rollItemSegmentContrl.frame;
 }
 
 - (void)configCameraRollCell:(CameraRollItemCell*)cell WithModel:(CameraRollItem*)item {
@@ -136,8 +148,8 @@ typedef enum : NSUInteger {
     } else if (sender.selectedSegmentIndex == 1) {
         if (!self.coverFlowLayout) {
             self.coverFlowLayout = [[SYCollectionViewCoverFlowLayout alloc] initWithCollectionViewSize:self.collectionView.frame.size];
-            self.coverFlowLayout.minimumLineSpacing = -60;
-            self.coverFlowLayout.itemSize = CGSizeMake(CELL_SIZE.width * 2, CELL_SIZE.height * 2);
+            self.coverFlowLayout.minimumLineSpacing = -70;
+            self.coverFlowLayout.itemSize = CGSizeMake(CELL_SIZE.width * 1.8, CELL_SIZE.height * 1.8);
         }
         self.collectionView.collectionViewLayout = self.coverFlowLayout;
         [self.coverFlowLayout invalidateLayout];

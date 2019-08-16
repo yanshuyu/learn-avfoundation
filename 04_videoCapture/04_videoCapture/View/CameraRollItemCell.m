@@ -69,11 +69,14 @@
 
 - (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
     [super applyLayoutAttributes:layoutAttributes];
+    self.layer.borderWidth = 0;
     if ([layoutAttributes isKindOfClass:[SYCollectionViewCoverFlowLayoutAttributes class]]
         && layoutAttributes.representedElementCategory == UICollectionElementCategoryCell) {
         SYCollectionViewCoverFlowLayoutAttributes* coverFlowLayoutAttributes = (SYCollectionViewCoverFlowLayoutAttributes*)layoutAttributes;
         self.layer.shouldRasterize = coverFlowLayoutAttributes.shouldRaster;
         self.maskView.alpha = coverFlowLayoutAttributes.maskAlpha;
+        self.layer.borderWidth = 2;
+        self.layer.borderColor = [[UIColor whiteColor] CGColor];
     }
    
 }

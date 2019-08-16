@@ -13,7 +13,7 @@
 #define TRANSLATE_DISTANCE      100
 #define ZOOM_FACTOR             0.2f
 #define FLOW_OFFSET             40
-#define INACTIVE_GREY_VALUE     0.4f
+#define INACTIVE_GREY_VALUE     0.5f
 
 
 @implementation SYCollectionViewCoverFlowLayout

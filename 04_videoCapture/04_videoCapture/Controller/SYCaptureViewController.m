@@ -103,6 +103,10 @@
     }
 }
 
+- (BOOL)shouldAutorotate {
+    return FALSE;
+}
+
 - (void)setUpView {
     self.scrollableTabBarContainer.backgroundColor = [UIColor blackColor];
     [self.captureButton setImage:[UIImage imageNamed:@"square"] forState:UIControlStateSelected];
