@@ -20,7 +20,6 @@
 @interface SYCaptureViewController () <CaptureControllerDelegate,
                                         ScrollableTabBarDelegate,
                                         VideoGestureLayerDelegate,
-                                        UIImagePickerControllerDelegate,
                                         UINavigationControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet VideoPreviewView *videoPreviewView;
@@ -46,13 +45,13 @@
 @property (weak, nonatomic) IBOutlet UIImageView *framePreviewImage;
 
 
-
 @property (strong, nonatomic) CaptureController* captureController;
 @property (strong, nonatomic) VideoGestureLayer* captureGestureLayer;
 @property (strong, nonatomic) ScrollableTabBar* scrollableTabBar;
 @property (nonatomic) CaptureMode currentCaptureMode;
 @property (strong, nonatomic) UIViewPropertyAnimator* zoomSliderAnimator;
 @property (strong, nonatomic) UIView*  zoomSliderAnimHelperWiget;
+@property (nonatomic) BOOL shouldAutoRestartSession;
 
 @end
 
@@ -96,6 +95,14 @@
 
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    if (self.shouldAutoRestartSession) {
+        [self.captureController startSession];
+        self.shouldAutoRestartSession = false;
+    }
+}
+
 - (void)setUpView {
     self.scrollableTabBarContainer.backgroundColor = [UIColor blackColor];
     [self.captureButton setImage:[UIImage imageNamed:@"square"] forState:UIControlStateSelected];
@@ -123,6 +130,8 @@
     
     self.flashMeunView.alpha = 0;
     [self runFlashMenuFadeAnimation:FALSE];
+    
+    self.shouldAutoRestartSession = FALSE;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -448,8 +457,11 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
     NSLog(@"capture sesession did start running.");
 }
 
-- (void)captureControllerSessionDidStopRunning:(CaptureController *)controller {
-    NSLog(@"capture session did stop running.");
+- (void)captureController:(CaptureController *)controller SessionDidStopRunning:(NSDictionary *)info {
+    NSLog(@"capture session did stop running, info: %@", info);
+    if (!info) {
+        self.shouldAutoRestartSession = TRUE;
+    }
 }
 
 - (void)captureControllerStartRunningSessionFailed:(CaptureController *)controller {

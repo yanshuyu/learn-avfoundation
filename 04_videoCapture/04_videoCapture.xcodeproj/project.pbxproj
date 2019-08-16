@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		112C745F2301685E00F7CFED /* CameraRollBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 112C745E2301685E00F7CFED /* CameraRollBrowserViewController.m */; };
 		112C746223016CD800F7CFED /* CameraRollItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 112C746123016CD800F7CFED /* CameraRollItemCell.m */; };
+		112C746523069AC700F7CFED /* SYCollectionViewCoverFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 112C746423069AC700F7CFED /* SYCollectionViewCoverFlowLayout.m */; };
+		112C74682306A9C200F7CFED /* SYCollectionViewCoverFlowLayoutAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 112C74672306A9C200F7CFED /* SYCollectionViewCoverFlowLayoutAttributes.m */; };
 		113C6C7523013A190016D089 /* CameraRollManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 113C6C7423013A190016D089 /* CameraRollManager.m */; };
 		11821EF622F2D12C00620228 /* BasicMovieWritter.m in Sources */ = {isa = PBXBuildFile; fileRef = 11821EF522F2D12C00620228 /* BasicMovieWritter.m */; };
 		11821EFA22F2D2C700620228 /* NSURL+SYAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 11821EF922F2D2C700620228 /* NSURL+SYAddition.m */; };
@@ -34,6 +36,10 @@
 		112C745E2301685E00F7CFED /* CameraRollBrowserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraRollBrowserViewController.m; sourceTree = "<group>"; };
 		112C746023016CD800F7CFED /* CameraRollItemCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraRollItemCell.h; sourceTree = "<group>"; };
 		112C746123016CD800F7CFED /* CameraRollItemCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraRollItemCell.m; sourceTree = "<group>"; };
+		112C746323069AC700F7CFED /* SYCollectionViewCoverFlowLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SYCollectionViewCoverFlowLayout.h; sourceTree = "<group>"; };
+		112C746423069AC700F7CFED /* SYCollectionViewCoverFlowLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SYCollectionViewCoverFlowLayout.m; sourceTree = "<group>"; };
+		112C74662306A9C200F7CFED /* SYCollectionViewCoverFlowLayoutAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SYCollectionViewCoverFlowLayoutAttributes.h; sourceTree = "<group>"; };
+		112C74672306A9C200F7CFED /* SYCollectionViewCoverFlowLayoutAttributes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SYCollectionViewCoverFlowLayoutAttributes.m; sourceTree = "<group>"; };
 		113C6C7323013A190016D089 /* CameraRollManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraRollManager.h; sourceTree = "<group>"; };
 		113C6C7423013A190016D089 /* CameraRollManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraRollManager.m; sourceTree = "<group>"; };
 		11821EF422F2D12C00620228 /* BasicMovieWritter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasicMovieWritter.h; sourceTree = "<group>"; };
@@ -169,6 +175,10 @@
 				11CFE61D22F7524F00277E7D /* BuildInFilterLibrary.m */,
 				113C6C7323013A190016D089 /* CameraRollManager.h */,
 				113C6C7423013A190016D089 /* CameraRollManager.m */,
+				112C746323069AC700F7CFED /* SYCollectionViewCoverFlowLayout.h */,
+				112C746423069AC700F7CFED /* SYCollectionViewCoverFlowLayout.m */,
+				112C74662306A9C200F7CFED /* SYCollectionViewCoverFlowLayoutAttributes.h */,
+				112C74672306A9C200F7CFED /* SYCollectionViewCoverFlowLayoutAttributes.m */,
 			);
 			path = Supported;
 			sourceTree = "<group>";
@@ -243,6 +253,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				112C746523069AC700F7CFED /* SYCollectionViewCoverFlowLayout.m in Sources */,
+				112C74682306A9C200F7CFED /* SYCollectionViewCoverFlowLayoutAttributes.m in Sources */,
 				1197BFBD22D88DB800A30CF6 /* SYScrollableTabBarItem.m in Sources */,
 				113C6C7523013A190016D089 /* CameraRollManager.m in Sources */,
 				11CFE61E22F7524F00277E7D /* BuildInFilterLibrary.m in Sources */,

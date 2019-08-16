@@ -9,6 +9,7 @@
 #import "CameraRollBrowserViewController.h"
 #import "../Supported/CameraRollManager.h"
 #import "../View/CameraRollItemCell.h"
+#import "../Supported/SYCollectionViewCoverFlowLayout.h"
 
 #define CELL_SIZE CGSizeMake(122, 122)
 
@@ -24,11 +25,14 @@ typedef enum : NSUInteger {
 @interface CameraRollBrowserViewController () <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
-@property (weak, nonatomic) IBOutlet UIButton *closeButton;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *segmentControl;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *rollItemSegmentContrl;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *layoutSegmentContrl;
 
-@property (strong, nonatomic) NSMutableArray<CameraRollItem*>* cameraRollItems;
-@property (nonatomic) CameraRollSegment cameraRollSegment;
+@property (strong, nonatomic) NSMutableArray<CameraRollItem*>* allCameraRollItems;
+@property (strong, nonatomic) NSArray<CameraRollItem*>* currentViewingCameraRollItems;
+
+@property (strong, nonatomic) UICollectionViewFlowLayout* basicFlowLayout;
+@property (strong, nonatomic) SYCollectionViewCoverFlowLayout* coverFlowLayout;
 
 @end
 
@@ -37,44 +41,38 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupView];
+    
     CameraRollManager* cameraRollMgr = [CameraRollManager new];
-    self.cameraRollItems = [NSMutableArray arrayWithArray:[cameraRollMgr fetchCameraRollItems]];
-    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.cameraRollItems.count-1 inSection:0] atScrollPosition:UICollectionViewScrollPositionBottom animated:FALSE];
+    self.allCameraRollItems = [NSMutableArray arrayWithArray:[cameraRollMgr fetchCameraRollItems]];
+    self.rollItemSegmentContrl.selectedSegmentIndex = 0;
+    self.layoutSegmentContrl.selectedSegmentIndex = 0;
+    [self handleRollItemSegmentControlValueChange:self.rollItemSegmentContrl];
+    [self handleLayoutSegmentControlValueChange:self.layoutSegmentContrl];
+    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.currentViewingCameraRollItems.count-1 inSection:0]
+                                atScrollPosition:UICollectionViewScrollPositionBottom
+                                        animated:FALSE];
 }
 
-
 - (void)setupView {
-    self.cameraRollSegment = CameraRollSegmentAll;
-    self.navigationController.navigationBar.hidden = TRUE;
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     
-    UIVisualEffectView* buttonBlurOverlayView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
-    buttonBlurOverlayView.frame = self.closeButton.frame;
-    [self.view insertSubview:buttonBlurOverlayView belowSubview:self.closeButton];
-    self.closeButton.layer.cornerRadius = self.closeButton.bounds.size.width * 0.5;
-    self.closeButton.layer.masksToBounds = TRUE;
-    buttonBlurOverlayView.layer.cornerRadius = buttonBlurOverlayView.bounds.size.width * 0.5;
-    buttonBlurOverlayView.layer.masksToBounds = TRUE;
-    
-    UIVisualEffectView* segmentBlurOverlayView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
-    segmentBlurOverlayView.frame = self.segmentControl.frame;
-    [self.view insertSubview:segmentBlurOverlayView belowSubview:self.segmentControl];
-    segmentBlurOverlayView.layer.cornerRadius = 4;
-    segmentBlurOverlayView.layer.masksToBounds = TRUE;
-    
-    self.collectionView.dataSource = self;
-    self.collectionView.delegate = self;
     UICollectionViewFlowLayout* flowLayout = [[UICollectionViewFlowLayout alloc] init];
     flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
     flowLayout.minimumLineSpacing = 4;
     flowLayout.minimumInteritemSpacing = 4;
     flowLayout.itemSize = CELL_SIZE;
-    flowLayout.sectionInset = UIEdgeInsetsMake(0, 0, 40, 0);
+    self.basicFlowLayout = flowLayout;
     self.collectionView.collectionViewLayout = flowLayout;
     self.collectionView.backgroundColor = [UIColor blackColor];
     self.collectionView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
+    self.collectionView.dataSource = self;
+    self.collectionView.delegate = self;
     
-//    CGFloat bottomOffset = self.collectionView.contentSize.height - self.collectionView.bounds.size.height;
-//    [self.collectionView setContentOffset:CGPointMake(0, bottomOffset) animated:FALSE];
+    UIVisualEffectView* segmentBlurOverlayView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
+    segmentBlurOverlayView.frame = self.rollItemSegmentContrl.frame;
+    [self.view insertSubview:segmentBlurOverlayView belowSubview:self.rollItemSegmentContrl];
+    segmentBlurOverlayView.layer.cornerRadius = 4;
+    segmentBlurOverlayView.layer.masksToBounds = TRUE;
 }
 
 - (void)configCameraRollCell:(CameraRollItemCell*)cell WithModel:(CameraRollItem*)item {
@@ -100,47 +98,63 @@ typedef enum : NSUInteger {
                              }];
 }
 
-- (NSArray<CameraRollItem*>*) filterCameraRollItemBySegment {
+
+- (void)filterCameraRollItemsBySegment:(CameraRollSegment)segment {
     NSMutableArray<CameraRollItem*>* result = [NSMutableArray array];
-    if (self.cameraRollSegment == CameraRollSegmentAll) {
-        result = self.cameraRollItems;
-    } else if (self.cameraRollSegment == CameraRollSegmentPhoto) {
-        [self.cameraRollItems enumerateObjectsUsingBlock:^(CameraRollItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    if (segment == CameraRollSegmentAll) {
+        result = self.allCameraRollItems;
+    } else if (segment == CameraRollSegmentPhoto) {
+        [self.allCameraRollItems enumerateObjectsUsingBlock:^(CameraRollItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if (obj.mediaType == PHAssetMediaTypeImage) {
                 [result addObject:obj];
             }
         }];
-    } else if (self.cameraRollSegment == CameraRollSegmentVideo) {
-        [self.cameraRollItems enumerateObjectsUsingBlock:^(CameraRollItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    } else if (segment == CameraRollSegmentVideo) {
+        [self.allCameraRollItems enumerateObjectsUsingBlock:^(CameraRollItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if (obj.mediaType == PHAssetMediaTypeVideo) {
                 [result addObject:obj];
             }
         }];
     }
     
-    return result;
-}
-
-- (void)updateCameraRollSegment:(NSInteger)index {
-    if (index == 0) {
-        self.cameraRollSegment = CameraRollSegmentAll;
-    } else if (index == 1) {
-        self.cameraRollSegment = CameraRollSegmentPhoto;
-    } else if (index == 2) {
-        self.cameraRollSegment = CameraRollSegmentVideo;
-    }
+    self.currentViewingCameraRollItems = result;
 }
 
 - (BOOL)prefersStatusBarHidden {
     return TRUE;
 }
 
-- (IBAction)handleCloseButtonTap:(UIButton *)sender {
+- (IBAction)handleCloseButtonTap:(UIBarButtonItem *)sender {
     [self dismissViewControllerAnimated:TRUE completion:nil];
 }
 
-- (IBAction)handleSegmentControllTap:(UISegmentedControl *)sender {
-    [self updateCameraRollSegment:sender.selectedSegmentIndex];
+
+- (IBAction)handleLayoutSegmentControlValueChange:(UISegmentedControl *)sender {
+    if (sender.selectedSegmentIndex == 0) {
+        self.collectionView.collectionViewLayout = self.basicFlowLayout;
+        [self.collectionView.collectionViewLayout invalidateLayout];
+    } else if (sender.selectedSegmentIndex == 1) {
+        if (!self.coverFlowLayout) {
+            self.coverFlowLayout = [[SYCollectionViewCoverFlowLayout alloc] initWithCollectionViewSize:self.collectionView.frame.size];
+            self.coverFlowLayout.minimumLineSpacing = -60;
+            self.coverFlowLayout.itemSize = CGSizeMake(CELL_SIZE.width * 2, CELL_SIZE.height * 2);
+        }
+        self.collectionView.collectionViewLayout = self.coverFlowLayout;
+        [self.coverFlowLayout invalidateLayout];
+    }
+}
+
+- (IBAction)handleRollItemSegmentControlValueChange:(UISegmentedControl *)sender {
+    CameraRollSegment rollItemSegment = CameraRollSegmentNone;
+    if (sender.selectedSegmentIndex == 0) {
+        rollItemSegment = CameraRollSegmentAll;
+    } else if (sender.selectedSegmentIndex == 1) {
+        rollItemSegment = CameraRollSegmentPhoto;
+    } else if (sender.selectedSegmentIndex == 2) {
+        rollItemSegment = CameraRollSegmentVideo;
+    }
+    
+    [self filterCameraRollItemsBySegment:rollItemSegment];
     [self.collectionView performBatchUpdates:^{
         [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
     } completion:Nil];
@@ -150,18 +164,14 @@ typedef enum : NSUInteger {
 // collection view data source
 //
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    NSArray* segmentCameraRollItems = [self filterCameraRollItemBySegment];
-    if (segmentCameraRollItems) {
-        return segmentCameraRollItems.count;
-    }
-    return 0;
+    return self.currentViewingCameraRollItems.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CameraRollItemCell* cell = (CameraRollItemCell*)[collectionView dequeueReusableCellWithReuseIdentifier:@"cameraRollItemCell" forIndexPath:indexPath];
     // config cell
     [cell prepareForReuse];
-    CameraRollItem* cameraRollItem = [[self filterCameraRollItemBySegment] objectAtIndex:indexPath.row];
+    CameraRollItem* cameraRollItem = [self.currentViewingCameraRollItems objectAtIndex:indexPath.row];
     [self configCameraRollCell:cell WithModel:cameraRollItem];
     
     return cell;

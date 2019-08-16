@@ -69,7 +69,7 @@ typedef enum : NSUInteger {
 - (void)captureController:(CaptureController *)controller ConfigureDevice:(AVCaptureDevice*)device FailedWithError:(NSError*)error;
 - (void)captureControllerSessionRuntimeError:(CaptureController*)controller;
 - (void)captureControllerSessionDidStartRunning:(CaptureController*)controller;
-- (void)captureControllerSessionDidStopRunning:(CaptureController *)controller;
+- (void)captureController:(CaptureController *)controller SessionDidStopRunning:(NSDictionary*)info;
 - (void)captureController:(CaptureController *)controller LeaveCaptureMode:(CaptureMode)mode;
 - (void)captureController:(CaptureController *)controller EnterCaptureMode:(CaptureMode)mode;
 //

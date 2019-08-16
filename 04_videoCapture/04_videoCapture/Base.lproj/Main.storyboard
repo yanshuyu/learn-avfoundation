@@ -398,17 +398,6 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zy7-H4-67e">
-                                <rect key="frame" x="20" y="20" width="40" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="H43-yD-sXj"/>
-                                    <constraint firstAttribute="width" constant="40" id="QGQ-sA-HJM"/>
-                                </constraints>
-                                <state key="normal" image="close"/>
-                                <connections>
-                                    <action selector="handleCloseButtonTap:" destination="3ES-Kf-gQ5" eventType="touchUpInside" id="Xpb-j1-x6K"/>
-                                </connections>
-                            </button>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="gzq-uW-hrB">
                                 <rect key="frame" x="57.5" y="617" width="260" height="31"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -423,7 +412,7 @@
                                 </segments>
                                 <color key="tintColor" red="0.9017729163" green="0.29864004249999998" blue="0.23354148860000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
-                                    <action selector="handleSegmentControllTap:" destination="3ES-Kf-gQ5" eventType="valueChanged" id="6k4-lO-6nF"/>
+                                    <action selector="handleRollItemSegmentControlValueChange:" destination="3ES-Kf-gQ5" eventType="valueChanged" id="F9O-Ev-h0r"/>
                                 </connections>
                             </segmentedControl>
                         </subviews>
@@ -434,17 +423,35 @@
                             <constraint firstItem="uHp-lP-8rF" firstAttribute="leading" secondItem="AeM-FQ-09T" secondAttribute="leading" id="HkA-uE-GWa"/>
                             <constraint firstItem="AeM-FQ-09T" firstAttribute="bottom" secondItem="uHp-lP-8rF" secondAttribute="bottom" id="Ufv-jR-4KS"/>
                             <constraint firstItem="AeM-FQ-09T" firstAttribute="bottom" secondItem="gzq-uW-hrB" secondAttribute="bottom" constant="20" id="clU-dn-Wnd"/>
-                            <constraint firstItem="zy7-H4-67e" firstAttribute="top" secondItem="Q4m-yo-h57" secondAttribute="top" constant="20" id="i1f-mQ-LED"/>
-                            <constraint firstItem="zy7-H4-67e" firstAttribute="leading" secondItem="AeM-FQ-09T" secondAttribute="leading" constant="20" id="juq-G5-pga"/>
                             <constraint firstItem="gzq-uW-hrB" firstAttribute="centerX" secondItem="Q4m-yo-h57" secondAttribute="centerX" id="vlI-KW-pQJ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="AeM-FQ-09T"/>
                     </view>
-                    <navigationItem key="navigationItem" id="FQp-gT-qPq"/>
+                    <navigationItem key="navigationItem" id="FQp-gT-qPq">
+                        <nil key="title"/>
+                        <barButtonItem key="leftBarButtonItem" image="close" id="ZWz-6o-0NV">
+                            <color key="tintColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="handleCloseButtonTap:" destination="3ES-Kf-gQ5" id="ZrZ-Wt-iIz"/>
+                            </connections>
+                        </barButtonItem>
+                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Viv-gK-PrW">
+                            <rect key="frame" x="122" y="7" width="131" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <segments>
+                                <segment title="Grid" width="65"/>
+                                <segment title="Flow" width="65"/>
+                            </segments>
+                            <color key="tintColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="handleLayoutSegmentControlValueChange:" destination="3ES-Kf-gQ5" eventType="valueChanged" id="IG8-LR-Bs5"/>
+                            </connections>
+                        </segmentedControl>
+                    </navigationItem>
                     <connections>
-                        <outlet property="closeButton" destination="zy7-H4-67e" id="9qM-At-uOs"/>
                         <outlet property="collectionView" destination="uHp-lP-8rF" id="n8S-bf-WIE"/>
-                        <outlet property="segmentControl" destination="gzq-uW-hrB" id="Wut-ap-JFf"/>
+                        <outlet property="layoutSegmentContrl" destination="Viv-gK-PrW" id="TIN-EM-VNC"/>
+                        <outlet property="rollItemSegmentContrl" destination="gzq-uW-hrB" id="pvg-T2-YA2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fv5-cE-Gny" userLabel="First Responder" sceneMemberID="firstResponder"/>

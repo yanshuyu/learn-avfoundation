@@ -1202,13 +1202,14 @@
 }
 
 - (void)sessionStopRunningNotification:(NSNotification*)notification {
-    if ([self.delegate respondsToSelector:@selector(captureControllerSessionDidStopRunning:)]) {
-        [self.delegate captureControllerSessionDidStopRunning:self];
+    if ([self.delegate respondsToSelector:@selector(captureController:SessionDidStopRunning:)]) {
+        [self.delegate captureController:self SessionDidStopRunning:notification.userInfo];
     }
 }
 
 - (void)sessionWasInteruptNotification:(NSNotification*)notification {
     NSLog(@"session was intterupt: %@", notification);
+    
 }
 
 //
