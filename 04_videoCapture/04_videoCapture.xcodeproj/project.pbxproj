@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		112C745F2301685E00F7CFED /* CameraRollBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 112C745E2301685E00F7CFED /* CameraRollBrowserViewController.m */; };
+		112C746223016CD800F7CFED /* CameraRollItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 112C746123016CD800F7CFED /* CameraRollItemCell.m */; };
 		113C6C7523013A190016D089 /* CameraRollManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 113C6C7423013A190016D089 /* CameraRollManager.m */; };
 		11821EF622F2D12C00620228 /* BasicMovieWritter.m in Sources */ = {isa = PBXBuildFile; fileRef = 11821EF522F2D12C00620228 /* BasicMovieWritter.m */; };
 		11821EFA22F2D2C700620228 /* NSURL+SYAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 11821EF922F2D2C700620228 /* NSURL+SYAddition.m */; };
@@ -28,6 +30,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		112C745D2301685E00F7CFED /* CameraRollBrowserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraRollBrowserViewController.h; sourceTree = "<group>"; };
+		112C745E2301685E00F7CFED /* CameraRollBrowserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraRollBrowserViewController.m; sourceTree = "<group>"; };
+		112C746023016CD800F7CFED /* CameraRollItemCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraRollItemCell.h; sourceTree = "<group>"; };
+		112C746123016CD800F7CFED /* CameraRollItemCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraRollItemCell.m; sourceTree = "<group>"; };
 		113C6C7323013A190016D089 /* CameraRollManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraRollManager.h; sourceTree = "<group>"; };
 		113C6C7423013A190016D089 /* CameraRollManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraRollManager.m; sourceTree = "<group>"; };
 		11821EF422F2D12C00620228 /* BasicMovieWritter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasicMovieWritter.h; sourceTree = "<group>"; };
@@ -127,6 +133,8 @@
 				118AB80422D488FC0073C888 /* VideoPreviewView.m */,
 				11D8C62D22F02B95000B3495 /* VideoGestureLayer.h */,
 				11D8C62E22F02B95000B3495 /* VideoGestureLayer.m */,
+				112C746023016CD800F7CFED /* CameraRollItemCell.h */,
+				112C746123016CD800F7CFED /* CameraRollItemCell.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -138,6 +146,8 @@
 				118AB80922D48C780073C888 /* CaptureController.m */,
 				118AB80B22D48CF50073C888 /* SYCaptureViewController.h */,
 				118AB80C22D48CF50073C888 /* SYCaptureViewController.m */,
+				112C745D2301685E00F7CFED /* CameraRollBrowserViewController.h */,
+				112C745E2301685E00F7CFED /* CameraRollBrowserViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -236,6 +246,8 @@
 				1197BFBD22D88DB800A30CF6 /* SYScrollableTabBarItem.m in Sources */,
 				113C6C7523013A190016D089 /* CameraRollManager.m in Sources */,
 				11CFE61E22F7524F00277E7D /* BuildInFilterLibrary.m in Sources */,
+				112C746223016CD800F7CFED /* CameraRollItemCell.m in Sources */,
+				112C745F2301685E00F7CFED /* CameraRollBrowserViewController.m in Sources */,
 				118AB80A22D48C780073C888 /* CaptureController.m in Sources */,
 				11CFE5F922F5E3EA00277E7D /* ContextManager.m in Sources */,
 				118AB7FC22D486BD0073C888 /* main.m in Sources */,

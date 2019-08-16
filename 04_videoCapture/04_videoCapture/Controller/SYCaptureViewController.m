@@ -13,6 +13,7 @@
 #import "../Supported/SYScrollableTabBarItem.h"
 #import "../Supported/ContextManager.h"
 #import "../Supported/BuildInFilterLibrary.h"
+#import "../Supported/CameraRollManager.h"
 #import <Photos/Photos.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
@@ -291,32 +292,6 @@
 - (IBAction)handleSwitchCameraTap:(UIButton *)sender {
     NSLog(@"switch camera tapping");
     [self.captureController switchCamera];
-}
-
-- (IBAction)handleAlbumButtonTap:(UIButton *)sender {
-    NSLog(@"album button tapped");
-
-    void(^presentPhotoViewer)(void) = ^{
-        UIImagePickerController* imagePickerController = [UIImagePickerController new];
-        imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-        imagePickerController.mediaTypes = @[(NSString*)kUTTypeImage, (NSString*)kUTTypeVideo];
-        imagePickerController.allowsEditing = FALSE;
-        imagePickerController.delegate = self;
-        [self presentViewController:imagePickerController animated:TRUE completion:Nil];
-    };
-    
-    PHAuthorizationStatus photoLibraryAuthorization = [PHPhotoLibrary authorizationStatus];
-    if (photoLibraryAuthorization == PHAuthorizationStatusDenied || photoLibraryAuthorization == PHAuthorizationStatusNotDetermined) {
-        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
-            if (status == PHAuthorizationStatusAuthorized) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    presentPhotoViewer();
-                });
-            }
-        }];
-        return ;
-    }
-    presentPhotoViewer();
 }
 
 - (IBAction)handleZoomSliderTouchDragEnter:(UISlider *)sender {
