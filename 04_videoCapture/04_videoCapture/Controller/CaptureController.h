@@ -91,8 +91,8 @@ typedef enum : NSUInteger {
 - (CIImage*)captureController:(CaptureController *)controller ExpectedProcessingFilterVideoFrame:(CIImage*)frame;
 
 // device capbilities
-- (void)captureControllerBeginSwitchCamera;
-- (void)captureControllerDidFinishSwitchCamera:(BOOL)success;
+- (void)captureController:(CaptureController *)controller BeginSwitchCameraFromPosition:(AVCaptureDevicePosition)position;
+- (void)captureController:(CaptureController *)controller FinishSwitchCameraToPosition:(AVCaptureDevicePosition)position Success:(BOOL)success;
 - (void)captureController:(CaptureController *)controller DidCameraZoomToFactor:(CGFloat)factor;
 - (void)captureController:(CaptureController*)controller WillSwitchFlashModeFrom:(AVCaptureFlashMode)mode;
 - (void)captureController:(CaptureController*)controller DidSwitchFlashModeTo:(AVCaptureFlashMode)mode;

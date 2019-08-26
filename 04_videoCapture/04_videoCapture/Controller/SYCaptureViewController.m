@@ -53,6 +53,7 @@
 @property (strong, nonatomic) UIView*  zoomSliderAnimHelperWiget;
 @property (strong, nonatomic) UIViewPropertyAnimator* blurEffectAnimator;
 @property (nonatomic) int lastSelectedModeIndex;
+@property (nonatomic) AVCaptureDevicePosition lastCameraPosition;
 
 @end
 
@@ -301,7 +302,6 @@
 }
 
 - (IBAction)handleSwitchCameraTap:(UIButton *)sender {
-    NSLog(@"switch camera tapping");
     [self.captureController switchCamera];
 }
 
@@ -541,14 +541,33 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
     });
 }
 
-- (void)captureControllerBeginSwitchCamera {
+
+- (void)captureController:(CaptureController *)controller BeginSwitchCameraFromPosition:(AVCaptureDevicePosition)position {
+    self.lastCameraPosition = position;
+    self.scrollableTabBar.interactionEnabled = FALSE;
 }
 
-- (void)captureControllerDidFinishSwitchCamera:(BOOL)success {
-    NSLog(@"camera switch: %d", success);
+- (void)captureController:(CaptureController *)controller FinishSwitchCameraToPosition:(AVCaptureDevicePosition)position Success:(BOOL)success {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (success) {
-            self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
+            self.scrollableTabBar.interactionEnabled = TRUE;
+            UIViewAnimationOptions option = self.lastCameraPosition == AVCaptureDevicePositionFront ? UIViewAnimationOptionTransitionFlipFromRight : UIViewAnimationOptionTransitionFlipFromLeft;
+            UIView* previewView = self.currentCaptureMode == CaptureModeRealTimeFilterVideo ? self.framePreviewView : self.videoPreviewView;
+            if (self.lastCameraPosition != position && success) {
+                [UIView transitionWithView:previewView
+                                  duration:0.5
+                                   options:option
+                                animations:^{
+                                    [UIView animateWithDuration:0.25 animations:^{
+                                        self.blurEffectView.effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+                                    } completion:^(BOOL finished) {
+                                        [UIView animateWithDuration:0.5 animations:^{
+                                            self.blurEffectView.effect = Nil;
+                                        }];
+                                    }];
+                                }
+                                completion:Nil];
+            }
         }
     });
 }

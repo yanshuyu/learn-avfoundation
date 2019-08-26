@@ -675,12 +675,13 @@
             dispatch_async(self.sessionQueue, ^{
                 BOOL success = FALSE;
                 AVCaptureDeviceInput* currentDeviceInput = self.videoDeviceInput;
+                if ([self.delegate respondsToSelector:@selector(captureController:BeginSwitchCameraFromPosition:)]) {
+                    [self.delegate captureController:self
+                       BeginSwitchCameraFromPosition:currentDeviceInput.device.position];
+                }
                 [self.session beginConfiguration];
                 [self removeVideoDeviceObserver];
                 [self.session removeInput:self.videoDeviceInput];
-                if ([self.delegate respondsToSelector:@selector(captureControllerBeginSwitchCamera)]) {
-                    [self.delegate captureControllerBeginSwitchCamera];
-                }
 
                 if([self.session canAddInput:targetDeviceInput]) {
                     [self.session addInput:targetDeviceInput];
@@ -697,8 +698,10 @@
                 [self addVideoDeviceObserver];
                 [self.session commitConfiguration];
                 
-                if ([self.delegate respondsToSelector:@selector(captureControllerDidFinishSwitchCamera:)]) {
-                    [self.delegate captureControllerDidFinishSwitchCamera:success];
+                if ([self.delegate respondsToSelector:@selector(captureController:FinishSwitchCameraToPosition:Success:)]) {
+                    [self.delegate captureController:self
+                        FinishSwitchCameraToPosition:self.videoDeviceInput.device.position
+                                             Success:success];
                 }
             });
         }
