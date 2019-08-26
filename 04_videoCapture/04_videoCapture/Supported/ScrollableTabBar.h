@@ -22,9 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ScrollableTabBarDelegate <NSObject>
 
 @optional
+- (void)scrollableTabBar:(ScrollableTabBar*)bar beginUserScrollingFromSelectedIndex:(int)index;
+- (void)scrollableTabBar:(ScrollableTabBar *)bar userScrollingWithSelectedItemOffset:(float)xoffset complectionPercent:(float)percent;
 - (void)scrollableTabBar:(ScrollableTabBar*)bar SelectItem:(ScrollableTabBarItem*)item AtIndex:(int)index;
 - (void)scrollableTabBar:(ScrollableTabBar *)bar DeselectItem:(ScrollableTabBarItem *)item AtIndex:(int)index;
-
+- (void)scrollableTabBar:(ScrollableTabBar*)bar finishUserScrollingToSelectedIndex:(int)index;
 @end
 
 

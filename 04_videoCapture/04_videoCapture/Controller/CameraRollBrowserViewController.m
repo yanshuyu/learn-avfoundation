@@ -143,6 +143,7 @@ typedef enum : NSUInteger {
 
 - (IBAction)handleLayoutSegmentControlValueChange:(UISegmentedControl *)sender {
     if (sender.selectedSegmentIndex == 0) {
+        //[self.collectionView setCollectionViewLayout:self.basicFlowLayout animated:TRUE];
         self.collectionView.collectionViewLayout = self.basicFlowLayout;
         [self.collectionView.collectionViewLayout invalidateLayout];
     } else if (sender.selectedSegmentIndex == 1) {
@@ -151,6 +152,7 @@ typedef enum : NSUInteger {
             self.coverFlowLayout.minimumLineSpacing = -70;
             self.coverFlowLayout.itemSize = CGSizeMake(CELL_SIZE.width * 1.8, CELL_SIZE.height * 1.8);
         }
+        //[self.collectionView setCollectionViewLayout:self.coverFlowLayout animated:TRUE];
         self.collectionView.collectionViewLayout = self.coverFlowLayout;
         [self.coverFlowLayout invalidateLayout];
     }

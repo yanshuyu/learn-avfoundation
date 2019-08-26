@@ -357,9 +357,25 @@
 // MARK: - switch capture mode
 //
 - (void)switchToMode:(CaptureMode)mode {
+    if (mode == self.currentCaptureMode) {
+        return ;
+    }
     dispatch_async(self.sessionQueue, ^{
+        if ([self.delegate respondsToSelector:@selector(captureController:WillLeaveCaptureMode:)]) {
+            [self.delegate captureController:self
+                            WillLeaveCaptureMode:self.currentCaptureMode];
+        }
         BOOL success = [self configSessionForMode:mode];
         if (success) {
+            if ([self.delegate respondsToSelector:@selector(captureController:LeaveCaptureMode:)]) {
+                [self.delegate captureController:self
+                                LeaveCaptureMode:self.currentCaptureMode];
+            }
+            if ([self.delegate respondsToSelector:@selector(captureController:WillEnterCaptureMode:)]) {
+                [self.delegate captureController:self
+                            WillEnterCaptureMode:mode];
+            }
+            
             [self enumerateDeviceForMode:mode];
             //[self startSession];
             self.currentCaptureMode = mode;
@@ -372,15 +388,6 @@
 }
 
 - (BOOL)configSessionForMode:(CaptureMode)mode {
-    if (mode == self.currentCaptureMode) {
-        return TRUE;
-    }
-    
-    if ([self.delegate respondsToSelector:@selector(captureController:LeaveCaptureMode:)]) {
-        [self.delegate captureController:self
-                        LeaveCaptureMode:self.currentCaptureMode];
-    }
-    
     if (mode != CaptureModePhoto) {
         if (self.photoOutput) {
             AVCaptureConnection* photoOutputConnection = [self.photoOutput connectionWithMediaType:AVMediaTypeVideo];
@@ -607,6 +614,7 @@
             return ;
         }
         cameraDevice.focusMode = AVCaptureFocusModeContinuousAutoFocus;
+        cameraDevice.focusPointOfInterest = CGPointMake(0.5, 0.5);
         [cameraDevice unlockForConfiguration];
     }
 }
@@ -629,6 +637,7 @@
         }
         
         cameraDevice.exposureMode = AVCaptureExposureModeContinuousAutoExposure;
+        cameraDevice.exposurePointOfInterest = CGPointMake(0.5, 0.5);
         [cameraDevice unlockForConfiguration];
     }
 }

@@ -21,17 +21,6 @@
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AMr-6p-1d6" customClass="VideoPreviewView">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <visualEffectView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="G4l-11-h6A">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" id="IKi-9o-Aag">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        </view>
-                                        <blurEffect style="light"/>
-                                    </visualEffectView>
-                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="afc-Wv-Ahm" userLabel="Frame  PreView View">
@@ -54,12 +43,71 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <visualEffectView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UQl-hp-J8X">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="PHN-BG-KWB">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                                <blurEffect style="light"/>
+                            </visualEffectView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LIVE" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CKX-Gz-Hsh" userLabel="live lable">
                                 <rect key="frame" x="173" y="72" width="29" height="17"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" red="0.90588235289999997" green="0.29803921570000003" blue="0.23529411759999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3TB-3Y-58G" userLabel="flash menu" colorLabel="IBBuiltInLabel-Yellow">
+                                <rect key="frame" x="0.0" y="62" width="375" height="40"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D5d-hs-ge1" userLabel="flash_auto">
+                                        <rect key="frame" x="40" y="5" width="30" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="MQv-pf-CbU"/>
+                                            <constraint firstAttribute="width" constant="30" id="RQ5-rF-8Wp"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <state key="normal" title="Auto"/>
+                                        <connections>
+                                            <action selector="handleFlashAutoButtonTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="Mjt-o7-0aD"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mhb-fl-ZBa" userLabel="flash_on">
+                                        <rect key="frame" x="172.5" y="5" width="30" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="aAy-Ch-Fid"/>
+                                            <constraint firstAttribute="width" constant="30" id="iRG-7W-k1a"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <state key="normal" title="On"/>
+                                        <connections>
+                                            <action selector="handleFlashOnButtonTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="r1h-kX-r6S"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7ef-CF-8nb" userLabel="flash_off">
+                                        <rect key="frame" x="305" y="5" width="30" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="30" id="I95-o8-2Au"/>
+                                            <constraint firstAttribute="height" constant="30" id="bVy-pE-A97"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <state key="normal" title="Off"/>
+                                        <connections>
+                                            <action selector="handleFlashModeOffTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="bYV-Y7-tdT"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="7ef-CF-8nb" secondAttribute="trailing" constant="40" id="V0H-xh-4Fh"/>
+                                    <constraint firstItem="7ef-CF-8nb" firstAttribute="centerY" secondItem="Mhb-fl-ZBa" secondAttribute="centerY" id="Wu7-6n-cVC"/>
+                                    <constraint firstItem="D5d-hs-ge1" firstAttribute="leading" secondItem="3TB-3Y-58G" secondAttribute="leading" constant="40" id="Y1I-nH-HON"/>
+                                    <constraint firstItem="Mhb-fl-ZBa" firstAttribute="centerX" secondItem="3TB-3Y-58G" secondAttribute="centerX" id="YMs-u6-izq"/>
+                                    <constraint firstAttribute="height" constant="40" id="aQA-2o-DYI"/>
+                                    <constraint firstItem="D5d-hs-ge1" firstAttribute="centerY" secondItem="Mhb-fl-ZBa" secondAttribute="centerY" id="aqE-eE-HeV"/>
+                                    <constraint firstItem="Mhb-fl-ZBa" firstAttribute="centerY" secondItem="3TB-3Y-58G" secondAttribute="centerY" id="p46-H5-lHc"/>
+                                </constraints>
+                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5mJ-xG-bz8" userLabel="setting container">
                                 <rect key="frame" x="0.0" y="20" width="375" height="42"/>
                                 <subviews>
@@ -120,57 +168,6 @@
                                     <constraint firstAttribute="trailing" secondItem="pTv-J4-aDJ" secondAttribute="trailing" id="SnR-Sp-Pxt"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3TB-3Y-58G" userLabel="flash menu" colorLabel="IBBuiltInLabel-Yellow">
-                                <rect key="frame" x="0.0" y="62" width="375" height="40"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D5d-hs-ge1" userLabel="flash_auto">
-                                        <rect key="frame" x="40" y="5" width="30" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="30" id="MQv-pf-CbU"/>
-                                            <constraint firstAttribute="width" constant="30" id="RQ5-rF-8Wp"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                        <state key="normal" title="Auto"/>
-                                        <connections>
-                                            <action selector="handleFlashAutoButtonTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="Mjt-o7-0aD"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mhb-fl-ZBa" userLabel="flash_on">
-                                        <rect key="frame" x="172.5" y="5" width="30" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="30" id="aAy-Ch-Fid"/>
-                                            <constraint firstAttribute="width" constant="30" id="iRG-7W-k1a"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                        <state key="normal" title="On"/>
-                                        <connections>
-                                            <action selector="handleFlashOnButtonTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="r1h-kX-r6S"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7ef-CF-8nb" userLabel="flash_off">
-                                        <rect key="frame" x="305" y="5" width="30" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="30" id="I95-o8-2Au"/>
-                                            <constraint firstAttribute="height" constant="30" id="bVy-pE-A97"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                        <state key="normal" title="Off"/>
-                                        <connections>
-                                            <action selector="handleFlashModeOffTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="bYV-Y7-tdT"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="7ef-CF-8nb" secondAttribute="trailing" constant="40" id="V0H-xh-4Fh"/>
-                                    <constraint firstItem="7ef-CF-8nb" firstAttribute="centerY" secondItem="Mhb-fl-ZBa" secondAttribute="centerY" id="Wu7-6n-cVC"/>
-                                    <constraint firstItem="D5d-hs-ge1" firstAttribute="leading" secondItem="3TB-3Y-58G" secondAttribute="leading" constant="40" id="Y1I-nH-HON"/>
-                                    <constraint firstItem="Mhb-fl-ZBa" firstAttribute="centerX" secondItem="3TB-3Y-58G" secondAttribute="centerX" id="YMs-u6-izq"/>
-                                    <constraint firstAttribute="height" constant="40" id="aQA-2o-DYI"/>
-                                    <constraint firstItem="D5d-hs-ge1" firstAttribute="centerY" secondItem="Mhb-fl-ZBa" secondAttribute="centerY" id="aqE-eE-HeV"/>
-                                    <constraint firstItem="Mhb-fl-ZBa" firstAttribute="centerY" secondItem="3TB-3Y-58G" secondAttribute="centerY" id="p46-H5-lHc"/>
-                                </constraints>
-                            </view>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="ip0-lJ-xkQ" userLabel="slider container">
                                 <rect key="frame" x="20" y="479" width="335" height="32"/>
                                 <subviews>
@@ -226,19 +223,19 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ran-Xp-fH3" userLabel="capture button">
-                                <rect key="frame" x="147.5" y="559" width="80" height="80"/>
+                                <rect key="frame" x="150" y="559" width="75" height="75"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="80" id="Tme-E1-qzb"/>
-                                    <constraint firstAttribute="width" constant="80" id="fUf-P5-Bmw"/>
+                                    <constraint firstAttribute="height" constant="75" id="Tme-E1-qzb"/>
+                                    <constraint firstAttribute="width" constant="75" id="fUf-P5-Bmw"/>
                                 </constraints>
-                                <state key="normal" image="circle_red" backgroundImage="frame_2"/>
-                                <state key="highlighted" image="square" backgroundImage="frame_2"/>
+                                <state key="normal" image="circle_red" backgroundImage="arch"/>
+                                <state key="highlighted" image="square" backgroundImage="arch"/>
                                 <connections>
                                     <action selector="handleCaptureButtonTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="Tr0-K3-RsZ"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VNv-QK-Md4" userLabel="album button">
-                                <rect key="frame" x="40" y="579" width="40" height="40"/>
+                                <rect key="frame" x="40" y="576.5" width="40" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="19T-Ba-xY4"/>
                                     <constraint firstAttribute="width" constant="40" id="zhM-hJ-eOO"/>
@@ -248,7 +245,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Gh-0s-UNP" userLabel="camera button">
-                                <rect key="frame" x="295" y="579" width="40" height="40"/>
+                                <rect key="frame" x="295" y="576.5" width="40" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="NUa-Ys-sMs"/>
                                     <constraint firstAttribute="height" constant="40" id="kB3-Lh-sOk"/>
@@ -266,7 +263,9 @@
                             <constraint firstAttribute="trailing" secondItem="ip0-lJ-xkQ" secondAttribute="trailing" constant="20" id="17Y-p3-suV"/>
                             <constraint firstAttribute="trailing" secondItem="afc-Wv-Ahm" secondAttribute="trailing" id="4Yk-a0-7wI"/>
                             <constraint firstItem="CKX-Gz-Hsh" firstAttribute="centerX" secondItem="H4I-Wv-7zF" secondAttribute="centerX" id="6lj-vh-kfV"/>
+                            <constraint firstItem="UQl-hp-J8X" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="7wI-dG-c2m"/>
                             <constraint firstItem="yKm-cY-ayC" firstAttribute="top" secondItem="ip0-lJ-xkQ" secondAttribute="bottom" constant="40" id="BW7-zj-rHn"/>
+                            <constraint firstItem="UQl-hp-J8X" firstAttribute="top" secondItem="H4I-Wv-7zF" secondAttribute="top" id="Cdq-B0-7Js"/>
                             <constraint firstItem="8Gh-0s-UNP" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="Fes-mR-Gro"/>
                             <constraint firstItem="5mJ-xG-bz8" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="JL4-BO-Zla"/>
                             <constraint firstItem="VNv-QK-Md4" firstAttribute="leading" secondItem="yKm-cY-ayC" secondAttribute="leading" constant="40" id="LKp-w6-LqO"/>
@@ -275,6 +274,8 @@
                             <constraint firstItem="afc-Wv-Ahm" firstAttribute="top" secondItem="H4I-Wv-7zF" secondAttribute="top" id="OSi-fa-hIv"/>
                             <constraint firstItem="yKm-cY-ayC" firstAttribute="leading" secondItem="hne-uj-s8C" secondAttribute="leading" id="YKu-td-0tE"/>
                             <constraint firstItem="H4I-Wv-7zF" firstAttribute="bottom" secondItem="yKm-cY-ayC" secondAttribute="bottom" id="aL8-BY-eNs"/>
+                            <constraint firstItem="UQl-hp-J8X" firstAttribute="trailing" secondItem="H4I-Wv-7zF" secondAttribute="trailing" id="b0t-O3-jfB"/>
+                            <constraint firstItem="H4I-Wv-7zF" firstAttribute="bottom" secondItem="UQl-hp-J8X" secondAttribute="bottom" id="dAc-cg-5Zc"/>
                             <constraint firstItem="3TB-3Y-58G" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="doF-EI-oie"/>
                             <constraint firstItem="ran-Xp-fH3" firstAttribute="top" secondItem="yKm-cY-ayC" secondAttribute="top" constant="8" id="i7H-ZM-8UC"/>
                             <constraint firstItem="ran-Xp-fH3" firstAttribute="centerX" secondItem="yKm-cY-ayC" secondAttribute="centerX" id="j5H-7o-mFt"/>
@@ -290,7 +291,7 @@
                     </view>
                     <connections>
                         <outlet property="albumButton" destination="VNv-QK-Md4" id="wET-rS-N28"/>
-                        <outlet property="blurEffectView" destination="G4l-11-h6A" id="9fT-vy-Xcu"/>
+                        <outlet property="blurEffectView" destination="UQl-hp-J8X" id="caa-L9-5kr"/>
                         <outlet property="cameraSwitchButton" destination="8Gh-0s-UNP" id="wPt-fp-dA9"/>
                         <outlet property="captureButton" destination="ran-Xp-fH3" id="mfw-Kp-ms4"/>
                         <outlet property="captureSettingContainerView" destination="5mJ-xG-bz8" id="JVG-jZ-GlS"/>
@@ -478,11 +479,11 @@
         </scene>
     </scenes>
     <resources>
+        <image name="arch" width="50" height="50"/>
         <image name="circle_red" width="50" height="50"/>
         <image name="close" width="50" height="50"/>
         <image name="cloud" width="50" height="50"/>
         <image name="flash_auto" width="50" height="50"/>
-        <image name="frame_2" width="80" height="80"/>
         <image name="hdr_off" width="80" height="80"/>
         <image name="live_on" width="80" height="80"/>
         <image name="minus" width="64" height="64"/>

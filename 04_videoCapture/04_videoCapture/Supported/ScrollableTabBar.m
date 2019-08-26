@@ -17,6 +17,7 @@
 @property (readwrite, nonatomic) int selectedIndex;
 @property (strong, nonatomic) UIPanGestureRecognizer* panGesture;
 @property (nonatomic) CGPoint lastPanTranslation;
+@property (nonatomic) CGPoint lastPanItemPos;
 
 @end
 
@@ -84,6 +85,11 @@
     pos.x = self.barItemsContainer.center.x;
     pos.y = self.frame.size.height - self.selectedIndicator.frame.size.height - maxItemHeight * 0.5;
     self.barItemsContainer.center = pos;
+    
+    for (ScrollableTabBarItem* item in self.barItems) {
+        [item setDeselected];
+    }
+    
 }
 
 - (void)setupInteraction {
@@ -104,18 +110,22 @@
     if (self.selectedIndex >= 0 && self.selectedIndex < self.barItems.count) {
         ScrollableTabBarItem* oldItem = [self.barItems objectAtIndex:self.selectedIndex];
         [oldItem setDeselected];
-        [self.delegate scrollableTabBar:self
-                           DeselectItem:oldItem
-                                AtIndex:self.selectedIndex];
+        if ([self.delegate respondsToSelector:@selector(scrollableTabBar:DeselectItem:AtIndex:)]) {
+            [self.delegate scrollableTabBar:self
+                               DeselectItem:oldItem
+                                    AtIndex:self.selectedIndex];
+        }
     }
     
     if (index >= 0 && index < self.barItems.count) {
         ScrollableTabBarItem* item = [self.barItems objectAtIndex:index];
         [item setSelected];
         self.selectedIndex = index;
-        [self.delegate scrollableTabBar:self
-                             SelectItem:item
-                                AtIndex:index];
+        if ([self.delegate respondsToSelector:@selector(scrollableTabBar:SelectItem:AtIndex:)]) {
+            [self.delegate scrollableTabBar:self
+                                 SelectItem:item
+                                    AtIndex:index];
+        }
     }
 }
 
@@ -156,6 +166,11 @@
     switch (gesture.state) {
         case UIGestureRecognizerStateBegan:
             self.lastPanTranslation = CGPointZero;
+            self.lastPanItemPos = [self convertPoint:self.barItems[self.selectedIndex].center fromView:self.barItems[self.selectedIndex]];
+            if ([self.delegate respondsToSelector:@selector(scrollableTabBar:beginUserScrollingFromSelectedIndex:)]) {
+                [self.delegate scrollableTabBar:self
+            beginUserScrollingFromSelectedIndex:self.selectedIndex];
+            }
             break;
         case UIGestureRecognizerStateChanged: {
             CGFloat minXTranslation = self.barItems.lastObject.frame.size.width - self.barItemsContainer.frame.size.width * 0.5;
@@ -168,11 +183,25 @@
             xTranslation = xTranslation > maxXTranslation ? maxXTranslation : xTranslation;
             self.barItemsContainer.center = CGPointMake(xTranslation, self.barItemsContainer.center.y);
             
+            CGPoint selectedItemPos = [self convertPoint:self.barItems[self.selectedIndex].center fromView:self.barItems[self.selectedIndex]];
+            CGSize selectedItemSize = self.barItems[self.selectedIndex].bounds.size;
+            float offset = selectedItemPos.x - self.lastPanItemPos.x;
+            float percent = MIN(1,fabs(offset / (selectedItemSize.width * 0.5)));
+            if ([self.delegate respondsToSelector:@selector(scrollableTabBar:userScrollingWithSelectedItemOffset:complectionPercent:)]) {
+                [self.delegate scrollableTabBar:self
+            userScrollingWithSelectedItemOffset:offset
+                             complectionPercent:percent];
+            }
+            
             break;
         }
         case UIGestureRecognizerStateEnded: {
             self.lastPanTranslation = CGPointZero;
             [self autoJumpToNearestItem];
+            if ([self.delegate respondsToSelector:@selector(scrollableTabBar:finishUserScrollingToSelectedIndex:)]) {
+                [self.delegate scrollableTabBar:self
+             finishUserScrollingToSelectedIndex:self.selectedIndex];
+            }
         }
         default:
             break;

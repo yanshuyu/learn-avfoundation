@@ -86,7 +86,7 @@
 
 - (void)handleDoubleTap:(UIGestureRecognizer*)gesture {
     CGPoint point = [gesture locationInView:self];
-    [self runTapWigetZoomAnimationTo:self.center];
+    [self runTapWigetZoomAnimationTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))];
     if ([self.delegate respondsToSelector:@selector(videoGestureLayer:TapToResetFocusAndExposureAtLayerPoint:RecommandedPoint:)]) {
         [self.delegate videoGestureLayer:self
         TapToResetFocusAndExposureAtLayerPoint:point

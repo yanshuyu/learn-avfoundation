@@ -70,7 +70,9 @@ typedef enum : NSUInteger {
 - (void)captureControllerSessionRuntimeError:(CaptureController*)controller;
 - (void)captureControllerSessionDidStartRunning:(CaptureController*)controller;
 - (void)captureController:(CaptureController *)controller SessionDidStopRunning:(NSDictionary*)info;
+- (void)captureController:(CaptureController *)controller WillLeaveCaptureMode:(CaptureMode)mode;
 - (void)captureController:(CaptureController *)controller LeaveCaptureMode:(CaptureMode)mode;
+- (void)captureController:(CaptureController *)controller WillEnterCaptureMode:(CaptureMode)mode;
 - (void)captureController:(CaptureController *)controller EnterCaptureMode:(CaptureMode)mode;
 //
 // photo/video capture

@@ -29,7 +29,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *captureButton;
 @property (weak, nonatomic) IBOutlet UIButton *cameraSwitchButton;
 @property (weak, nonatomic) IBOutlet UIButton *albumButton;
-@property (weak, nonatomic) IBOutlet UIVisualEffectView *blurEffectView;
 @property (weak, nonatomic) IBOutlet UISlider *zoomSlider;
 @property (weak, nonatomic) IBOutlet UIView *captureSettingContainerView;
 @property (weak, nonatomic) IBOutlet UIView *photoSettingView;
@@ -43,6 +42,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *liveLable;
 @property (weak, nonatomic) IBOutlet UIView *framePreviewView;
 @property (weak, nonatomic) IBOutlet UIImageView *framePreviewImage;
+@property (weak, nonatomic) IBOutlet UIVisualEffectView *blurEffectView;
 
 
 @property (strong, nonatomic) CaptureController* captureController;
@@ -51,7 +51,8 @@
 @property (nonatomic) CaptureMode currentCaptureMode;
 @property (strong, nonatomic) UIViewPropertyAnimator* zoomSliderAnimator;
 @property (strong, nonatomic) UIView*  zoomSliderAnimHelperWiget;
-@property (nonatomic) BOOL shouldAutoRestartSession;
+@property (strong, nonatomic) UIViewPropertyAnimator* blurEffectAnimator;
+@property (nonatomic) int lastSelectedModeIndex;
 
 @end
 
@@ -68,8 +69,8 @@
     UIImageView* barItemSelectedIndicator = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"select_indicator"]];
     barItemSelectedIndicator.frame = CGRectMake(0, 0, 12, 12);
     SYScrollableTabBarItem* photoBarItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Photo" CaptureMode:CaptureModePhoto];
-    SYScrollableTabBarItem* videoBarItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Video" CaptureMode:CaptureModeVideo];
-    SYScrollableTabBarItem* filterVideoItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Video FX" CaptureMode:CaptureModeRealTimeFilterVideo];
+    SYScrollableTabBarItem* videoBarItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Movie" CaptureMode:CaptureModeVideo];
+    SYScrollableTabBarItem* filterVideoItem = [[SYScrollableTabBarItem alloc] initWithTitleString:@"Video" CaptureMode:CaptureModeRealTimeFilterVideo];
     NSArray<SYScrollableTabBarItem*>* barItems = [NSArray arrayWithObjects:photoBarItem, videoBarItem, filterVideoItem, nil];
     self.scrollableTabBar = [[ScrollableTabBar alloc] initWithFrame:self.scrollableTabBarContainer.bounds
                                                               Items:barItems
@@ -87,7 +88,6 @@
             [self.captureController setPreviewLayer:self.videoPreviewView.previewLayer];
             [self.captureController startSession];
             [self.captureController switchToMode:barItems.firstObject.mode];
-            self.blurEffectView.hidden = TRUE;
             [self syncZoomSliderWithDeviceZoomLevel];
             [self EnumerateCaptureDeviceCapbilites];
         });
@@ -97,14 +97,15 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if (self.shouldAutoRestartSession) {
-        [self.captureController startSession];
-        self.shouldAutoRestartSession = false;
-    }
+    [self.captureController startSession];
 }
 
 - (BOOL)shouldAutorotate {
     return FALSE;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskPortrait;
 }
 
 - (void)setUpView {
@@ -114,7 +115,6 @@
     self.albumButton.layer.borderColor = [UIColor redColor].CGColor;
     self.albumButton.layer.cornerRadius = 4;
     self.albumButton.layer.masksToBounds = true;
-    self.blurEffectView.hidden = FALSE;
     self.liveLable.hidden = TRUE;
     
     self.zoomSliderContainer.alpha = 0;
@@ -134,8 +134,6 @@
     
     self.flashMeunView.alpha = 0;
     [self runFlashMenuFadeAnimation:FALSE];
-    
-    self.shouldAutoRestartSession = FALSE;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -384,12 +382,35 @@
 //
 // MARK: - scrollable tab bar delegate
 //
+- (void)scrollableTabBar:(ScrollableTabBar *)bar beginUserScrollingFromSelectedIndex:(int)index {
+    self.lastSelectedModeIndex = index;
+    self.blurEffectAnimator = [[UIViewPropertyAnimator alloc] initWithDuration:0.5
+                                                                         curve:UIViewAnimationCurveLinear
+                                                                    animations:^{
+                                                                        self.blurEffectView.effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+                                                                    }];
+    [self.blurEffectAnimator pauseAnimation];
+}
+
+- (void)scrollableTabBar:(ScrollableTabBar *)bar userScrollingWithSelectedItemOffset:(float)xoffset complectionPercent:(float)percent {
+    [self.blurEffectAnimator setFractionComplete:percent];
+}
+
 - (void)scrollableTabBar:(ScrollableTabBar *)bar SelectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {
     [self.captureController switchToMode:((SYScrollableTabBarItem*)item).mode];
 }
 
 - (void)scrollableTabBar:(ScrollableTabBar *)bar DeselectItem:(ScrollableTabBarItem *)item AtIndex:(int)index {
     
+}
+
+- (void)scrollableTabBar:(ScrollableTabBar *)bar finishUserScrollingToSelectedIndex:(int)index {
+    [self.blurEffectAnimator stopAnimation:TRUE];
+    if (index == self.lastSelectedModeIndex) {
+        [UIView animateWithDuration:0.5 animations:^{
+            self.blurEffectView.effect = Nil;
+        }];
+    }
 }
 
 
@@ -463,9 +484,6 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
 
 - (void)captureController:(CaptureController *)controller SessionDidStopRunning:(NSDictionary *)info {
     NSLog(@"capture session did stop running, info: %@", info);
-    if (!info) {
-        self.shouldAutoRestartSession = TRUE;
-    }
 }
 
 - (void)captureControllerStartRunningSessionFailed:(CaptureController *)controller {
@@ -478,8 +496,6 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
         self.cameraSwitchButton.userInteractionEnabled = FALSE;
         self.captureButton.userInteractionEnabled = FALSE;
         self.albumButton.userInteractionEnabled = FALSE;
-        self.blurEffectView.hidden = FALSE;
-        
         if (mode == CaptureModePhoto) {
             if (!self.flashMeunView.hidden) {
                 [self runFlashMenuFadeAnimation:FALSE];
@@ -501,12 +517,14 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
         [self updatePreviewViewFrameForCaptureMode:mode];
         self.framePreviewView.hidden = (mode != CaptureModeRealTimeFilterVideo);
         //self.videoPreviewView.hidden = !self.framePreviewView.hidden;
-        
+        [UIView animateWithDuration:0.7 animations:^{
+            self.blurEffectView.effect = Nil;
+        }];
         if (self.currentCaptureMode == CaptureModePhoto) {
             UIImage* whiteCircle = [UIImage imageNamed:@"circle_white"];
             [self.captureButton setImage:whiteCircle forState:UIControlStateNormal];
-            [self.scrollableTabBarContainer setBackgroundColor:[UIColor colorWithWhite:0 alpha:0]];
-            [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0]];
+            [self.scrollableTabBarContainer setBackgroundColor:[UIColor colorWithWhite:0 alpha:1]];
+            [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:1]];
             self.photoSettingView.hidden = FALSE;
             self.flashSwitchButton.hidden = !(self.captureController.flashModeSwitchSupported && self.captureController.flashModeSwitchEnabled);
             self.liveLable.hidden = !(self.captureController.livePhotoMode == LivePhotoModeOn);
@@ -520,20 +538,15 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
             [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
             self.photoSettingView.hidden = TRUE;
        }
-        self.blurEffectView.hidden = TRUE;
     });
 }
 
 - (void)captureControllerBeginSwitchCamera {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.blurEffectView.hidden = FALSE;
-    });
 }
 
 - (void)captureControllerDidFinishSwitchCamera:(BOOL)success {
     NSLog(@"camera switch: %d", success);
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.blurEffectView.hidden = TRUE;
         if (success) {
             self.scrollableTabBar.interactionEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
         }
