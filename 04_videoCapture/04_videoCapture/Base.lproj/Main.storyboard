@@ -148,7 +148,7 @@
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstItem="WTE-br-hx6" firstAttribute="centerY" secondItem="pTv-J4-aDJ" secondAttribute="centerY" id="3il-22-FFX"/>
                                             <constraint firstItem="8K4-fV-uiR" firstAttribute="centerY" secondItem="WTE-br-hx6" secondAttribute="centerY" id="BGl-v2-cyY"/>
@@ -158,14 +158,47 @@
                                             <constraint firstItem="z47-hy-FZX" firstAttribute="leading" secondItem="pTv-J4-aDJ" secondAttribute="leading" constant="40" id="yCR-i1-NU1"/>
                                         </constraints>
                                     </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2z3-4Y-ham" userLabel="video setting">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="42"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uw7-2b-m19" userLabel="torch_switch">
+                                                <rect key="frame" x="40" y="6" width="30" height="30"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="30" id="W7H-PQ-E0D"/>
+                                                    <constraint firstAttribute="width" constant="30" id="x0j-9g-cc7"/>
+                                                </constraints>
+                                                <state key="normal" image="flash_auto"/>
+                                                <connections>
+                                                    <action selector="handleTorchSwitchButtonTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="85c-Y7-OnZ"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Nn-Rd-orQ" userLabel="time_lable">
+                                                <rect key="frame" x="164.5" y="11" width="46" height="20.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstItem="uw7-2b-m19" firstAttribute="leading" secondItem="2z3-4Y-ham" secondAttribute="leading" constant="40" id="UZD-bF-ygT"/>
+                                            <constraint firstItem="uw7-2b-m19" firstAttribute="centerY" secondItem="2z3-4Y-ham" secondAttribute="centerY" id="W2q-Th-75v"/>
+                                            <constraint firstItem="8Nn-Rd-orQ" firstAttribute="centerY" secondItem="2z3-4Y-ham" secondAttribute="centerY" id="Yi6-Qo-tgt"/>
+                                            <constraint firstItem="8Nn-Rd-orQ" firstAttribute="centerX" secondItem="2z3-4Y-ham" secondAttribute="centerX" id="pKl-2f-nDa"/>
+                                        </constraints>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="2z3-4Y-ham" secondAttribute="bottom" id="0bb-GJ-qIm"/>
                                     <constraint firstItem="pTv-J4-aDJ" firstAttribute="top" secondItem="5mJ-xG-bz8" secondAttribute="top" id="C8u-mI-8eC"/>
                                     <constraint firstItem="pTv-J4-aDJ" firstAttribute="leading" secondItem="5mJ-xG-bz8" secondAttribute="leading" id="MJe-gc-lMe"/>
                                     <constraint firstAttribute="bottom" secondItem="pTv-J4-aDJ" secondAttribute="bottom" id="Pa8-hz-RpO"/>
                                     <constraint firstAttribute="height" constant="42" id="QaN-tW-CBD"/>
                                     <constraint firstAttribute="trailing" secondItem="pTv-J4-aDJ" secondAttribute="trailing" id="SnR-Sp-Pxt"/>
+                                    <constraint firstItem="2z3-4Y-ham" firstAttribute="leading" secondItem="5mJ-xG-bz8" secondAttribute="leading" id="kZY-2e-roG"/>
+                                    <constraint firstAttribute="trailing" secondItem="2z3-4Y-ham" secondAttribute="trailing" id="qtF-qI-evH"/>
+                                    <constraint firstItem="2z3-4Y-ham" firstAttribute="top" secondItem="5mJ-xG-bz8" secondAttribute="top" id="z4n-9c-wXO"/>
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="ip0-lJ-xkQ" userLabel="slider container">
@@ -306,9 +339,12 @@
                         <outlet property="liveLable" destination="CKX-Gz-Hsh" id="ONc-1z-ukG"/>
                         <outlet property="livePhotoSwitchButton" destination="WTE-br-hx6" id="FzO-eR-dXl"/>
                         <outlet property="photoSettingView" destination="pTv-J4-aDJ" id="HPH-SO-5OD"/>
+                        <outlet property="recordTimeLable" destination="8Nn-Rd-orQ" id="340-XL-QcE"/>
                         <outlet property="scrollableTabBarContainer" destination="yKm-cY-ayC" id="HeS-jQ-9JG"/>
+                        <outlet property="torchSwitchButton" destination="uw7-2b-m19" id="mgc-5c-WRD"/>
                         <outlet property="videoGestureView" destination="FCx-Fm-tg3" id="TDC-Xm-VNb"/>
                         <outlet property="videoPreviewView" destination="AMr-6p-1d6" id="dLk-ih-gmU"/>
+                        <outlet property="videoSettingView" destination="2z3-4Y-ham" id="On1-Kz-gWZ"/>
                         <outlet property="zoomSlider" destination="35d-HA-QIp" id="Rzk-Mc-lA8"/>
                         <outlet property="zoomSliderContainer" destination="ip0-lJ-xkQ" id="fiv-Mm-LfQ"/>
                     </connections>

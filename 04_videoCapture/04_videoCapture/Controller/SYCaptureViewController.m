@@ -39,6 +39,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *flashAutoButton;
 @property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
 @property (weak, nonatomic) IBOutlet UIButton *flashOffButton;
+@property (weak, nonatomic) IBOutlet UIView *videoSettingView;
+@property (weak, nonatomic) IBOutlet UIButton *torchSwitchButton;
+@property (weak, nonatomic) IBOutlet UILabel *recordTimeLable;
 @property (weak, nonatomic) IBOutlet UILabel *liveLable;
 @property (weak, nonatomic) IBOutlet UIView *framePreviewView;
 @property (weak, nonatomic) IBOutlet UIImageView *framePreviewImage;
@@ -133,8 +136,9 @@
     
     self.videoGestureView.delegate = self;
     
-    self.flashMeunView.alpha = 0;
-    [self runFlashMenuFadeAnimation:FALSE];
+    self.photoSettingView.hidden = TRUE;
+    self.videoSettingView.hidden = TRUE;
+    self.flashMeunView.hidden = TRUE;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -163,6 +167,10 @@
     self.flashSwitchButton.hidden = !self.captureController.flashModeSwitchSupported;
     self.captureController.flashModeSwitchEnabled = self.captureController.flashModeSwitchSupported;
     self.flashSwitchButton.enabled = self.captureController.flashModeSwitchEnabled;
+    
+    self.torchSwitchButton.hidden = !self.captureController.torchModeSwitchSupported;
+    self.captureController.torchModeSwitchEnable = self.captureController.torchModeSwitchSupported;
+    self.torchSwitchButton.enabled = self.captureController.torchModeSwitchEnable;
     
     self.livePhotoSwitchButton.hidden = !self.captureController.livePhotoCaptureSupported;
     self.captureController.livePhotoCaptureEnabled = self.captureController.livePhotoCaptureSupported;
@@ -195,6 +203,28 @@
                                 forState:UIControlStateNormal];
         
   //  }
+}
+
+- (void)updateVideoCaptureSettingView {
+    // if (!self.flashSwitchButton.hidden) {
+    self.flashAutoButton.titleLabel.textColor = UIColor.whiteColor;
+    self.flashOnButton.titleLabel.textColor = UIColor.whiteColor;
+    self.flashOffButton.titleLabel.textColor = UIColor.whiteColor;
+    
+    NSString* flashStateImage = @"";
+    if (self.captureController.torchMode == AVCaptureTorchModeOff) {
+        flashStateImage = @"flash_off";
+        self.flashOffButton.titleLabel.textColor = UIColor.redColor;
+    } else if (self.captureController.torchMode == AVCaptureTorchModeOn) {
+        flashStateImage = @"flash_on";
+        self.flashOnButton.titleLabel.textColor = UIColor.redColor;
+    } else if (self.captureController.torchMode == AVCaptureTorchModeAuto) {
+        flashStateImage = @"flash_auto";
+        self.flashAutoButton.titleLabel.textColor = UIColor.redColor;
+    }
+    [self.torchSwitchButton setImage:[UIImage imageNamed:flashStateImage]
+                            forState:UIControlStateNormal];
+    
 }
 
 - (void)updatePreviewViewFrameForCaptureMode:(CaptureMode)mode {
@@ -258,32 +288,31 @@
     }
 }
 
-- (void)runFlashMenuFadeAnimation:(BOOL)visible {
-    if (visible && self.flashMeunView.hidden) {
-        self.flashMeunView.hidden = FALSE;
-        self.flashMeunView.alpha = 0;
-        CGPoint targetCenter = self.captureSettingContainerView.center;
-        targetCenter.y = self.captureSettingContainerView.bounds.size.height + self.flashMeunView.bounds.size.height * 0.5;
-        [UIView animateWithDuration:0.25
-                         animations:^{
-                             self.flashMeunView.center = targetCenter;
-                             self.flashMeunView.alpha = 1;
-                         }];
-    }
+- (void)runFlashMenuFadeInAnimation {
+    self.flashMeunView.hidden = FALSE;
+    self.flashMeunView.alpha = 0;
+    CGPoint targetCenter = self.captureSettingContainerView.center;
+    targetCenter.y = self.captureSettingContainerView.bounds.size.height + self.flashMeunView.bounds.size.height * 0.5;
+    [UIView animateWithDuration:0.25
+                     animations:^{
+                         self.flashMeunView.center = targetCenter;
+                         self.flashMeunView.alpha = 1;
+                     }];
+}
+
+- (void)runFlashMenuFadeOutAnimation {
+    CGPoint targetCenter = self.captureSettingContainerView.center;
+    targetCenter.y = self.captureSettingContainerView.bounds.size.height - self.flashMeunView.bounds.size.height;
+    [UIView animateWithDuration:0.25
+                     animations:^{
+                         self.flashMeunView.center = targetCenter;
+                         self.flashMeunView.alpha = 0;
+                     }
+                     completion:^(BOOL finished) {
+                         [self updatePhotoCaptureSettingView];
+                         [self updateVideoCaptureSettingView];
+                     }];
     
-    if (!visible && !self.flashMeunView.hidden) {
-        CGPoint targetCenter = self.captureSettingContainerView.center;
-        targetCenter.y = self.captureSettingContainerView.bounds.size.height - self.flashMeunView.bounds.size.height;
-        [UIView animateWithDuration:0.25
-                         animations:^{
-                             self.flashMeunView.center = targetCenter;
-                             self.flashMeunView.alpha = 0;
-                         }
-                         completion:^(BOOL finished) {
-                             [self updatePhotoCaptureSettingView];
-                             self.flashMeunView.hidden = TRUE;
-                         }];
-    }
 }
 
 
@@ -339,43 +368,75 @@
 }
 
 - (IBAction)handleFlashSwitchButtonTap:(UIButton *)sender {
-    NSLog(@"toggle flash mode");
-    [self runFlashMenuFadeAnimation:self.flashMeunView.hidden];
-
+    if (self.flashMeunView.alpha > 0.5) {
+        [self runFlashMenuFadeOutAnimation];
+    } else {
+        [self runFlashMenuFadeInAnimation];
+    }
 }
 
+- (IBAction)handleTorchSwitchButtonTap:(UIButton *)sender {
+    if (self.flashMeunView.alpha > 0.5) {
+        [self runFlashMenuFadeOutAnimation];
+    } else {
+        [self runFlashMenuFadeInAnimation];
+    }
+}
+
+
 - (IBAction)handleLivePhotoSwitchButtonTap:(UIButton *)sender {
-    NSLog(@"toggle live photo mode");
     self.captureController.livePhotoMode = self.captureController.livePhotoMode == LivePhotoModeOn ? LivePhotoModeOff : LivePhotoModeOn;
 }
 
 - (IBAction)handleDHRSwitchButtonTap:(UIButton *)sender {
-    NSLog(@"toggle dhr mode");
+   
 }
 
 - (IBAction)handleFlashAutoButtonTap:(UIButton *)sender {
-    if (self.captureController.flashMode != AVCaptureFlashModeAuto) {
-        [self.captureController switchFlashMoe:AVCaptureFlashModeAuto];
-    } else {
-        [self runFlashMenuFadeAnimation:FALSE];
+    if (self.currentCaptureMode == CaptureModePhoto) {
+        if (self.captureController.flashMode != AVCaptureFlashModeAuto) {
+            [self.captureController switchFlashMoe:AVCaptureFlashModeAuto];
+        } else {
+            [self runFlashMenuFadeOutAnimation];
+        }
+    } else if (self.currentCaptureMode == CaptureModeVideo || self.currentCaptureMode == CaptureModeRealTimeFilterVideo) {
+        if (self.captureController.torchMode != AVCaptureTorchModeAuto) {
+            [self.captureController switchTorchMode:AVCaptureTorchModeAuto];
+        } else {
+            [self runFlashMenuFadeOutAnimation];
+        }
     }
 }
 
 - (IBAction)handleFlashOnButtonTap:(UIButton *)sender {
-   // [self runFlashMenuFadeAnimation:FALSE];
-    if (self.captureController.flashMode != AVCaptureFlashModeOn) {
-        [self.captureController switchFlashMoe:AVCaptureFlashModeOn];
-    } else {
-        [self runFlashMenuFadeAnimation:FALSE];
+    if (self.currentCaptureMode == CaptureModePhoto) {
+        if (self.captureController.flashMode != AVCaptureFlashModeOn) {
+            [self.captureController switchFlashMoe:AVCaptureFlashModeOn];
+        } else {
+            [self runFlashMenuFadeOutAnimation];
+        }
+    } else if (self.currentCaptureMode == CaptureModeVideo || self.currentCaptureMode == CaptureModeRealTimeFilterVideo) {
+        if (self.captureController.torchMode != AVCaptureTorchModeOn) {
+            [self.captureController switchTorchMode:AVCaptureTorchModeOn];
+        } else {
+            [self runFlashMenuFadeOutAnimation];
+        }
     }
 }
 
 - (IBAction)handleFlashModeOffTap:(UIButton *)sender {
-    //[self runFlashMenuFadeAnimation:FALSE];
-    if (self.captureController.flashMode != AVCaptureFlashModeOff) {
-        [self.captureController switchFlashMoe:AVCaptureFlashModeOff];
-    } else {
-        [self runFlashMenuFadeAnimation:FALSE];
+    if (self.currentCaptureMode == CaptureModePhoto) {
+        if (self.captureController.flashMode != AVCaptureFlashModeOff) {
+            [self.captureController switchFlashMoe:AVCaptureFlashModeOff];
+        } else {
+            [self runFlashMenuFadeOutAnimation];
+        }
+    } else if (self.currentCaptureMode == CaptureModeVideo || self.currentCaptureMode == CaptureModeRealTimeFilterVideo) {
+        if (self.captureController.torchMode != AVCaptureTorchModeOff) {
+            [self.captureController switchTorchMode:AVCaptureTorchModeOff];
+        } else {
+            [self runFlashMenuFadeOutAnimation];
+        }
     }
 }
 
@@ -383,6 +444,7 @@
 // MARK: - scrollable tab bar delegate
 //
 - (void)scrollableTabBar:(ScrollableTabBar *)bar beginUserScrollingFromSelectedIndex:(int)index {
+    [self.blurEffectAnimator stopAnimation:TRUE];
     self.lastSelectedModeIndex = index;
     self.blurEffectAnimator = [[UIViewPropertyAnimator alloc] initWithDuration:0.5
                                                                          curve:UIViewAnimationCurveLinear
@@ -422,8 +484,8 @@
     CGPoint pointAtDeviceSpace = [self.videoPreviewView.previewLayer captureDevicePointOfInterestForPoint:pointAtPreviewLayer];
     [self.captureController tapToFocusAtInterestPoint:pointAtDeviceSpace];
     [self.captureController tapToExposureAtInterestPoint:pointAtDeviceSpace];
-    if (!self.flashMeunView.hidden) {
-        [self runFlashMenuFadeAnimation:FALSE];
+    if (self.flashMeunView.alpha > 0) {
+        [self runFlashMenuFadeOutAnimation];
     }
 }
 
@@ -432,15 +494,15 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
          RecommandedPoint:(CGPoint)recommandedpoint {
     [self.captureController resetFocus];
     [self.captureController resetExposure];
-    if (!self.flashMeunView.hidden) {
-        [self runFlashMenuFadeAnimation:FALSE];
+    if (self.flashMeunView.alpha > 0) {
+        [self runFlashMenuFadeOutAnimation];
     }
 }
 
 - (void)videoGestureLayer:(VideoGestureLayer *)layer BeginCameraZoom:(CGFloat)scale {
     [self runZoomSliderFadeAnimaton:TRUE];
-    if (!self.flashMeunView.hidden) {
-        [self runFlashMenuFadeAnimation:FALSE];
+    if (self.flashMeunView.alpha > 0) {
+        [self runFlashMenuFadeOutAnimation];
     }
 }
 
@@ -496,10 +558,12 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
         self.cameraSwitchButton.userInteractionEnabled = FALSE;
         self.captureButton.userInteractionEnabled = FALSE;
         self.albumButton.userInteractionEnabled = FALSE;
+        if (self.flashMeunView.alpha > 0) {
+            self.flashMeunView.hidden = TRUE;
+            [self runFlashMenuFadeOutAnimation];
+            
+        }
         if (mode == CaptureModePhoto) {
-            if (!self.flashMeunView.hidden) {
-                [self runFlashMenuFadeAnimation:FALSE];
-            }
             self.liveLable.hidden = TRUE;
         }
     });
@@ -516,10 +580,13 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
         self.videoGestureView.pinchToZoomCameraEnabled = self.captureController.cameraZoomEnabled;
         [self updatePreviewViewFrameForCaptureMode:mode];
         self.framePreviewView.hidden = (mode != CaptureModeRealTimeFilterVideo);
-        //self.videoPreviewView.hidden = !self.framePreviewView.hidden;
         [UIView animateWithDuration:0.7 animations:^{
             self.blurEffectView.effect = Nil;
         }];
+        
+        self.photoSettingView.hidden = TRUE;
+        self.videoSettingView.hidden = TRUE;
+        
         if (self.currentCaptureMode == CaptureModePhoto) {
             UIImage* whiteCircle = [UIImage imageNamed:@"circle_white"];
             [self.captureButton setImage:whiteCircle forState:UIControlStateNormal];
@@ -528,6 +595,7 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
             self.photoSettingView.hidden = FALSE;
             self.flashSwitchButton.hidden = !(self.captureController.flashModeSwitchSupported && self.captureController.flashModeSwitchEnabled);
             self.liveLable.hidden = !(self.captureController.livePhotoMode == LivePhotoModeOn);
+            [self.flashMeunView setBackgroundColor:[UIColor colorWithWhite:0 alpha:1]];
             [self updatePhotoCaptureSettingView];
 
          
@@ -536,8 +604,11 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
             [self.captureButton setImage:redCircle forState:UIControlStateNormal];
             [self.scrollableTabBarContainer setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
             [self.captureSettingContainerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
-            self.photoSettingView.hidden = TRUE;
-       }
+            [self.flashMeunView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.5]];
+            self.videoSettingView.hidden = FALSE;
+            [self updateVideoCaptureSettingView];
+            
+        }
     });
 }
 
@@ -655,9 +726,10 @@ FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL *)url
 
 - (void)captureController:(CaptureController *)controller DidSwitchFlashModeTo:(AVCaptureFlashMode)mode {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self runFlashMenuFadeAnimation:FALSE];
+        [self runFlashMenuFadeOutAnimation];
     });
 }
+
 
 - (void)captureController:(CaptureController *)controller DidToggleLivePhotoModeTo:(LivePhotoMode)mode {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -667,6 +739,12 @@ FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL *)url
                                         forState:UIControlStateNormal];
             self.liveLable.hidden = !(mode == LivePhotoModeOn);
         }
+    });
+}
+
+- (void)captureController:(CaptureController *)controller DidSwitchTorchModeTo:(AVCaptureTorchMode)mode {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self runFlashMenuFadeOutAnimation];
     });
 }
 

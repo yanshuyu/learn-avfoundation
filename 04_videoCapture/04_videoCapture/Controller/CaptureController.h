@@ -97,7 +97,8 @@ typedef enum : NSUInteger {
 - (void)captureController:(CaptureController*)controller WillSwitchFlashModeFrom:(AVCaptureFlashMode)mode;
 - (void)captureController:(CaptureController*)controller DidSwitchFlashModeTo:(AVCaptureFlashMode)mode;
 - (void)captureController:(CaptureController *)controller DidToggleLivePhotoModeTo:(LivePhotoMode)mode;
-
+- (void)captureController:(CaptureController*)controller WillSwitchTorchModeFrom:(AVCaptureTorchMode)mode;
+- (void)captureController:(CaptureController*)controller DidSwitchTorchModeTo:(AVCaptureTorchMode)mode;
 @required
 
 
@@ -127,6 +128,11 @@ typedef enum : NSUInteger {
 @property (nonatomic, readonly) BOOL flashModeSwitchSupported;
 @property (nonatomic) BOOL flashModeSwitchEnabled;
 @property (nonatomic, readonly) AVCaptureFlashMode flashMode;
+
+@property (nonatomic, readonly) BOOL torchModeSwitchSupported;
+@property (nonatomic) BOOL torchModeSwitchEnable;
+@property (nonatomic, readonly) AVCaptureTorchMode torchMode;
+
 
 @property (nonatomic, readonly) BOOL livePhotoCaptureSupported;
 @property (nonatomic) BOOL livePhotoCaptureEnabled;
@@ -161,6 +167,7 @@ typedef enum : NSUInteger {
 - (void)smoothZoomVideoTo:(CGFloat)zoomFactor WithRate:(float)rate;
 - (void)cancelVideoSmoothZoom;
 - (void)switchFlashMoe:(AVCaptureFlashMode)mode;
+- (void)switchTorchMode:(AVCaptureTorchMode)mode;
 
 @end
 

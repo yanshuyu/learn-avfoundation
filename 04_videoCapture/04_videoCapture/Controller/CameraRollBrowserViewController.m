@@ -132,9 +132,6 @@ typedef enum : NSUInteger {
     self.currentViewingCameraRollItems = result;
 }
 
-- (BOOL)prefersStatusBarHidden {
-    return TRUE;
-}
 
 - (IBAction)handleCloseButtonTap:(UIBarButtonItem *)sender {
     [self dismissViewControllerAnimated:TRUE completion:nil];

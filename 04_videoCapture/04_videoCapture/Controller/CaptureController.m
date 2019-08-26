@@ -215,6 +215,12 @@
                 self.videoDeviceInput.device.subjectAreaChangeMonitoringEnabled = TRUE;
                 [self.videoDeviceInput.device unlockForConfiguration];
             }
+            if (self.torchModeSwitchSupported) {
+                self.torchModeSwitchEnable = TRUE;
+                [self.videoDeviceInput.device lockForConfiguration:Nil];
+                self.videoDeviceInput.device.torchMode = AVCaptureTorchModeAuto;
+                [self.videoDeviceInput.device unlockForConfiguration];
+            }
             [self addVideoDeviceObserver];
             
             if (SESSION_DEBUG_INFO) {
@@ -810,7 +816,7 @@
 
 - (BOOL)flashModeSwitchSupported {
     AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
-    return cameraDevice.flashAvailable && self.photoOutput.supportedFlashModes.count > 1;
+    return cameraDevice.hasFlash && cameraDevice.flashAvailable && self.photoOutput.supportedFlashModes.count > 1;
 }
 
 - (void)switchFlashMoe:(AVCaptureFlashMode)mode {
@@ -824,16 +830,48 @@
                 [self.delegate captureController:self
                          WillSwitchFlashModeFrom:self.flashMode];
             }
-        }
-        
-        if ([self.photoOutput.supportedFlashModes containsObject:[NSNumber numberWithInt:mode]]) {
-            self.flashMode = mode;
-            if ([self.delegate respondsToSelector:@selector(captureController:DidSwitchFlashModeTo:)]) {
-                [self.delegate captureController:self
-                            DidSwitchFlashModeTo:self.flashMode];
+            
+            if ([self.photoOutput.supportedFlashModes containsObject:[NSNumber numberWithInt:mode]]) {
+                self.flashMode = mode;
+                if ([self.delegate respondsToSelector:@selector(captureController:DidSwitchFlashModeTo:)]) {
+                    [self.delegate captureController:self
+                                DidSwitchFlashModeTo:self.flashMode];
+                }
             }
         }
     });
+}
+
+- (BOOL)torchModeSwitchSupported {
+    AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+    return cameraDevice.hasTorch && cameraDevice.torchAvailable && [cameraDevice isTorchModeSupported:AVCaptureTorchModeAuto];
+}
+
+- (void)switchTorchMode:(AVCaptureTorchMode)mode {
+    if (self.torchModeSwitchSupported && self.torchModeSwitchEnable) {
+        AVCaptureDevice* cameraDevice = self.videoDeviceInput.device;
+        if (cameraDevice.torchMode == mode) {
+            return ;
+        }
+        if ([self.delegate respondsToSelector:@selector(captureController:WillSwitchTorchModeFrom:)]) {
+            [self.delegate captureController:self
+                     WillSwitchTorchModeFrom:cameraDevice.torchMode];
+        }
+        
+        if ([cameraDevice isTorchModeSupported:mode]) {
+            [cameraDevice lockForConfiguration:Nil];
+            cameraDevice.torchMode = mode;
+            [cameraDevice unlockForConfiguration];
+            if ([self.delegate respondsToSelector:@selector(captureController:DidSwitchTorchModeTo:)]) {
+                [self.delegate captureController:self
+                            DidSwitchTorchModeTo:mode];
+            }
+        }
+    }
+}
+
+- (AVCaptureTorchMode)torchMode {
+    return self.videoDeviceInput.device.torchMode;
 }
 
 - (BOOL)livePhotoCaptureSupported {
