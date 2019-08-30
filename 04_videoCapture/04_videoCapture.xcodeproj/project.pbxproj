@@ -422,7 +422,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-3-videoPlayer";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-1-audioPlaybackAndRecord";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -439,7 +439,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-3-videoPlayer";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-1-audioPlaybackAndRecord";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 			};

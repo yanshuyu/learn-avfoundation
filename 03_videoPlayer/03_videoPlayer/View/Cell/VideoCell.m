@@ -141,4 +141,14 @@
 }
 
 
+- (void)prepareForReuse {
+    [super prepareForReuse];
+    _thumbnailImage.image = nil;
+    _titleLable.text = @"";
+    _timeLable.text = @"";
+    _asset = nil;
+    _imageGenerator = nil;
+}
+
+
 @end
