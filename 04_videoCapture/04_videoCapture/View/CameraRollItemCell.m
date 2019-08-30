@@ -62,7 +62,6 @@
     self.durationLable.hidden = TRUE;
     self.liveLable.hidden = TRUE;
     self.cloudeImageView.hidden = TRUE;
-    self.playImageView.hidden = TRUE;
     self.maskView.alpha = 0;
     self.maskView.frame = self.bounds;
 }

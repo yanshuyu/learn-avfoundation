@@ -93,7 +93,6 @@ typedef enum : NSUInteger {
     } else if (item.mediaType == PHAssetMediaTypeVideo) {
         cell.durationLable.text = [NSString stringWithFormat:@"%02d:%02d", ((int)item.duration)/60,((int)item.duration)%60];
         cell.durationLable.hidden = FALSE;
-        cell.playImageView.hidden = FALSE;
     }
     
     [item generateThumbnailImageWithTargetSize:CELL_SIZE

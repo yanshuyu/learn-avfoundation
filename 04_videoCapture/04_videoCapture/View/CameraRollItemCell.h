@@ -16,7 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UILabel *durationLable;
 @property (weak, nonatomic) IBOutlet UILabel *liveLable;
 @property (weak, nonatomic) IBOutlet UIImageView *cloudeImageView;
-@property (weak, nonatomic) IBOutlet UIImageView *playImageView;
 
 @end
 

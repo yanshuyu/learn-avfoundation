@@ -274,7 +274,7 @@
                                     <constraint firstAttribute="width" constant="40" id="zhM-hJ-eOO"/>
                                 </constraints>
                                 <connections>
-                                    <segue destination="rPV-E3-eGw" kind="presentation" id="wQF-um-pZW"/>
+                                    <segue destination="rPV-E3-eGw" kind="presentation" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="wQF-um-pZW"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Gh-0s-UNP" userLabel="camera button">
@@ -356,7 +356,7 @@
         <!--Camera Roll Browser View Controller-->
         <scene sceneID="6j2-MF-tNQ">
             <objects>
-                <viewController id="3ES-Kf-gQ5" customClass="CameraRollBrowserViewController" sceneMemberID="viewController">
+                <viewController modalPresentationStyle="overFullScreen" id="3ES-Kf-gQ5" customClass="CameraRollBrowserViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Q4m-yo-h57">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -400,13 +400,6 @@
                                                         <constraint firstAttribute="height" constant="20" id="hkI-ES-hT1"/>
                                                     </constraints>
                                                 </imageView>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="trangle" translatesAutoresizingMaskIntoConstraints="NO" id="iim-ws-6Hm">
-                                                    <rect key="frame" x="42.5" y="42.5" width="25" height="25"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="25" id="rjK-NV-e5M"/>
-                                                        <constraint firstAttribute="width" constant="25" id="wA5-hs-qo4"/>
-                                                    </constraints>
-                                                </imageView>
                                             </subviews>
                                         </view>
                                         <color key="backgroundColor" red="0.43529411759999997" green="0.4431372549" blue="0.47450980390000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -419,17 +412,14 @@
                                             <constraint firstItem="n0S-Qx-22R" firstAttribute="leading" secondItem="YoO-30-aPD" secondAttribute="leading" id="Tm4-0d-OZS"/>
                                             <constraint firstItem="n0S-Qx-22R" firstAttribute="top" secondItem="YoO-30-aPD" secondAttribute="top" id="UUl-mN-JCh"/>
                                             <constraint firstItem="RCa-O1-Ezw" firstAttribute="top" secondItem="YoO-30-aPD" secondAttribute="top" constant="4" id="YOg-CD-lbu"/>
-                                            <constraint firstItem="iim-ws-6Hm" firstAttribute="centerY" secondItem="YoO-30-aPD" secondAttribute="centerY" id="YhL-k9-al0"/>
                                             <constraint firstAttribute="bottom" secondItem="n0S-Qx-22R" secondAttribute="bottom" id="hQx-xN-nYK"/>
                                             <constraint firstAttribute="trailing" secondItem="n0S-Qx-22R" secondAttribute="trailing" id="lXl-bS-7Kw"/>
-                                            <constraint firstItem="iim-ws-6Hm" firstAttribute="centerX" secondItem="YoO-30-aPD" secondAttribute="centerX" id="rec-En-TWU"/>
                                         </constraints>
                                         <size key="customSize" width="110" height="110"/>
                                         <connections>
                                             <outlet property="cloudeImageView" destination="RCa-O1-Ezw" id="fyR-xH-att"/>
                                             <outlet property="durationLable" destination="ZNQ-Zn-AkV" id="vet-FQ-kBe"/>
                                             <outlet property="liveLable" destination="1IB-hU-ZUf" id="iI1-Xa-gFQ"/>
-                                            <outlet property="playImageView" destination="iim-ws-6Hm" id="uFX-52-Fnn"/>
                                             <outlet property="thumnailImageView" destination="n0S-Qx-22R" id="9fN-Qi-Kv8"/>
                                         </connections>
                                     </collectionViewCell>
@@ -498,6 +488,7 @@
         <!--Navigation Controller-->
         <scene sceneID="DmS-ar-gbY">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ASX-g7-N40" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="rPV-E3-eGw" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="rHf-nR-4XV">
@@ -509,7 +500,6 @@
                         <segue destination="3ES-Kf-gQ5" kind="relationship" relationship="rootViewController" id="UTN-MN-nib"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ASX-g7-N40" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1501.5999999999999" y="-564.46776611694156"/>
         </scene>
@@ -526,6 +516,5 @@
         <image name="plus" width="64" height="64"/>
         <image name="square" width="30" height="30"/>
         <image name="switch-camera" width="80" height="80"/>
-        <image name="trangle" width="50" height="50"/>
     </resources>
 </document>
