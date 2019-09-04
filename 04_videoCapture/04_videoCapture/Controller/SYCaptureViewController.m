@@ -67,6 +67,10 @@
 
 @implementation SYCaptureViewController
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -101,7 +105,10 @@
             [self EnumerateCaptureDeviceCapbilites];
         });
     }];
-
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[CameraRollManager shareInstance] fetchCameraRollItems];
+    });
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -147,15 +154,24 @@
     
     self.recordTimerInterval = 0.5;
     self.photoCapturePreviewSize = CGSizeMake(self.albumButton.bounds.size.width * 2, self.albumButton.bounds.size.height * 2);
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleCameraRollManagerChangNotification:)
+                                                 name:CameraRollManagerChangeNoticification
+                                               object:[CameraRollManager shareInstance]];
+    [self albumShowLastestCameraRoll];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    [self.captureController cleanUpSession];
-}
 
 - (BOOL)prefersStatusBarHidden {
     return TRUE;
+}
+
+- (void)handleCameraRollManagerChangNotification:(NSNotification*)notification {
+    if (notification.name == CameraRollManagerChangeNoticification) {
+        NSLog(@"%@: %@", CameraRollManagerChangeNoticification, notification.userInfo);
+        [self albumShowLastestCameraRoll];
+    }
 }
 
 - (void)EnumerateCaptureDeviceCapbilites {
@@ -183,6 +199,18 @@
     self.livePhotoSwitchButton.hidden = !self.captureController.livePhotoCaptureSupported;
     self.captureController.livePhotoCaptureEnabled = self.captureController.livePhotoCaptureSupported;
     self.livePhotoSwitchButton.enabled = self.captureController.livePhotoCaptureEnabled;
+}
+
+- (void)albumShowLastestCameraRoll {
+    [[CameraRollManager shareInstance] fetchLatestCameraRollItemWithCompeletionHandler:^(CameraRollItem * _Nonnull rollItem) {
+        [rollItem generateThumbnailImageWithTargetSize:self.photoCapturePreviewSize
+                                           contentMode:PHImageContentModeAspectFill
+                                     completionHandler:^(UIImage * _Nullable thumbnail, NSError * _Nullable error) {
+                                         dispatch_async(dispatch_get_main_queue(), ^{
+                                             [self.albumButton setBackgroundImage:thumbnail forState:UIControlStateNormal];
+                                         });
+                                     }];
+    }];
 }
 
 - (void)syncZoomSliderWithDeviceZoomLevel {

@@ -8,9 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <Photos/Photos.h>
+#import "CameraRollManagerNotification.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+//
+// camera roll item
+//
 
 @interface CameraRollItem : NSObject
 
@@ -26,13 +30,31 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)cameraRollItemWithAsset:(PHAsset*)asset;
 - (void)generateThumbnailImageWithTargetSize:(CGSize)size
                                   contentMode:(PHImageContentMode)contentMode
-                            completionHandler:(void (^)(UIImage* _Nullable, NSError* _Nullable))completionHandler;
+                            completionHandler:(nullable void (^)(UIImage* _Nullable, NSError* _Nullable))completionHandler;
 @end
 
 
-@interface CameraRollManager : NSObject
 
+
+
+
+//
+// camera roll manager
+//
+typedef enum : NSUInteger {
+    CameraRollChangeTypeInsert,
+    CameraRollChangeTypeRemove,
+    CameraRollChangeTypeUpdate,
+} CameraRollChangeType;
+
+
+@interface CameraRollManager : NSObject <PHPhotoLibraryChangeObserver>
+
+
++ (instancetype)shareInstance;
 - (NSArray<CameraRollItem*>*)fetchCameraRollItems;
+- (void)fetchLatestCameraRollItemWithCompeletionHandler:(nullable void (^)(CameraRollItem*))compeletionHandler;
+- (void)reset;
 
 @end
 

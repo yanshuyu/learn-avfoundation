@@ -28,7 +28,7 @@ typedef enum : NSUInteger {
 @property (weak, nonatomic) IBOutlet UISegmentedControl *rollItemSegmentContrl;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *layoutSegmentContrl;
 
-@property (strong, nonatomic) NSMutableArray<CameraRollItem*>* allCameraRollItems;
+@property (strong, nonatomic) NSArray<CameraRollItem*>* allCameraRollItems;
 @property (strong, nonatomic) NSArray<CameraRollItem*>* currentViewingCameraRollItems;
 @property (strong, nonatomic) UIView* blurEffectView;
 
@@ -39,12 +39,16 @@ typedef enum : NSUInteger {
 
 @implementation CameraRollBrowserViewController
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupView];
     
-    CameraRollManager* cameraRollMgr = [CameraRollManager new];
-    self.allCameraRollItems = [NSMutableArray arrayWithArray:[cameraRollMgr fetchCameraRollItems]];
+    self.allCameraRollItems = [[CameraRollManager shareInstance] fetchCameraRollItems];
     self.rollItemSegmentContrl.selectedSegmentIndex = 0;
     self.layoutSegmentContrl.selectedSegmentIndex = 0;
     [self handleRollItemSegmentControlValueChange:self.rollItemSegmentContrl];
@@ -52,7 +56,12 @@ typedef enum : NSUInteger {
     [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.currentViewingCameraRollItems.count-1 inSection:0]
                                 atScrollPosition:UICollectionViewScrollPositionBottom
                                         animated:FALSE];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleCameraRollManagerChangeNotification:)
+                                                 name:CameraRollManagerChangeNoticification
+                                               object:[CameraRollManager shareInstance]];
 }
+
 
 - (void)setupView {
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
@@ -113,7 +122,7 @@ typedef enum : NSUInteger {
 - (void)filterCameraRollItemsBySegment:(CameraRollSegment)segment {
     NSMutableArray<CameraRollItem*>* result = [NSMutableArray array];
     if (segment == CameraRollSegmentAll) {
-        result = self.allCameraRollItems;
+        result = [NSMutableArray arrayWithArray:self.allCameraRollItems];
     } else if (segment == CameraRollSegmentPhoto) {
         [self.allCameraRollItems enumerateObjectsUsingBlock:^(CameraRollItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if (obj.mediaType == PHAssetMediaTypeImage) {
@@ -131,6 +140,28 @@ typedef enum : NSUInteger {
     self.currentViewingCameraRollItems = result;
 }
 
+- (void)handleCameraRollManagerChangeNotification:(NSNotification*)notification {
+    if (notification.name == CameraRollManagerChangeNoticification) {
+        NSUInteger key = [[notification.userInfo objectForKey:@"changeType"] integerValue];
+        if ( key == CameraRollChangeTypeInsert) {
+            NSLog(@"%@, insert roll items: %@", CameraRollManagerChangeNoticification, notification.userInfo[@"insertRollItems"]);
+            self.allCameraRollItems = [[CameraRollManager shareInstance] fetchCameraRollItems];
+            [self handleRollItemSegmentControlValueChange:self.rollItemSegmentContrl];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.collectionView performBatchUpdates:^{
+                    [self handleRollItemSegmentControlValueChange:self.rollItemSegmentContrl];
+                } completion:Nil];
+            });
+            
+        } else if (key == CameraRollChangeTypeRemove) {
+            NSLog(@"%@, remove roll items: %@", CameraRollManagerChangeNoticification, notification.userInfo[@"removeIndexSet"]);
+            self.allCameraRollItems = [[CameraRollManager shareInstance] fetchCameraRollItems];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self handleRollItemSegmentControlValueChange:self.rollItemSegmentContrl];
+            });
+        }
+    }
+}
 
 - (IBAction)handleCloseButtonTap:(UIBarButtonItem *)sender {
     [self dismissViewControllerAnimated:TRUE completion:nil];

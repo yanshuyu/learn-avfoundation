@@ -14,6 +14,7 @@
 		113C6C7523013A190016D089 /* CameraRollManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 113C6C7423013A190016D089 /* CameraRollManager.m */; };
 		11821EF622F2D12C00620228 /* BasicMovieWritter.m in Sources */ = {isa = PBXBuildFile; fileRef = 11821EF522F2D12C00620228 /* BasicMovieWritter.m */; };
 		11821EFA22F2D2C700620228 /* NSURL+SYAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 11821EF922F2D2C700620228 /* NSURL+SYAddition.m */; };
+		11855ECF231FF2CA00A139BC /* CameraRollManagerNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 11855ECE231FF2CA00A139BC /* CameraRollManagerNotification.m */; };
 		118AB7EE22D486BA0073C888 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 118AB7ED22D486BA0073C888 /* AppDelegate.m */; };
 		118AB7F422D486BA0073C888 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 118AB7F222D486BA0073C888 /* Main.storyboard */; };
 		118AB7F622D486BD0073C888 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 118AB7F522D486BD0073C888 /* Assets.xcassets */; };
@@ -47,6 +48,8 @@
 		11821EF522F2D12C00620228 /* BasicMovieWritter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BasicMovieWritter.m; sourceTree = "<group>"; };
 		11821EF822F2D2C700620228 /* NSURL+SYAddition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSURL+SYAddition.h"; sourceTree = "<group>"; };
 		11821EF922F2D2C700620228 /* NSURL+SYAddition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSURL+SYAddition.m"; sourceTree = "<group>"; };
+		11855ECD231FF1D400A139BC /* CameraRollManagerNotification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraRollManagerNotification.h; sourceTree = "<group>"; };
+		11855ECE231FF2CA00A139BC /* CameraRollManagerNotification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraRollManagerNotification.m; sourceTree = "<group>"; };
 		118AB7E922D486BA0073C888 /* 04_videoCapture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 04_videoCapture.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		118AB7EC22D486BA0073C888 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		118AB7ED22D486BA0073C888 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -178,6 +181,8 @@
 				11CFE5F822F5E3EA00277E7D /* ContextManager.m */,
 				11CFE61C22F7524F00277E7D /* BuildInFilterLibrary.h */,
 				11CFE61D22F7524F00277E7D /* BuildInFilterLibrary.m */,
+				11855ECD231FF1D400A139BC /* CameraRollManagerNotification.h */,
+				11855ECE231FF2CA00A139BC /* CameraRollManagerNotification.m */,
 				113C6C7323013A190016D089 /* CameraRollManager.h */,
 				113C6C7423013A190016D089 /* CameraRollManager.m */,
 				112C746323069AC700F7CFED /* SYCollectionViewCoverFlowLayout.h */,
@@ -270,6 +275,7 @@
 				119908E9231F5D1300BCC789 /* UIImage+SYAddtion.m in Sources */,
 				118AB7FC22D486BD0073C888 /* main.m in Sources */,
 				1197BFB722D7355700A30CF6 /* ScrollableTabBarItem.m in Sources */,
+				11855ECF231FF2CA00A139BC /* CameraRollManagerNotification.m in Sources */,
 				118AB7EE22D486BA0073C888 /* AppDelegate.m in Sources */,
 				11D8C62F22F02B95000B3495 /* VideoGestureLayer.m in Sources */,
 				1197BFBA22D7363300A30CF6 /* ScrollableTabBar.m in Sources */,

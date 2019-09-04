@@ -8,6 +8,9 @@
 
 #import "CameraRollManager.h"
 
+//
+// camera roll item
+//
 @interface CameraRollItem ()
 @property (strong, nonatomic) PHAsset* asset;
 @property (nonatomic) BOOL thumbnailImageReady;
@@ -93,9 +96,52 @@
 
 
 
+
+
+//
+// camera roll manager
+//
+@interface CameraRollManager ()
+
+@property (nonatomic) BOOL initailized;
+@property (strong, nonatomic) PHFetchResult* fetchResults;
+@property (strong, nonatomic) NSMutableArray* cameraRollItems;
+
+@end
+
+
 @implementation CameraRollManager
 
++ (instancetype)shareInstance {
+    static CameraRollManager* instance = nil;
+    static dispatch_once_t once_flag;
+    dispatch_once(&once_flag, ^{
+        instance = [CameraRollManager new];
+    });
+    return instance;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.initailized = FALSE;
+        [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];
+}
+
+
 - (NSArray<CameraRollItem*>*)fetchCameraRollItems {
+    if (self.initailized) {
+        return self.cameraRollItems;
+    }
+    
     NSMutableArray<CameraRollItem*>* result = [NSMutableArray array];
     PHFetchOptions* albumsFetchOption = [[PHFetchOptions alloc] init];
     albumsFetchOption.includeAssetSourceTypes = PHAssetSourceTypeUserLibrary | PHAssetSourceTypeCloudShared;
@@ -116,7 +162,65 @@
         [result addObject:item];
     }];
     
+    self.fetchResults = assets;
+    self.cameraRollItems = result;
+    self.initailized = TRUE;
+    
     return result;
+}
+
+- (void)fetchLatestCameraRollItemWithCompeletionHandler:(void (^)(CameraRollItem * _Nonnull))compeletionHandler {
+    PHFetchOptions* option = [PHFetchOptions new];
+    option.includeAssetSourceTypes = PHAssetSourceTypeUserLibrary | PHAssetSourceTypeCloudShared;
+    option.sortDescriptors =  @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:FALSE]];
+    option.fetchLimit = 1;
+    PHFetchResult<PHAsset*>* reslut = [PHAsset fetchAssetsWithOptions:option];
+    if (reslut.count > 0 && compeletionHandler) {
+        compeletionHandler([CameraRollItem cameraRollItemWithAsset:[reslut objectAtIndex:reslut.count-1]]);
+    }
+}
+
+
+- (void)photoLibraryDidChange:(PHChange *)changeInstance {
+    PHFetchResultChangeDetails* changeDetails = [changeInstance changeDetailsForFetchResult:self.fetchResults];
+    if (changeDetails.hasIncrementalChanges) {
+        if (changeDetails.removedIndexes.count > 0) {
+            self.fetchResults = changeDetails.fetchResultAfterChanges;
+            [self.cameraRollItems removeObjectsAtIndexes:changeDetails.removedIndexes];
+            [[NSNotificationCenter defaultCenter] postNotificationName:CameraRollManagerChangeNoticification
+                                                                object:self
+                                                              userInfo:@{
+                                                                         @"changeType" : @(CameraRollChangeTypeRemove),
+                                                                         @"removeIndexSet" : changeDetails.removedIndexes,
+                                                                         }];
+        }
+        
+        if (changeDetails.insertedIndexes.count > 0) {
+            self.fetchResults = changeDetails.fetchResultAfterChanges;
+             __block NSInteger objIndex = 0;
+            NSMutableArray* insertedItems = [NSMutableArray array];
+            [changeDetails.insertedIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+                CameraRollItem* newItem = [CameraRollItem cameraRollItemWithAsset:(PHAsset*)changeDetails.insertedObjects[objIndex]];
+                [self.cameraRollItems addObject:newItem];
+                objIndex += 1;
+                [insertedItems addObject:newItem];
+            }];
+
+            [[NSNotificationCenter defaultCenter] postNotificationName:CameraRollManagerChangeNoticification
+                                                                object:self
+                                                              userInfo:@{
+                                                                         @"changeType" : @(CameraRollChangeTypeInsert),
+                                                                         @"insertRollItems" : insertedItems,
+                                                                         }];
+        }
+    }
+}
+
+
+- (void)reset {
+    self.fetchResults = nil;
+    self.cameraRollItems = nil;
+    self.initailized = FALSE;
 }
 
 @end
