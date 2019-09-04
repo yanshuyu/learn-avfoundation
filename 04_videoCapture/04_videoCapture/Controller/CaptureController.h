@@ -85,6 +85,8 @@ typedef enum : NSUInteger {
 - (void)captureController:(CaptureController *)controller DidStartRecordingToFileURL:(NSURL*)url;
 - (void)captureController:(CaptureController *)controller DidFinishRecordingToFileURL:(NSURL*)url Error:(NSError*)error;
 - (void)captureController:(CaptureController *)controller SaveVideo:(NSURL* _Nullable)url ToLibraryWithResult:(AssetSavedResult)result Error:(NSError* _Nullable)error;
+- (CGSize)captureControllerPreviewImageSizeForPhotoCapture;
+- (void)captureController:(CaptureController *)controller DidFinishCapturePhotoWithPreviewImage:(UIImage*)preview;
 //- (void)captureController:(CaptureController *)controller DidCaptureVideoFrame:(CIImage*)image;
 - (void)captureController:(CaptureController *)controller BeginRealTimeFilterVideoRecordSession:(BOOL)ready;
 - (void)captureController:(CaptureController *)controller FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL* _Nullable)url Error:(NSError* _Nullable)error;

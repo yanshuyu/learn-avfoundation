@@ -29,6 +29,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *captureButton;
 @property (weak, nonatomic) IBOutlet UIButton *cameraSwitchButton;
 @property (weak, nonatomic) IBOutlet UIButton *albumButton;
+
 @property (weak, nonatomic) IBOutlet UISlider *zoomSlider;
 @property (weak, nonatomic) IBOutlet UIView *captureSettingContainerView;
 @property (weak, nonatomic) IBOutlet UIView *photoSettingView;
@@ -60,6 +61,8 @@
 @property (strong, nonatomic) NSTimer* recordTimer;
 @property (nonatomic) NSTimeInterval recordTimeCounter;
 @property (nonatomic) NSTimeInterval recordTimerInterval;
+@property (nonatomic) CGSize photoCapturePreviewSize;
+
 @end
 
 @implementation SYCaptureViewController
@@ -117,10 +120,10 @@
 - (void)setUpView {
     self.scrollableTabBarContainer.backgroundColor = [UIColor blackColor];
     [self.captureButton setImage:[UIImage imageNamed:@"square"] forState:UIControlStateSelected];
-    self.albumButton.layer.borderWidth = 1;
-    self.albumButton.layer.borderColor = [UIColor redColor].CGColor;
+
     self.albumButton.layer.cornerRadius = 4;
-    self.albumButton.layer.masksToBounds = true;
+    self.albumButton.clipsToBounds = TRUE;
+    
     self.liveLable.hidden = TRUE;
     
     self.zoomSliderContainer.alpha = 0;
@@ -143,6 +146,7 @@
     self.flashMeunView.hidden = TRUE;
     
     self.recordTimerInterval = 0.5;
+    self.photoCapturePreviewSize = CGSizeMake(self.albumButton.bounds.size.width * 2, self.albumButton.bounds.size.height * 2);
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -651,6 +655,23 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
                                 completion:Nil];
             }
         }
+    });
+}
+
+- (CGSize)captureControllerPreviewImageSizeForPhotoCapture {
+    return self.photoCapturePreviewSize;
+}
+
+- (void)captureController:(CaptureController *)controller DidFinishCapturePhotoWithPreviewImage:(UIImage *)preview {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.albumButton setBackgroundImage:preview forState:UIControlStateNormal];
+        [UIView animateWithDuration:0.1 animations:^{
+            self.albumButton.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.5, 0.5);
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.1 animations:^{
+                self.albumButton.transform = CGAffineTransformIdentity;
+            }];
+        }];
     });
 }
 

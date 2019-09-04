@@ -9,6 +9,7 @@
 #import "CaptureController.h"
 #import "../Supported/BasicMovieWritter.h"
 #import "../Caeogory/NSURL+SYAddition.h"
+#import "../Caeogory/UIImage+SYAddtion.h"
 #import "../Supported/ContextManager.h"
 #import <Photos/Photos.h>
 
@@ -935,6 +936,12 @@
             captureSetting.flashMode = self.flashMode;
         }
         
+        CGSize previewImageSize = [self.delegate respondsToSelector:@selector(captureControllerPreviewImageSizeForPhotoCapture)] ? [self.delegate captureControllerPreviewImageSizeForPhotoCapture] : [UIScreen mainScreen].bounds.size;
+        captureSetting.previewPhotoFormat = @{
+                                              (id)kCVPixelBufferPixelFormatTypeKey : [captureSetting.availablePreviewPhotoPixelFormatTypes firstObject],
+                                              (id)kCVPixelBufferWidthKey : @(previewImageSize.width),
+                                              (id)kCVPixelBufferHeightKey : @(previewImageSize.height),
+                                              };
         //[self.photoCaptureSettingsOnProgressing setObject:captureSetting forKey:[NSNumber numberWithLongLong:captureSetting.uniqueID]];
         PhotoCaptureData* captureData = [PhotoCaptureData new];
         captureData.captureSettings = captureSetting;
@@ -1290,6 +1297,31 @@ didFinishProcessingPhoto:(AVCapturePhoto *)photo
             PhotoCaptureData* captureData = [self.photoCaptureDataInProcessing objectForKey:key];
             if (captureData) {
                 captureData.photoData = [photo fileDataRepresentation];
+                if (photo.previewPixelBuffer && [self.delegate respondsToSelector:@selector(captureController:DidFinishCapturePhotoWithPreviewImage:)]) {
+                    UIImageOrientation orientation = UIImageOrientationUp;
+                    switch (UIDevice.currentDevice.orientation) {
+                        case UIDeviceOrientationPortrait:
+                            orientation = UIImageOrientationRight;
+                            break;
+                        case UIDeviceOrientationPortraitUpsideDown:
+                            orientation = UIImageOrientationLeft;
+                            break;
+                        case UIDeviceOrientationLandscapeLeft:
+                            orientation = UIImageOrientationUp;
+                            break;
+                        case UIDeviceOrientationLandscapeRight:
+                            orientation = UIImageOrientationDown;
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                    UIImage* previewImage = [UIImage imageWithCGImage:[photo previewCGImageRepresentation]
+                                                                scale:UIScreen.mainScreen.scale
+                                                          orientation:orientation];
+                    [self.delegate captureController:self
+               DidFinishCapturePhotoWithPreviewImage:previewImage];
+                }
                 if (SESSION_DEBUG_INFO) {
                     NSLog(@"[CaptureController debug info] Generating capture photo data at address:%d, for key: %@ success", (int)captureData.photoData, key);
                 }

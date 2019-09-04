@@ -255,6 +255,16 @@
                                     <constraint firstAttribute="height" constant="116" id="c5y-5F-Zk5"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qz5-ZM-2fO">
+                                <rect key="frame" x="40" y="566.5" width="60" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="60" id="usr-ZB-e60"/>
+                                    <constraint firstAttribute="width" secondItem="qz5-ZM-2fO" secondAttribute="height" multiplier="1:1" id="wLa-aM-JMg"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="rPV-E3-eGw" kind="presentation" id="mFF-8t-EU8"/>
+                                </connections>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ran-Xp-fH3" userLabel="capture button">
                                 <rect key="frame" x="150" y="559" width="75" height="75"/>
                                 <constraints>
@@ -265,16 +275,6 @@
                                 <state key="highlighted" image="square" backgroundImage="arch"/>
                                 <connections>
                                     <action selector="handleCaptureButtonTap:" destination="KdT-PG-SUD" eventType="touchUpInside" id="Tr0-K3-RsZ"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VNv-QK-Md4" userLabel="album button">
-                                <rect key="frame" x="40" y="576.5" width="40" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="19T-Ba-xY4"/>
-                                    <constraint firstAttribute="width" constant="40" id="zhM-hJ-eOO"/>
-                                </constraints>
-                                <connections>
-                                    <segue destination="rPV-E3-eGw" kind="presentation" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="wQF-um-pZW"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Gh-0s-UNP" userLabel="camera button">
@@ -301,10 +301,10 @@
                             <constraint firstItem="UQl-hp-J8X" firstAttribute="top" secondItem="H4I-Wv-7zF" secondAttribute="top" id="Cdq-B0-7Js"/>
                             <constraint firstItem="8Gh-0s-UNP" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="Fes-mR-Gro"/>
                             <constraint firstItem="5mJ-xG-bz8" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" id="JL4-BO-Zla"/>
-                            <constraint firstItem="VNv-QK-Md4" firstAttribute="leading" secondItem="yKm-cY-ayC" secondAttribute="leading" constant="40" id="LKp-w6-LqO"/>
-                            <constraint firstItem="VNv-QK-Md4" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="MCc-Kg-TRH"/>
                             <constraint firstItem="CKX-Gz-Hsh" firstAttribute="top" secondItem="5mJ-xG-bz8" secondAttribute="bottom" constant="10" id="NmS-Ov-JWT"/>
+                            <constraint firstItem="qz5-ZM-2fO" firstAttribute="leading" secondItem="H4I-Wv-7zF" secondAttribute="leading" constant="40" id="OOC-NA-X4m"/>
                             <constraint firstItem="afc-Wv-Ahm" firstAttribute="top" secondItem="H4I-Wv-7zF" secondAttribute="top" id="OSi-fa-hIv"/>
+                            <constraint firstItem="qz5-ZM-2fO" firstAttribute="centerY" secondItem="ran-Xp-fH3" secondAttribute="centerY" id="QA9-d5-aP6"/>
                             <constraint firstItem="yKm-cY-ayC" firstAttribute="leading" secondItem="hne-uj-s8C" secondAttribute="leading" id="YKu-td-0tE"/>
                             <constraint firstItem="H4I-Wv-7zF" firstAttribute="bottom" secondItem="yKm-cY-ayC" secondAttribute="bottom" id="aL8-BY-eNs"/>
                             <constraint firstItem="UQl-hp-J8X" firstAttribute="trailing" secondItem="H4I-Wv-7zF" secondAttribute="trailing" id="b0t-O3-jfB"/>
@@ -323,7 +323,7 @@
                         <viewLayoutGuide key="safeArea" id="H4I-Wv-7zF"/>
                     </view>
                     <connections>
-                        <outlet property="albumButton" destination="VNv-QK-Md4" id="wET-rS-N28"/>
+                        <outlet property="albumButton" destination="qz5-ZM-2fO" id="LZ2-BZ-wZh"/>
                         <outlet property="blurEffectView" destination="UQl-hp-J8X" id="caa-L9-5kr"/>
                         <outlet property="cameraSwitchButton" destination="8Gh-0s-UNP" id="wPt-fp-dA9"/>
                         <outlet property="captureButton" destination="ran-Xp-fH3" id="mfw-Kp-ms4"/>
@@ -488,7 +488,6 @@
         <!--Navigation Controller-->
         <scene sceneID="DmS-ar-gbY">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ASX-g7-N40" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="rPV-E3-eGw" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="rHf-nR-4XV">
@@ -500,6 +499,7 @@
                         <segue destination="3ES-Kf-gQ5" kind="relationship" relationship="rootViewController" id="UTN-MN-nib"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ASX-g7-N40" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1501.5999999999999" y="-564.46776611694156"/>
         </scene>
