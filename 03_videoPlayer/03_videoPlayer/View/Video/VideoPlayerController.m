@@ -113,7 +113,8 @@
                       @"tracks",
                       @"availableMediaCharacteristicsWithMediaSelectionOptions"];
     self.asset = [AVAsset assetWithURL:self.url];
-    self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset automaticallyLoadedAssetKeys:keys];
+    //self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset automaticallyLoadedAssetKeys:keys];
+    self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset];
     [self addVideoRequestTimer];
     
     self.player = [AVPlayer playerWithPlayerItem:self.playerItem];

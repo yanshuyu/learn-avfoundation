@@ -57,7 +57,9 @@
 @property (strong, nonatomic) UIViewPropertyAnimator* blurEffectAnimator;
 @property (nonatomic) int lastSelectedModeIndex;
 @property (nonatomic) AVCaptureDevicePosition lastCameraPosition;
-
+@property (strong, nonatomic) NSTimer* recordTimer;
+@property (nonatomic) NSTimeInterval recordTimeCounter;
+@property (nonatomic) NSTimeInterval recordTimerInterval;
 @end
 
 @implementation SYCaptureViewController
@@ -139,6 +141,8 @@
     self.photoSettingView.hidden = TRUE;
     self.videoSettingView.hidden = TRUE;
     self.flashMeunView.hidden = TRUE;
+    
+    self.recordTimerInterval = 0.5;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -256,6 +260,14 @@
     
 }
 
+- (void)updateRecordTimeLable:(NSTimer*)timer {
+    self.recordTimeCounter += self.recordTimerInterval;
+    int minute = (int)self.recordTimeCounter / 60;
+    int second = (int)self.recordTimeCounter % 60;
+    NSString* timeStr = [NSString stringWithFormat:@"%02d:%02d", minute, second];
+    self.recordTimeLable.text = timeStr;
+}
+
 - (void)runZoomSliderFadeAnimaton:(BOOL)visible {
     if (visible) {
         [self.zoomSliderAnimator stopAnimation: TRUE];
@@ -314,7 +326,6 @@
                      }];
     
 }
-
 
 - (IBAction)handleCaptureButtonTap:(UIButton *)sender {
     if (self.currentCaptureMode == CaptureModePhoto) {
@@ -667,6 +678,14 @@ SaveCapturePhotoWithSessionID:(int64_t)Id
         self.cameraSwitchButton.enabled = FALSE;
         self.albumButton.enabled = FALSE;
         [self.captureButton setSelected:TRUE];
+        [self.recordTimer invalidate];
+        self.recordTimeLable.textColor = UIColor.redColor;
+        self.recordTimeCounter = 0;
+        self.recordTimer = [NSTimer scheduledTimerWithTimeInterval:self.recordTimerInterval
+                                                            target:self
+                                                          selector:@selector(updateRecordTimeLable:)
+                                                          userInfo:nil
+                                                           repeats:true];
     });
 }
 
@@ -676,6 +695,15 @@ SaveCapturePhotoWithSessionID:(int64_t)Id
         self.cameraSwitchButton.enabled = TRUE;
         self.albumButton.enabled = TRUE;
         [self.captureButton setSelected:FALSE];
+        [self.recordTimer invalidate];
+    });
+}
+
+- (void)captureController:(CaptureController *)controller SaveVideo:(NSURL *)url ToLibraryWithResult:(AssetSavedResult)result Error:(NSError *)error {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.recordTimeLable.textColor = UIColor.whiteColor;
+        self.recordTimeLable.text = @"00:00";
+        self.recordTimeCounter = 0;
     });
 }
 
