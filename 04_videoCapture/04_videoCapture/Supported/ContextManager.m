@@ -9,13 +9,22 @@
 #import "ContextManager.h"
 #import <CoreImage/CoreImage.h>
 
+@interface ContextManager ()
+
+@property(strong, nonatomic, readwrite) CIContext* shareCIContext;
+@property(strong, nonatomic, readwrite) EAGLContext* shareGLContext;
+
+
+@end
+
 @implementation ContextManager
 
 - (instancetype)initContexts {
     self = [super init];
     if (self)
     {
-        self.shareCIContext = [CIContext new];
+        self.shareGLContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+        self.shareCIContext = [CIContext contextWithEAGLContext:self.shareGLContext];
     }
     return  self;
 }

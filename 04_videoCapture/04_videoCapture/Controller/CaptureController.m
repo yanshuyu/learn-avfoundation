@@ -1416,19 +1416,20 @@ didFinishCaptureForResolvedSettings:(AVCaptureResolvedPhotoSettings *)resolvedSe
 // video/sufio data sample buffer output delegate
 //
 - (void)captureOutput:(AVCaptureOutput *)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
-    AVCaptureConnection* videoDataOutputConnection = [self.videoDataOutput connectionWithMediaType:AVMediaTypeVideo];
-    AVCaptureConnection* audioDataOutputConnection = [self.audioDataOutput connectionWithMediaType:AVMediaTypeAudio];
-    
-    CFRetain(sampleBuffer);
-    dispatch_async(self.movieQueue, ^{
+    @autoreleasepool {
+        AVCaptureConnection* videoDataOutputConnection = [self.videoDataOutput connectionWithMediaType:AVMediaTypeVideo];
+        AVCaptureConnection* audioDataOutputConnection = [self.audioDataOutput connectionWithMediaType:AVMediaTypeAudio];
+        
+        //CFRetain(sampleBuffer);
+        //dispatch_async(self.movieQueue, ^{
         if (connection == videoDataOutputConnection) {
             CMTime presentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
             CVImageBufferRef piexlBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
             CIImage* scrImage = [CIImage imageWithCVImageBuffer:piexlBuffer];
             CIImage* processImage = Nil;
-            if ([self.delegate respondsToSelector:@selector(captureController:ExpectedProcessingFilterVideoFrame:)]) {
+            if ([self.delegate respondsToSelector:@selector(captureController:ExpectedProcessingVideoFrame:)]) {
                 processImage = [self.delegate captureController:self
-                             ExpectedProcessingFilterVideoFrame:scrImage];
+                             ExpectedProcessingVideoFrame:scrImage];
             }
             if (self.recording) {
                 processImage = processImage == Nil ? scrImage : processImage;
@@ -1459,8 +1460,10 @@ didFinishCaptureForResolvedSettings:(AVCaptureResolvedPhotoSettings *)resolvedSe
                 [self.movieWritter appendMediaSampleBuffer:sampleBuffer WithInputContext:AUDIO_WRITTER_INPUT_CONTEXT];
             }
         }
-        CFRelease(sampleBuffer);
-    });
+        //CFRelease(sampleBuffer);
+        //});
+
+    }
 }
 
 

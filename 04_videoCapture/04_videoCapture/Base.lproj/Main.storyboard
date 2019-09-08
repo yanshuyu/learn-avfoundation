@@ -23,20 +23,9 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="afc-Wv-Ahm" userLabel="Frame  PreView View">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="afc-Wv-Ahm" userLabel="glPreviewView" customClass="GLPreviewView">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
-                                <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WDH-Td-G8q">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
-                                    </imageView>
-                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="WDH-Td-G8q" secondAttribute="bottom" id="6px-dT-Ta6"/>
-                                    <constraint firstItem="WDH-Td-G8q" firstAttribute="top" secondItem="afc-Wv-Ahm" secondAttribute="top" id="FSE-mq-Kj1"/>
-                                    <constraint firstAttribute="trailing" secondItem="WDH-Td-G8q" secondAttribute="trailing" id="Znh-OL-2KQ"/>
-                                    <constraint firstItem="WDH-Td-G8q" firstAttribute="leading" secondItem="afc-Wv-Ahm" secondAttribute="leading" id="hJ6-Cx-10U"/>
-                                </constraints>
                             </view>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FCx-Fm-tg3" userLabel="Video Gesture View" customClass="VideoGestureLayer">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
@@ -333,8 +322,7 @@
                         <outlet property="flashOffButton" destination="7ef-CF-8nb" id="A8g-De-gAt"/>
                         <outlet property="flashOnButton" destination="Mhb-fl-ZBa" id="ta2-Yl-LGA"/>
                         <outlet property="flashSwitchButton" destination="z47-hy-FZX" id="0Fj-dQ-6vs"/>
-                        <outlet property="framePreviewImage" destination="WDH-Td-G8q" id="vV0-kY-TOU"/>
-                        <outlet property="framePreviewView" destination="afc-Wv-Ahm" id="bdm-xt-KYW"/>
+                        <outlet property="glPreviewView" destination="afc-Wv-Ahm" id="GuA-NE-34u"/>
                         <outlet property="hdrSwitchButton" destination="8K4-fV-uiR" id="xUw-qD-9YG"/>
                         <outlet property="liveLable" destination="CKX-Gz-Hsh" id="ONc-1z-ukG"/>
                         <outlet property="livePhotoSwitchButton" destination="WTE-br-hx6" id="FzO-eR-dXl"/>

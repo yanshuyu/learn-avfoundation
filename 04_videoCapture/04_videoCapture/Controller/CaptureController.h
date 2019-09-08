@@ -90,7 +90,7 @@ typedef enum : NSUInteger {
 //- (void)captureController:(CaptureController *)controller DidCaptureVideoFrame:(CIImage*)image;
 - (void)captureController:(CaptureController *)controller BeginRealTimeFilterVideoRecordSession:(BOOL)ready;
 - (void)captureController:(CaptureController *)controller FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL* _Nullable)url Error:(NSError* _Nullable)error;
-- (CIImage*)captureController:(CaptureController *)controller ExpectedProcessingFilterVideoFrame:(CIImage*)frame;
+- (CIImage*)captureController:(CaptureController *)controller ExpectedProcessingVideoFrame:(CIImage*)frame;
 
 // device capbilities
 - (void)captureController:(CaptureController *)controller BeginSwitchCameraFromPosition:(AVCaptureDevicePosition)position;

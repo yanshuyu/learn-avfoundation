@@ -8,6 +8,7 @@
 #import "SYCaptureViewController.h"
 #import "../View/VideoPreviewView.h"
 #import "../View/VideoGestureLayer.h"
+#import "../View/GLPreviewView.h"
 #import "../Controller/CaptureController.h"
 #import "../Supported/ScrollableTabBar.h"
 #import "../Supported/SYScrollableTabBarItem.h"
@@ -23,6 +24,7 @@
                                         UINavigationControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet VideoPreviewView *videoPreviewView;
+@property (weak, nonatomic) IBOutlet GLPreviewView *glPreviewView;
 @property (weak, nonatomic) IBOutlet VideoGestureLayer *videoGestureView;
 @property (weak, nonatomic) IBOutlet UIView *scrollableTabBarContainer;
 @property (weak, nonatomic) IBOutlet UIStackView *zoomSliderContainer;
@@ -44,8 +46,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *torchSwitchButton;
 @property (weak, nonatomic) IBOutlet UILabel *recordTimeLable;
 @property (weak, nonatomic) IBOutlet UILabel *liveLable;
-@property (weak, nonatomic) IBOutlet UIView *framePreviewView;
-@property (weak, nonatomic) IBOutlet UIImageView *framePreviewImage;
 @property (weak, nonatomic) IBOutlet UIVisualEffectView *blurEffectView;
 
 
@@ -143,7 +143,6 @@
     
     self.videoPreviewView.layer.anchorPoint = CGPointMake(0, 0);
     self.videoGestureView.layer.anchorPoint = CGPointMake(0, 0);
-    self.framePreviewImage.contentMode = UIViewContentModeScaleAspectFill;
     [self updatePreviewViewFrameForCaptureMode:CaptureModeVideo];
     
     self.videoGestureView.delegate = self;
@@ -622,7 +621,8 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
         self.videoGestureView.tapToFocusAndExposureEnabled = self.captureController.tapToFocusEnabled && self.captureController.tapToExposureEnabled;
         self.videoGestureView.pinchToZoomCameraEnabled = self.captureController.cameraZoomEnabled;
         [self updatePreviewViewFrameForCaptureMode:mode];
-        self.framePreviewView.hidden = (mode != CaptureModeRealTimeFilterVideo);
+        //self.framePreviewView.hidden = (mode != CaptureModeRealTimeFilterVideo);
+        self.glPreviewView.hidden = (mode != CaptureModeRealTimeFilterVideo);
         [UIView animateWithDuration:0.7 animations:^{
             self.blurEffectView.effect = Nil;
         }];
@@ -666,7 +666,8 @@ TapToResetFocusAndExposureAtLayerPoint:(CGPoint)tapPoint
         if (success) {
             self.scrollableTabBar.interactionEnabled = TRUE;
             UIViewAnimationOptions option = self.lastCameraPosition == AVCaptureDevicePositionFront ? UIViewAnimationOptionTransitionFlipFromRight : UIViewAnimationOptionTransitionFlipFromLeft;
-            UIView* previewView = self.currentCaptureMode == CaptureModeRealTimeFilterVideo ? self.framePreviewView : self.videoPreviewView;
+            //UIView* previewView = self.currentCaptureMode == CaptureModeRealTimeFilterVideo ? self.framePreviewView : self.videoPreviewView;
+            UIView* previewView = self.currentCaptureMode == CaptureModeRealTimeFilterVideo ? self.glPreviewView : self.videoPreviewView;
             if (self.lastCameraPosition != position && success) {
                 [UIView transitionWithView:previewView
                                   duration:0.5
@@ -778,20 +779,26 @@ FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL *)url
     });
 }
 
-- (CIImage *)captureController:(CaptureController *)controller ExpectedProcessingFilterVideoFrame:(CIImage *)frame {
-    CIFilter* filter = [CIFilter filterWithName:@"CIComicEffect"];
-    CIImage* processImage = Nil;
-    if (filter) {
-        [filter setValue:frame forKey:kCIInputImageKey];
-        processImage = filter.outputImage;
-    }
-    
-    processImage = processImage == Nil ? frame : processImage;
+- (CIImage *)captureController:(CaptureController *)controller ExpectedProcessingVideoFrame:(nonnull CIImage *)frame {
+//    CIFilter* filter = [CIFilter filterWithName:@"CIComicEffect"];
+//    CIImage* processImage = Nil;
+//    if (filter) {
+//        [filter setValue:frame forKey:kCIInputImageKey];
+//        processImage = filter.outputImage;
+//    }
+//
+//    processImage = processImage == Nil ? frame : processImage;
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        self.framePreviewImage.image = [UIImage imageWithCIImage:processImage];
+//    });
+//
+ //   return processImage;
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.framePreviewImage.image = [UIImage imageWithCIImage:processImage];
+       [self.glPreviewView renderCIImage:frame];
     });
+
     
-    return processImage;
+    return frame;
 }
 
 - (void)captureController:(CaptureController *)controller DidCameraZoomToFactor:(CGFloat)factor {
