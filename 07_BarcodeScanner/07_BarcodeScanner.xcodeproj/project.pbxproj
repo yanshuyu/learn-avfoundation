@@ -1,0 +1,387 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		11C95665241BC11C003F2398 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C95664241BC11C003F2398 /* AppDelegate.swift */; };
+		11C95667241BC11C003F2398 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C95666241BC11C003F2398 /* SceneDelegate.swift */; };
+		11C95669241BC11C003F2398 /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C95668241BC11C003F2398 /* ScanViewController.swift */; };
+		11C9566C241BC11C003F2398 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11C9566A241BC11C003F2398 /* Main.storyboard */; };
+		11C9566E241BC121003F2398 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11C9566D241BC121003F2398 /* Assets.xcassets */; };
+		11C95671241BC121003F2398 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11C9566F241BC121003F2398 /* LaunchScreen.storyboard */; };
+		11C95679241BC1A5003F2398 /* BarcodeScanController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C95678241BC1A5003F2398 /* BarcodeScanController.swift */; };
+		11C9567F241BE39F003F2398 /* BarcodeScannerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C9567E241BE39F003F2398 /* BarcodeScannerPreviewView.swift */; };
+		11C95681241CB63A003F2398 /* UIImage+barCodeGenerate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C95680241CB63A003F2398 /* UIImage+barCodeGenerate.swift */; };
+		11C95683241CBDAA003F2398 /* BarcodePresentingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C95682241CBDAA003F2398 /* BarcodePresentingViewController.swift */; };
+		11C95685241CC640003F2398 /* PickScanneTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C95684241CC640003F2398 /* PickScanneTableViewController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		11C95661241BC11C003F2398 /* 07_BarcodeScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 07_BarcodeScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		11C95664241BC11C003F2398 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		11C95666241BC11C003F2398 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		11C95668241BC11C003F2398 /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
+		11C9566B241BC11C003F2398 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		11C9566D241BC121003F2398 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		11C95670241BC121003F2398 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		11C95672241BC121003F2398 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		11C95678241BC1A5003F2398 /* BarcodeScanController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScanController.swift; sourceTree = "<group>"; };
+		11C9567E241BE39F003F2398 /* BarcodeScannerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerPreviewView.swift; sourceTree = "<group>"; };
+		11C95680241CB63A003F2398 /* UIImage+barCodeGenerate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+barCodeGenerate.swift"; sourceTree = "<group>"; };
+		11C95682241CBDAA003F2398 /* BarcodePresentingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodePresentingViewController.swift; sourceTree = "<group>"; };
+		11C95684241CC640003F2398 /* PickScanneTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickScanneTableViewController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		11C9565E241BC11C003F2398 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		11C95658241BC11C003F2398 = {
+			isa = PBXGroup;
+			children = (
+				11C95663241BC11C003F2398 /* 07_BarcodeScanner */,
+				11C95662241BC11C003F2398 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		11C95662241BC11C003F2398 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				11C95661241BC11C003F2398 /* 07_BarcodeScanner.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		11C95663241BC11C003F2398 /* 07_BarcodeScanner */ = {
+			isa = PBXGroup;
+			children = (
+				11C9567D241BE365003F2398 /* Controller */,
+				11C9567C241BE352003F2398 /* Extendsion */,
+				11C9567A241BE33C003F2398 /* View */,
+				11C95678241BC1A5003F2398 /* BarcodeScanController.swift */,
+				11C95664241BC11C003F2398 /* AppDelegate.swift */,
+				11C95666241BC11C003F2398 /* SceneDelegate.swift */,
+				11C9566A241BC11C003F2398 /* Main.storyboard */,
+				11C9566D241BC121003F2398 /* Assets.xcassets */,
+				11C9566F241BC121003F2398 /* LaunchScreen.storyboard */,
+				11C95672241BC121003F2398 /* Info.plist */,
+			);
+			path = 07_BarcodeScanner;
+			sourceTree = "<group>";
+		};
+		11C9567A241BE33C003F2398 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				11C9567E241BE39F003F2398 /* BarcodeScannerPreviewView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		11C9567C241BE352003F2398 /* Extendsion */ = {
+			isa = PBXGroup;
+			children = (
+				11C95680241CB63A003F2398 /* UIImage+barCodeGenerate.swift */,
+			);
+			path = Extendsion;
+			sourceTree = "<group>";
+		};
+		11C9567D241BE365003F2398 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				11C95684241CC640003F2398 /* PickScanneTableViewController.swift */,
+				11C95668241BC11C003F2398 /* ScanViewController.swift */,
+				11C95682241CBDAA003F2398 /* BarcodePresentingViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		11C95660241BC11C003F2398 /* 07_BarcodeScanner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 11C95675241BC121003F2398 /* Build configuration list for PBXNativeTarget "07_BarcodeScanner" */;
+			buildPhases = (
+				11C9565D241BC11C003F2398 /* Sources */,
+				11C9565E241BC11C003F2398 /* Frameworks */,
+				11C9565F241BC11C003F2398 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = 07_BarcodeScanner;
+			productName = 07_BarcodeScanner;
+			productReference = 11C95661241BC11C003F2398 /* 07_BarcodeScanner.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		11C95659241BC11C003F2398 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1130;
+				LastUpgradeCheck = 1130;
+				ORGANIZATIONNAME = sy;
+				TargetAttributes = {
+					11C95660241BC11C003F2398 = {
+						CreatedOnToolsVersion = 11.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 11C9565C241BC11C003F2398 /* Build configuration list for PBXProject "07_BarcodeScanner" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 11C95658241BC11C003F2398;
+			productRefGroup = 11C95662241BC11C003F2398 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				11C95660241BC11C003F2398 /* 07_BarcodeScanner */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		11C9565F241BC11C003F2398 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11C95671241BC121003F2398 /* LaunchScreen.storyboard in Resources */,
+				11C9566E241BC121003F2398 /* Assets.xcassets in Resources */,
+				11C9566C241BC11C003F2398 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		11C9565D241BC11C003F2398 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11C95669241BC11C003F2398 /* ScanViewController.swift in Sources */,
+				11C95683241CBDAA003F2398 /* BarcodePresentingViewController.swift in Sources */,
+				11C95681241CB63A003F2398 /* UIImage+barCodeGenerate.swift in Sources */,
+				11C95665241BC11C003F2398 /* AppDelegate.swift in Sources */,
+				11C95685241CC640003F2398 /* PickScanneTableViewController.swift in Sources */,
+				11C95667241BC11C003F2398 /* SceneDelegate.swift in Sources */,
+				11C9567F241BE39F003F2398 /* BarcodeScannerPreviewView.swift in Sources */,
+				11C95679241BC1A5003F2398 /* BarcodeScanController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		11C9566A241BC11C003F2398 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				11C9566B241BC11C003F2398 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		11C9566F241BC121003F2398 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				11C95670241BC121003F2398 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		11C95673241BC121003F2398 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		11C95674241BC121003F2398 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		11C95676241BC121003F2398 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7Q4QUU55W5;
+				INFOPLIST_FILE = 07_BarcodeScanner/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-7-BarcodeScanner";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		11C95677241BC121003F2398 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7Q4QUU55W5;
+				INFOPLIST_FILE = 07_BarcodeScanner/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-7-BarcodeScanner";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		11C9565C241BC11C003F2398 /* Build configuration list for PBXProject "07_BarcodeScanner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11C95673241BC121003F2398 /* Debug */,
+				11C95674241BC121003F2398 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		11C95675241BC121003F2398 /* Build configuration list for PBXNativeTarget "07_BarcodeScanner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11C95676241BC121003F2398 /* Debug */,
+				11C95677241BC121003F2398 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 11C95659241BC11C003F2398 /* Project object */;
+}
