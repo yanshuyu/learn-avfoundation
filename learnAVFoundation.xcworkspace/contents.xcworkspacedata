@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:05_videoEditor/05_videoEditor.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:04_videoCapture/04_videoCapture.xcodeproj">
    </FileRef>
    <FileRef
