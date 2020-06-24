@@ -16,6 +16,9 @@ class VETimeLine: TimeLine {
     
     private var audioTracks: [AudioProvider] = []
     
+    var isEmpty: Bool {
+        return self.mainTracks.count + self.overlayTracks.count + self.audioTracks.count < 1
+    }
     
     func mainTrackItems() -> [TransitionableVideoProvider] {
         return self.mainTracks
@@ -45,11 +48,11 @@ class VETimeLine: TimeLine {
         if let _ = self.overlayTracks.first(where: { $0 === overlayItem }) {
             return
         }
-        var mutableOverlayItem = overlayItem
+
         if let time = time {
-            mutableOverlayItem.startTimeInTrack = time
+            overlayItem.startTimeInTrack = time
         }
-        self.overlayTracks.append(mutableOverlayItem)
+        self.overlayTracks.append(overlayItem)
 
     }
     
@@ -61,11 +64,10 @@ class VETimeLine: TimeLine {
         if let _ = self.audioTracks.first(where: { $0 === audioItem }) {
             return
         }
-        var mutableAudioItem = audioItem
         if let time = time {
-            mutableAudioItem.startTimeInTrack = time
+            audioItem.startTimeInTrack = time
         }
-        self.audioTracks.append(mutableAudioItem)
+        self.audioTracks.append(audioItem)
 
     }
     
@@ -109,24 +111,28 @@ class VETimeLine: TimeLine {
         removeAllAudioItems()
     }
     
-    func reloadTimeRanges() {
+    func updateTimeRanges() {
         // layout main tracks, ignore transition duration
         var cursorTime: CMTime = .zero
         for offset in 0..<self.mainTracks.count {
-            var curItem = self.mainTracks[offset]
-            var transitionDur = curItem.transitionDuration
+            let curItem = self.mainTracks[offset]
+            var transitionDur = curItem.videoTransition?.duration ?? CMTime.zero
             if offset == 0 {
                 transitionDur = .zero
             }
             cursorTime = CMTimeSubtract(cursorTime, transitionDur)
+            
+            #if DEBUG
             precondition(cursorTime.isValid)
+            #endif
+            
             curItem.startTimeInTrack = cursorTime
             cursorTime = CMTimeAdd(cursorTime, curItem.durationTimeInTrack)
         }
         
         // vaildated transition duration
         for offset in 0..<self.mainTracks.count {
-            var current = self.mainTracks[offset]
+            let current = self.mainTracks[offset]
             var prevItem: TransitionableVideoProvider?
             var nextItem: TransitionableVideoProvider?
             
@@ -141,15 +147,15 @@ class VETimeLine: TimeLine {
                 if intersectRange.duration.seconds > 0 {
                     offsetTimeRanges(from: offset+1, by: intersectRange.duration)
                     current.startTimeInTrack = current.timeRangeInTrack.centerAlignToTime(prev.timeRangeInTrack.end)!.start
-                    current.transitionDuration = CMTimeMakeWithSeconds(current.durationTimeInTrack.seconds * 0.5, preferredTimescale: 600)
-                    next.transitionDuration = current.transitionDuration
+                    current.videoTransition!.duration = CMTimeMakeWithSeconds(current.durationTimeInTrack.seconds * 0.5, preferredTimescale: 600)
+                    next.videoTransition!.duration = current.videoTransition!.duration
                 }
             }
             
             if let next = nextItem, prevItem == nil {
                 if next.timeRangeInTrack.containsTimeRange(current.timeRangeInTrack) {
                     offsetTimeRanges(from: offset+1, by:CMTimeSubtract(current.timeRangeInTrack.centerTime()!, next.startTimeInTrack))
-                    next.transitionDuration = CMTimeMakeWithSeconds(current.durationTimeInTrack.seconds * 0.5, preferredTimescale: 600)
+                    next.videoTransition!.duration = CMTimeMakeWithSeconds(current.durationTimeInTrack.seconds * 0.5, preferredTimescale: 600)
                 }
             }
             
@@ -158,7 +164,7 @@ class VETimeLine: TimeLine {
                 if prev.timeRangeInTrack.containsTimeRange(current.timeRangeInTrack) {
                     let target = current.timeRangeInTrack.centerAlignToTime(prev.timeRangeInTrack.end)!
                     offsetTimeRanges(from: offset, by: CMTimeSubtract(target.start, current.startTimeInTrack))
-                    current.transitionDuration = CMTimeMakeWithSeconds(current.durationTimeInTrack.seconds * 0.5, preferredTimescale: 600)
+                    current.videoTransition!.duration = CMTimeMakeWithSeconds(current.durationTimeInTrack.seconds * 0.5, preferredTimescale: 600)
                 }
             }
         }
@@ -166,7 +172,7 @@ class VETimeLine: TimeLine {
     
     func performBatchUpdate(_ updateBlock: () -> Void) {
         updateBlock()
-        reloadTimeRanges()
+        updateTimeRanges()
     }
     
     
@@ -178,7 +184,7 @@ class VETimeLine: TimeLine {
 extension VETimeLine {
     private func offsetTimeRanges(from index: Int, by time: CMTime) {
         for offset in index..<self.mainTracks.count {
-            var current = self.mainTracks[offset]
+            let current = self.mainTracks[offset]
             current.startTimeInTrack = CMTimeAdd(current.startTimeInTrack, time)
         }
     }

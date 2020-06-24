@@ -8,6 +8,7 @@
 
 import Foundation
 import AVFoundation
+import CoreImage
 
 protocol VideoCompositionTackProvider: class {
     var numberOfVideoTracks: uint { get }
@@ -16,12 +17,14 @@ protocol VideoCompositionTackProvider: class {
 }
 
 
-protocol VideoProvider:VideoCompositionTackProvider, AudioProvider {
+protocol VideoEffectProvider: class {
+    func applyEffect(to frame: CIImage, renderSize: CGSize, atTime: CMTime) -> CIImage
+}
+
+protocol VideoProvider:VideoCompositionTackProvider, VideoEffectProvider, AudioProvider {
     
 }
 
 protocol TransitionableVideoProvider: VideoProvider {
-    var transitionDuration: CMTime { get set }
-    var videoTransitionIdentifier: String { get set }
-    var audioTransitionIdentifier: String { get set }
+    var videoTransition: VideoTransition? { get set }
 }

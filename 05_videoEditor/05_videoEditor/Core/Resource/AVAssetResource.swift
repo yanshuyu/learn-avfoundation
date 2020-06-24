@@ -22,6 +22,10 @@ class AVAssetResource: Resource {
         }
     }
     
+    var resourceURL: URL? {
+        return (self.asset as? AVURLAsset)?.url
+    }
+    
     var natureSize: CGSize = CGSize.zero
     
     var duration: CMTime = CMTime.zero
@@ -75,8 +79,8 @@ class AVAssetResource: Resource {
                                                     
                                                     if asset.statusOfValue(forKey: #keyPath(AVAsset.tracks), error: &strongSelf.resourceError) != .loaded
                                                     || asset.statusOfValue(forKey: #keyPath(AVAsset.duration), error: &strongSelf.resourceError) != .loaded{
-                                                        strongSelf.resetStatus()
                                                         completionHandler?(.unavailable, strongSelf.resourceError)
+                                                        strongSelf.resetStatus()
                                                         return
                                                     }
                                                     strongSelf.updateStatus()

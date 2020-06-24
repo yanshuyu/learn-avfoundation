@@ -22,6 +22,7 @@ protocol Cancelable {
 
 
 protocol Resource {
+    var resourceURL: URL? { get }
     var natureSize: CGSize { get }
     var duration: CMTime { get }
     var preferredTransform: CGAffineTransform { get }

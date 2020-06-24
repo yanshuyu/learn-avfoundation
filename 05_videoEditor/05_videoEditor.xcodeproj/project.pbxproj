@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		111E0BE3247BFB8A0045F07E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111E0BE2247BFB8A0045F07E /* AppDelegate.swift */; };
 		111E0BE5247BFB8A0045F07E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111E0BE4247BFB8A0045F07E /* SceneDelegate.swift */; };
-		111E0BE7247BFB8A0045F07E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111E0BE6247BFB8A0045F07E /* ViewController.swift */; };
 		111E0BEA247BFB8A0045F07E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 111E0BE8247BFB8A0045F07E /* Main.storyboard */; };
 		111E0BEC247BFB8C0045F07E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 111E0BEB247BFB8C0045F07E /* Assets.xcassets */; };
 		111E0BEF247BFB8C0045F07E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 111E0BED247BFB8C0045F07E /* LaunchScreen.storyboard */; };
@@ -40,13 +39,17 @@
 		111E0C33248189640045F07E /* 05_blackhole.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 111E0C2E248188DC0045F07E /* 05_blackhole.mp4 */; };
 		111E0C362481908E0045F07E /* 01 Star Gazing.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 111E0C3424818E6C0045F07E /* 01 Star Gazing.m4a */; };
 		111E0C372481908E0045F07E /* 02 Keep Going.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 111E0C3524818E6C0045F07E /* 02 Keep Going.m4a */; };
+		114FFD6224A0AB15001ADD27 /* VEVideoCompositionLayerInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6124A0AB15001ADD27 /* VEVideoCompositionLayerInstruction.swift */; };
+		114FFD6424A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6324A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift */; };
+		114FFD6624A0FB04001ADD27 /* VEVideoCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6524A0FB04001ADD27 /* VEVideoCompositor.swift */; };
+		114FFD6824A27FC1001ADD27 /* Dictionary+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6724A27FC1001ADD27 /* Dictionary+extension.swift */; };
+		1160BD29249F6F0D0058872D /* VideoTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1160BD28249F6F0D0058872D /* VideoTransition.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		111E0BDF247BFB8A0045F07E /* 05_videoEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 05_videoEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		111E0BE2247BFB8A0045F07E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		111E0BE4247BFB8A0045F07E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		111E0BE6247BFB8A0045F07E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		111E0BE9247BFB8A0045F07E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		111E0BEB247BFB8C0045F07E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		111E0BEE247BFB8C0045F07E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -78,6 +81,11 @@
 		111E0C2E248188DC0045F07E /* 05_blackhole.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 05_blackhole.mp4; sourceTree = "<group>"; };
 		111E0C3424818E6C0045F07E /* 01 Star Gazing.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "01 Star Gazing.m4a"; sourceTree = "<group>"; };
 		111E0C3524818E6C0045F07E /* 02 Keep Going.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "02 Keep Going.m4a"; sourceTree = "<group>"; };
+		114FFD6124A0AB15001ADD27 /* VEVideoCompositionLayerInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEVideoCompositionLayerInstruction.swift; sourceTree = "<group>"; };
+		114FFD6324A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEVideoCompositionInstruction.swift; sourceTree = "<group>"; };
+		114FFD6524A0FB04001ADD27 /* VEVideoCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEVideoCompositor.swift; sourceTree = "<group>"; };
+		114FFD6724A27FC1001ADD27 /* Dictionary+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+extension.swift"; sourceTree = "<group>"; };
+		1160BD28249F6F0D0058872D /* VideoTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTransition.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +124,6 @@
 				111E0C0A247C18A10045F07E /* Extension */,
 				111E0BE2247BFB8A0045F07E /* AppDelegate.swift */,
 				111E0BE4247BFB8A0045F07E /* SceneDelegate.swift */,
-				111E0BE6247BFB8A0045F07E /* ViewController.swift */,
 				111E0C20247D02BE0045F07E /* TestViewController.swift */,
 				111E0BE8247BFB8A0045F07E /* Main.storyboard */,
 				111E0BEB247BFB8C0045F07E /* Assets.xcassets */,
@@ -135,6 +142,7 @@
 				111E0BFD247C033A0045F07E /* TimeLine.swift */,
 				111E0C04247C05B20045F07E /* Resource.swift */,
 				111E0C02247C04D00045F07E /* CompositionGenerator.swift */,
+				1160BD28249F6F0D0058872D /* VideoTransition.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -154,6 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				111E0C222480BE5B0045F07E /* Array+Extension.swift */,
+				114FFD6724A27FC1001ADD27 /* Dictionary+extension.swift */,
 				111E0C2824815FBF0045F07E /* CMTimeRange+Extension.swift */,
 			);
 			path = Extension;
@@ -190,6 +199,9 @@
 			children = (
 				111E0C0F247C248E0045F07E /* VideoTrackItem.swift */,
 				111E0C13247CCB5C0045F07E /* TransitionalbeVideoTrackItem.swift */,
+				114FFD6124A0AB15001ADD27 /* VEVideoCompositionLayerInstruction.swift */,
+				114FFD6324A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift */,
+				114FFD6524A0FB04001ADD27 /* VEVideoCompositor.swift */,
 			);
 			path = Video;
 			sourceTree = "<group>";
@@ -294,24 +306,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				114FFD6224A0AB15001ADD27 /* VEVideoCompositionLayerInstruction.swift in Sources */,
 				111E0BFE247C033A0045F07E /* TimeLine.swift in Sources */,
 				111E0BF8247BFD1A0045F07E /* CompositionTimeRangeProvider.swift in Sources */,
+				1160BD29249F6F0D0058872D /* VideoTransition.swift in Sources */,
 				111E0C21247D02BE0045F07E /* TestViewController.swift in Sources */,
 				111E0C232480BE5B0045F07E /* Array+Extension.swift in Sources */,
 				111E0C2924815FBF0045F07E /* CMTimeRange+Extension.swift in Sources */,
 				111E0BFC247BFFA30045F07E /* AudioProvider.swift in Sources */,
 				111E0C05247C05B20045F07E /* Resource.swift in Sources */,
+				114FFD6624A0FB04001ADD27 /* VEVideoCompositor.swift in Sources */,
 				111E0BFA247BFE0E0045F07E /* VideoProvider.swift in Sources */,
-				111E0BE7247BFB8A0045F07E /* ViewController.swift in Sources */,
 				111E0C0E247C1B160045F07E /* TrackItem.swift in Sources */,
 				111E0C01247C04550045F07E /* VETimeLine.swift in Sources */,
 				111E0BE3247BFB8A0045F07E /* AppDelegate.swift in Sources */,
 				111E0C12247CC7F80045F07E /* AudioTrackItem.swift in Sources */,
+				114FFD6824A27FC1001ADD27 /* Dictionary+extension.swift in Sources */,
 				111E0C10247C248E0045F07E /* VideoTrackItem.swift in Sources */,
 				111E0BE5247BFB8A0045F07E /* SceneDelegate.swift in Sources */,
 				111E0C03247C04D00045F07E /* CompositionGenerator.swift in Sources */,
 				111E0C16247CCC280045F07E /* VECompositionGenerator.swift in Sources */,
 				111E0C14247CCB5C0045F07E /* TransitionalbeVideoTrackItem.swift in Sources */,
+				114FFD6424A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift in Sources */,
 				111E0C09247C0A080045F07E /* AVAssetResource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,12 +8,12 @@
 
 import Foundation
 import AVFoundation
-
+import CoreImage
 
 
 
 class VideoTrackItem: AudioTrackItem, VideoProvider {
-    
+
     var numberOfVideoTracks: uint {
         guard let res = self.resource,
             res.resourceStatus == .availdable else {
@@ -45,5 +45,12 @@ class VideoTrackItem: AudioTrackItem, VideoProvider {
             }
         }
         return compositionTrack
+    }
+    
+    //
+    // MARK:- VideoEffectProvider
+    //
+    func applyEffect(to frame: CIImage, renderSize: CGSize, atTime: CMTime) -> CIImage {
+        return frame
     }
 }

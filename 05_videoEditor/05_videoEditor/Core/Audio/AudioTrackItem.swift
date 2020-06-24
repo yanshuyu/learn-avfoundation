@@ -11,7 +11,10 @@ import AVFoundation
 
 
 class AudioTrackItem: TrackItem, AudioProvider {
-        
+    
+    //
+    // MARK: - AudioCompositionTrackProvider
+    //
     var numberOfAudioTracks: uint {
         guard let res = self.resource,
             res.resourceStatus == .availdable else {
@@ -45,4 +48,10 @@ class AudioTrackItem: TrackItem, AudioProvider {
         return compositionTrack
     }
     
+    //
+    // MARK: - AudioMixerProvider
+    //
+    func configrueAudioMix(with parameters: AVMutableAudioMixInputParameters) {
+        
+    }
 }

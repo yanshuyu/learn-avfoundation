@@ -9,7 +9,9 @@
 import Foundation
 import AVFoundation
 
-protocol TimeLine {    
+protocol TimeLine {
+    var isEmpty: Bool { get }
+    
     func mainTrackItems() -> [TransitionableVideoProvider]
     func overlayTrackItems() -> [VideoProvider]
     func audioTrackItems() -> [AudioProvider]
@@ -32,7 +34,7 @@ protocol TimeLine {
     func removeAllAudioItems()
     func removeAllItems()
     
-    func reloadTimeRanges()
+    func updateTimeRanges()
     func performBatchUpdate(_ updateBlock: ()->Void)
     
 }

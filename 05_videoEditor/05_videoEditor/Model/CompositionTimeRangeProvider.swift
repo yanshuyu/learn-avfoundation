@@ -9,7 +9,7 @@
 import Foundation
 import AVFoundation
 
-protocol CompositionTimeRangeProvider {
+protocol CompositionTimeRangeProvider: class {
     var startTimeInTrack: CMTime { get set }
     var durationTimeInTrack: CMTime { get }
 }

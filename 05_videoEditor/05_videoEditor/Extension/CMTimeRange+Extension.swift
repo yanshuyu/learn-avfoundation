@@ -24,5 +24,70 @@ extension CMTimeRange {
         }
         return nil
     }
+    
+    func sliceTimeRanges(by: CMTimeRange) -> [CMTimeRange] {
+        let intersection = self.intersection(by)
+        guard intersection.duration.seconds > 0 else {
+            return [self]
+        }
+        
+        var slices: [CMTimeRange] = []
+        let leftRange = self.start < by.start ? self : by
+        let rightRange = self.start > by.start ? self : by
+        
+        let leftSlice = CMTimeRange(start: leftRange.start, end: intersection.start)
+        if leftSlice.duration.seconds > 0 {
+            slices.append(leftSlice)
+        }
+        slices.append(intersection)
+        let rightSlice = CMTimeRange(start: intersection.end, end: rightRange.end)
+        if rightSlice.duration.seconds > 0 {
+            slices.append(rightSlice)
+        }
+        
+        return slices
+    }
+    
+    func subtractSubRange(_ timeRange: CMTimeRange) -> [CMTimeRange] {
+        let intersection = self.intersection(timeRange)
+        guard intersection.duration.seconds > 0 else {
+            return [self]
+        }
+        
+        var remainderslices: [CMTimeRange] = []
+        let leftRange = CMTimeRange(start: self.start, end: intersection.start)
+        let rightRange = CMTimeRange(start: intersection.end, end: self.end)
+        
+        if leftRange.duration.seconds > 0 {
+            remainderslices.append(leftRange)
+        }
+        
+        if rightRange.duration.seconds > 0 {
+            remainderslices.append(rightRange)
+        }
+        
+        return remainderslices
+    }
+    
+
 }
+
+
+extension CMTime: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.value)
+        hasher.combine(self.timescale)
+    }
+}
+
+
+extension CMTimeRange: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.start.value)
+        hasher.combine(self.start.timescale)
+        hasher.combine(self.duration.value)
+        hasher.combine(self.duration.timescale)
+    }
+}
+
 

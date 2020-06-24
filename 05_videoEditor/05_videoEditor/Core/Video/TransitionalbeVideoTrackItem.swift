@@ -11,10 +11,5 @@ import AVFoundation
 
 
 class TransitionableVideoTrackItem: VideoTrackItem, TransitionableVideoProvider {
-    var transitionDuration: CMTime = CMTimeMakeWithSeconds(1, preferredTimescale: 600)
-    
-    var videoTransitionIdentifier: String = ""
-    
-    var audioTransitionIdentifier: String = ""
-    
+    var videoTransition: VideoTransition?
 }

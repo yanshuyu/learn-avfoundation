@@ -10,40 +10,32 @@ import Foundation
 import AVKit
 
 class TestViewController: AVPlayerViewController {
-    private var timeLine = VETimeLine()
-    private var videoLoadedCounter = 0
-    private var audioLoaderCounter = 0
+    private var timeLine = VETimeLine()    
+    fileprivate var syncGroup: DispatchGroup = DispatchGroup()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadMainTrackItems(urls: [Bundle.main.url(forResource: "01_nebula", withExtension: "mp4")!,
-                              Bundle.main.url(forResource: "02_blackhole", withExtension: "mp4")!,
-                              Bundle.main.url(forResource: "03_nebula", withExtension: "mp4")!,
-                              Bundle.main.url(forResource: "04_quasar", withExtension: "mp4")!])
+        loadMainTrackItems(urls: [Bundle.main.url(forResource: "853", withExtension: "mp4")!,
+                              Bundle.main.url(forResource: "bamboo", withExtension: "mp4")!,
+                              Bundle.main.url(forResource: "cute", withExtension: "mp4")!,
+                              Bundle.main.url(forResource: "sea", withExtension: "mp4")!])
+        loadAudioTrackItems()
+        self.syncGroup.notify(queue: DispatchQueue.main) { [weak self] in
+            self?.testComposition()
+        }
     }
     
     func loadMainTrackItems(urls: [URL]) {
         for url in urls {
             let trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
+            trackItem.videoTransition = VideoTransitionCutoff()
+            self.timeLine.addVideoItem(trackItem)
+            self.syncGroup.enter()
             trackItem.prepare(progressHandler: nil) {(status, error) in
-                DispatchQueue.main.async { [weak self] in
-                    guard let strongSelf = self else {
-                         return
-                     }
-                    strongSelf.videoLoadedCounter += 1
+                if status != .availdable {
+                    print("resource unavailable, url: \(trackItem.resource!.resourceURL?.absoluteString ?? "nil")")
                 }
-                
-                if status == .availdable {
-                    DispatchQueue.main.async { [weak self] in
-                        if let strongSelf = self {
-                            trackItem.transitionDuration = CMTimeMakeWithSeconds(1, preferredTimescale: 600)
-                            strongSelf.timeLine.addVideoItem(trackItem)
-                            
-                            if strongSelf.videoLoadedCounter >= urls.count {
-                                strongSelf.loadAudioTrackItems()
-                            }
-                        }
-                    }
-                }
+                self.syncGroup.leave()
             }
         }
     }
@@ -53,26 +45,26 @@ class TestViewController: AVPlayerViewController {
         let url = Bundle.main.url(forResource: "01 Star Gazing", withExtension: "m4a")!
         
         let audioItem = AudioTrackItem(resource: AVAssetResource(url: url))
+        self.timeLine.addAudioItem(audioItem)
+        self.syncGroup.enter()
         audioItem.prepare(progressHandler: nil) { [weak self] (resourceStatus, error) in
-            if resourceStatus == .availdable, let strongSelf = self {
-                audioItem.selectedTimeRange = CMTimeRangeMake(start: .zero, duration: CMTimeMakeWithSeconds(9, preferredTimescale: 600))
-                strongSelf.timeLine.addAudioItem(audioItem)
-                DispatchQueue.main.async {
-                    strongSelf.testComposition()
-                }
+            if resourceStatus != .availdable {
+                print("resource unavailable, url: \(audioItem.resource!.resourceURL?.absoluteString ?? "nil")")
             }
+            self?.syncGroup.leave()
         }
     }
     
     func testComposition() {
         //updateTrackItems()
-        self.timeLine.reloadTimeRanges()
+        self.timeLine.updateTimeRanges()
         let compositionGenerator = VECompositionGenerator(timeLine: self.timeLine)
         if let playerItem = compositionGenerator.buildPlayerItem() {
+             print(compositionGenerator.debugDescription)
             self.player = AVPlayer(playerItem: playerItem)
             self.player?.play()
         }
-        print(compositionGenerator.debugDescription)
+       
     }
     
     

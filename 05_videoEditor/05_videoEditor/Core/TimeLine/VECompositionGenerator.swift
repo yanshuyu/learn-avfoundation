@@ -9,9 +9,30 @@
 import Foundation
 import AVFoundation
 
+
+typealias CompositionLayerInstuctionTimeSlice = (timeRange: CMTimeRange, layerInstructions: [VEVideoCompositionLayerInstruction])
+
 class VECompositionGenerator: CompositionGenerator {
-    private var timeLine: TimeLine
+    private var timeLine: TimeLine {
+        didSet {
+            prepareToBuild()
+        }
+    }
+    
     private var composition: AVComposition?
+    private var videoComposition: AVVideoComposition?
+    private var audioMix: AVAudioMix?
+    
+    var renderSize: CGSize {
+        didSet {
+            prepareToBuild()
+        }
+    }
+    var frameDuration: CMTime {
+        didSet {
+            prepareToBuild()
+        }
+    }
     
     private var TRACKSIDCOUNTERINIT  = 1000
     private var tracksIDCounter: Int
@@ -30,18 +51,30 @@ class VECompositionGenerator: CompositionGenerator {
     private var overlayAudioTracksInfo: [Int: [AudioProvider]] = [:]
     private var audioTracksInfo: [Int:[AudioProvider]] = [:]
     
-    required init(timeLine: TimeLine) {
+    required init(timeLine: TimeLine, renderSize: CGSize = CGSize(width: 1280, height: 720), frameDuration: CMTime = CMTime(seconds: 1, preferredTimescale: 30)) {
         self.timeLine = timeLine
+        self.renderSize = renderSize
+        self.frameDuration = frameDuration
         self.tracksIDCounter = TRACKSIDCOUNTERINIT
     }
     
+    //
+    // MARK: Public API
+    //
     func buildPlayerItem() -> AVPlayerItem? {
-        prepareToBuild()
         buildComposition()
+        buildVideoComposition()
+        buildAudioMix()
+        
         guard let comp = self.composition else {
             return nil
         }
-        return AVPlayerItem(asset: comp)
+         
+        let playerItem = AVPlayerItem(asset: comp)
+        playerItem.videoComposition = self.videoComposition
+        playerItem.audioMix = self.audioMix
+        
+        return  playerItem
     }
     
     func buildExportSessiom() -> AVAssetExportSession? {
@@ -52,7 +85,16 @@ class VECompositionGenerator: CompositionGenerator {
         return nil
     }
     
+    //
+    // MARK: - Private API
+    //
     private func buildComposition() {
+        if self.composition != nil  {
+            return
+        }
+        
+        prepareToBuild()
+
         let comp = AVMutableComposition(urlAssetInitializationOptions: [AVURLAssetPreferPreciseDurationAndTimingKey:true])
         
         // main track items
@@ -62,7 +104,9 @@ class VECompositionGenerator: CompositionGenerator {
             
             if videoItem.numberOfVideoTracks > 0 {
                 let preferredTrackID = calcTrackIDForMainTrackItem(with: .video, offset: offset, index: 0)
+                #if DEBUG
                 precondition(preferredTrackID != -1)
+                #endif
                 if let _ = videoItem.videoCompositionTrack(for: comp, at: 0, preferredTrackID: preferredTrackID) {
                     if self.mainVideoTracksInfo[preferredTrackID] == nil {
                         self.mainVideoTracksInfo[preferredTrackID] = []
@@ -74,7 +118,9 @@ class VECompositionGenerator: CompositionGenerator {
             
             for audioTrackIdx in 0..<videoItem.numberOfAudioTracks {
                 let preferredTrackID = calcTrackIDForMainTrackItem(with: .audio, offset: offset, index: Int(audioTrackIdx))
+                #if DEBUG
                 precondition(preferredTrackID != -1)
+                #endif
                 if let _ = videoItem.audioCompositionTrack(for: comp, at: Int(audioTrackIdx), preferredTrackID: preferredTrackID) {
                     if self.mainAudioTracksInfo[preferredTrackID] == nil {
                         self.mainAudioTracksInfo[preferredTrackID] = []
@@ -95,7 +141,9 @@ class VECompositionGenerator: CompositionGenerator {
             var videoTrackID: Int = -1
             if overlayItem.numberOfVideoTracks > 0 {
                 videoTrackID = calcTrackIDForOverlayTrackItem(for: comp, mediaType: .video, timeRange: overlayItem.timeRangeInTrack)
+                #if DEBUG
                 precondition(videoTrackID != -1)
+                #endif
                 if let _ = overlayItem.videoCompositionTrack(for: comp, at: 0, preferredTrackID: videoTrackID) {
                     if self.overlayVideoTracksInfo[videoTrackID] == nil {
                         self.overlayVideoTracksInfo[videoTrackID] = []
@@ -111,7 +159,9 @@ class VECompositionGenerator: CompositionGenerator {
                                                               timeRange: nil,
                                                               hint: videoTrackID,
                                                               index: Int(idx))
+                #if DEBUG
                 precondition(audioTrackID != -1)
+                #endif
                 if let _ = overlayItem.audioCompositionTrack(for: comp, at: Int(idx), preferredTrackID: audioTrackID) {
                     if self.overlayAudioTracksInfo[audioTrackID] == nil {
                         self.overlayAudioTracksInfo[audioTrackID] = []
@@ -129,7 +179,9 @@ class VECompositionGenerator: CompositionGenerator {
         self.timeLine.audioTrackItems().forEach { (audioItem) in
             for idx in 0..<audioItem.numberOfAudioTracks {
                 let preferredTrackId = calcTrackIDForAudioTrackItem()
+                #if DEBUG
                 precondition(preferredTrackId != -1)
+                #endif
                 if let _ = audioItem.audioCompositionTrack(for: comp, at: Int(idx), preferredTrackID: preferredTrackId) {
                     if self.audioTracksInfo[preferredTrackId] == nil {
                         self.audioTracksInfo[preferredTrackId] = []
@@ -143,10 +195,93 @@ class VECompositionGenerator: CompositionGenerator {
         self.composition = comp
     }
     
+    
+    private func buildVideoComposition() {
+        if self.videoComposition != nil {
+            return
+        }
+        
+        if self.composition == nil {
+            buildComposition()
+        }
+        
+        guard self.composition != nil else {
+            return
+        }
+        
+        var compositionLayerInstructions: [VEVideoCompositionLayerInstruction] = []
+        self.mainVideoTracksInfo.forEach { (trackID, trackSegments) in
+            for videoProvider in trackSegments {
+                let layerInst = VEVideoCompositionLayerInstruction(trackID: CMPersistentTrackID(trackID), videoProvider: videoProvider)
+                compositionLayerInstructions.append(layerInst)
+            }
+        }
+        self.overlayVideoTracksInfo.forEach { (trackID, trackSegments) in
+            for videoProvider in trackSegments {
+                let layerInst = VEVideoCompositionLayerInstruction(trackID: CMPersistentTrackID(trackID), videoProvider: videoProvider)
+                compositionLayerInstructions.append(layerInst)
+            }
+        }
+        
+        
+        let layerInstructionTimeSlices = calcTimeSlicesForCompositionLayerInstructions(compositionLayerInstructions.sortedLayerInstructions())
+        let mainTrackIDs = self.mainVideoTracksInfo.keys.map({ CMPersistentTrackID($0) })
+        var compositionInstructions: [VEVideoCompositionInstruction] = []
+        
+        layerInstructionTimeSlices.forEach { (timeRange, layerInstructions) in
+            let trackIDs = layerInstructions.map({ $0.trackID })
+            let inst = VEVideoCompositionInstruction(timeRange: timeRange, trackIDs: trackIDs)
+            inst.mainTrackIDs = mainTrackIDs
+            inst.layerInstructios = layerInstructions
+            compositionInstructions.append(inst)
+        }
+        
+        
+        let videoComposition = AVMutableVideoComposition()
+        videoComposition.instructions = compositionInstructions
+        videoComposition.customVideoCompositorClass = VEVideoCompositor.self
+        videoComposition.frameDuration = self.frameDuration
+        videoComposition.renderSize = self.renderSize
+        
+        self.videoComposition = videoComposition
+    }
+    
+    
+    private func buildAudioMix() {
+        if self.audioMix != nil {
+            return
+        }
+        
+        guard self.mainAudioTracksInfo.count + self.overlayAudioTracksInfo.count + self.audioTracksInfo.count >= 1 else { return }
+        
+        let audioMix = AVMutableAudioMix()
+        var audioMixInputParams = [AVMutableAudioMixInputParameters]()
+        
+        let audioMixConfigure: (Int, [AudioProvider])->Void = { [weak self] (trackID, audioProviders) in
+            guard let strongSelf = self else { return }
+            if let audioCompTrack = strongSelf.composition!.track(withTrackID: CMPersistentTrackID(trackID)) {
+                let params = AVMutableAudioMixInputParameters(track: audioCompTrack)
+                audioProviders.forEach { $0.configrueAudioMix(with: params) }
+                audioMixInputParams.append(params)
+            }
+        }
+        
+        self.mainAudioTracksInfo.forEach { audioMixConfigure($0, $1) }
+        self.overlayAudioTracksInfo.forEach {audioMixConfigure($0, $1)}
+        self.audioTracksInfo.forEach { audioMixConfigure($0, $1)}
+        
+        self.audioMix = audioMix
+    }
+    
+    
     //
     // MARK: - Helper
     //
     private func prepareToBuild() {
+        self.composition = nil
+        self.videoComposition = nil
+        self.audioMix = nil
+        
         self.tracksIDCounter = TRACKSIDCOUNTERINIT
         self.mainAVTracksIDMapping = [:]
         self.overlayAVTracksIDMapping = [:]
@@ -161,10 +296,10 @@ class VECompositionGenerator: CompositionGenerator {
     
     private func calcTrackIDForMainTrackItem(with mediaType: AVMediaType, offset: Int, index: Int) -> Int {
         if mediaType == .video {
-            precondition(index < 10)
+            guard index < 10 else { return -1 }
             return (offset % 2 + 1) * 10 + index
         } else if mediaType == .audio {
-            precondition(index < 100)
+            guard index < 100 else { return -1 }
             return (offset % 2 + 1) * 100 + index
         }
         return -1
@@ -228,6 +363,39 @@ class VECompositionGenerator: CompositionGenerator {
     
     private func calcTrackIDForAudioTrackItem() -> Int {
         return self.nextTrackID
+    }
+    
+    private func calcTimeSlicesForCompositionLayerInstructions(_ layerInstructions: [VEVideoCompositionLayerInstruction]) -> [CompositionLayerInstuctionTimeSlice] {
+        var layerInstTimeSlices: [CompositionLayerInstuctionTimeSlice] = []
+        layerInstructions.forEach { (newAddLayerInst) in
+            let newAddTimeRange = newAddLayerInst.videoProvider.timeRangeInTrack
+            var remainderTimeRanges: [CMTimeRange] = [newAddTimeRange]
+            var layerInstTimeSlicesDict = layerInstTimeSlices.toTimeSlicesDictionary()
+        
+            
+            layerInstTimeSlices.forEach { (sliceTimeRange, sliceLayerInsts) in
+                let intersection = sliceTimeRange.intersection(newAddTimeRange)
+                if intersection.duration.seconds > 0 {
+                    layerInstTimeSlicesDict[sliceTimeRange] = nil
+                    let newSliceTimeRanges = sliceTimeRange.sliceTimeRanges(by: newAddTimeRange)
+                    newSliceTimeRanges.forEach { (slice) in
+                        if sliceTimeRange.containsTimeRange(slice) {
+                            if newAddTimeRange.containsTimeRange(slice) {
+                                layerInstTimeSlicesDict[slice] = newCompositionLayerInstuctionTimeSlice(slice, sliceLayerInsts + [newAddLayerInst])
+                                remainderTimeRanges = remainderTimeRanges.flatMap({$0.subtractSubRange(slice)})
+                            } else {
+                                layerInstTimeSlicesDict[slice] = newCompositionLayerInstuctionTimeSlice(slice, sliceLayerInsts)
+                            }
+                        }
+                    }
+                }
+            }
+            
+            remainderTimeRanges.forEach({ layerInstTimeSlicesDict[$0] = newCompositionLayerInstuctionTimeSlice($0, [newAddLayerInst]) })
+            layerInstTimeSlices = layerInstTimeSlicesDict.toTimeSlicesArray().sortedTimeSlices()
+        }
+        
+        return layerInstTimeSlices
     }
 
 }
@@ -338,7 +506,24 @@ extension VECompositionGenerator: CustomDebugStringConvertible {
                     }
                 }
             }
+            str += "-----------------------------------------\n"
+        }
+        
+        if let _ = self.videoComposition {
+            str += "Video Composition:\n"
+            self.videoComposition?.instructions.forEach({ (inst) in
+                if let inst = inst as? VEVideoCompositionInstruction {
+                    let trackIDs: [CMPersistentTrackID] = (inst.requiredSourceTrackIDs as? [CMPersistentTrackID] ?? [])
+                    str += "[\(inst.timeRange.start.seconds) - \(inst.timeRange.end.seconds)(\(trackIDs))] "
+                }
+            })
+            str += "\n"
         }
         return str
     }
+}
+
+
+fileprivate func newCompositionLayerInstuctionTimeSlice(_ timeRange: CMTimeRange, _ layerInstructions: [VEVideoCompositionLayerInstruction]) -> CompositionLayerInstuctionTimeSlice {
+    return (timeRange: timeRange, layerInstructions: layerInstructions)
 }

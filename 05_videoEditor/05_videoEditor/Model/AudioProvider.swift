@@ -16,7 +16,11 @@ protocol AudioCompositionTrackProvider: class {
 }
 
 
-protocol AudioProvider: CompositionTimeRangeProvider, AudioCompositionTrackProvider {
+protocol AudioMixerProvider {
+    func configrueAudioMix(with parameters: AVMutableAudioMixInputParameters)
+}
+
+protocol AudioProvider: CompositionTimeRangeProvider, AudioCompositionTrackProvider, AudioMixerProvider {
 
 }
 
