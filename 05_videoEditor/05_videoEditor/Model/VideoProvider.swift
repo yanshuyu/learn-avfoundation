@@ -14,6 +14,7 @@ protocol VideoCompositionTackProvider: class {
     var numberOfVideoTracks: uint { get }
     @discardableResult
     func videoCompositionTrack(for composition: AVMutableComposition, at trackIndex: Int, preferredTrackID: Int) -> AVMutableCompositionTrack?
+    func trackInfo(for trackIndex: Int) -> ResourceTrackInfo?
 }
 
 

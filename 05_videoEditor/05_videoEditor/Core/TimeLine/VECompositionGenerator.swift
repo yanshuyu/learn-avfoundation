@@ -213,12 +213,15 @@ class VECompositionGenerator: CompositionGenerator {
         self.mainVideoTracksInfo.forEach { (trackID, trackSegments) in
             for videoProvider in trackSegments {
                 let layerInst = VEVideoCompositionLayerInstruction(trackID: CMPersistentTrackID(trackID), videoProvider: videoProvider)
+                layerInst.trackInfo = videoProvider.trackInfo(for: 0)
                 compositionLayerInstructions.append(layerInst)
             }
         }
+        
         self.overlayVideoTracksInfo.forEach { (trackID, trackSegments) in
             for videoProvider in trackSegments {
                 let layerInst = VEVideoCompositionLayerInstruction(trackID: CMPersistentTrackID(trackID), videoProvider: videoProvider)
+                layerInst.trackInfo = videoProvider.trackInfo(for: 0)
                 compositionLayerInstructions.append(layerInst)
             }
         }

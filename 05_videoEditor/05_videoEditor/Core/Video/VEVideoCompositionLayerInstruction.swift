@@ -15,6 +15,8 @@ class VEVideoCompositionLayerInstruction: VideoEffectProvider {
     
     var videoProvider: VideoProvider
     
+    var trackInfo: ResourceTrackInfo?
+    
     var videoTransition: VideoTransition? {
         if let transitionProvider = self.videoProvider as? TransitionableVideoProvider {
             return transitionProvider.videoTransition
@@ -29,7 +31,11 @@ class VEVideoCompositionLayerInstruction: VideoEffectProvider {
     
     
     func applyEffect(to frame: CIImage, renderSize: CGSize, atTime: CMTime) -> CIImage {
-        return self.videoProvider.applyEffect(to: frame, renderSize: renderSize, atTime: atTime)
+        var transformedFrame = frame
+        if let trackInfo = self.trackInfo {
+            transformedFrame = transformedFrame.transformed(by: trackInfo.preferredTransform)
+        }
+        return self.videoProvider.applyEffect(to: transformedFrame, renderSize: renderSize, atTime: atTime)
     }
     
     

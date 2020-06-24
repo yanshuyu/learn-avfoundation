@@ -48,6 +48,13 @@ class AudioTrackItem: TrackItem, AudioProvider {
         return compositionTrack
     }
     
+    func trackInfo(for trackIndex: Int) -> ResourceTrackInfo? {
+        guard let res = self.resource else {
+            return nil
+        }
+        return res.trackInfo(for: .audio, at: trackIndex)
+    }
+    
     //
     // MARK: - AudioMixerProvider
     //

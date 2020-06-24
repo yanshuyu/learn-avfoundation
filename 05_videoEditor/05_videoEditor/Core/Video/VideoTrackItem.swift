@@ -47,6 +47,13 @@ class VideoTrackItem: AudioTrackItem, VideoProvider {
         return compositionTrack
     }
     
+    override func trackInfo(for trackIndex: Int) -> ResourceTrackInfo? {
+        guard let res = self.resource else {
+            return nil
+        }
+        return res.trackInfo(for: .video, at: trackIndex)
+    }
+    
     //
     // MARK:- VideoEffectProvider
     //

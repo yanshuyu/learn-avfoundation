@@ -8,6 +8,7 @@
 
 import Foundation
 import AVKit
+import AVFoundation
 
 class TestViewController: AVPlayerViewController {
     private var timeLine = VETimeLine()    
@@ -15,17 +16,19 @@ class TestViewController: AVPlayerViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadMainTrackItems(urls: [Bundle.main.url(forResource: "853", withExtension: "mp4")!,
-                              Bundle.main.url(forResource: "bamboo", withExtension: "mp4")!,
-                              Bundle.main.url(forResource: "cute", withExtension: "mp4")!,
-                              Bundle.main.url(forResource: "sea", withExtension: "mp4")!])
+        loadMainTrackItems()
+        //loadOverlayTrackItems()
         loadAudioTrackItems()
         self.syncGroup.notify(queue: DispatchQueue.main) { [weak self] in
             self?.testComposition()
         }
     }
     
-    func loadMainTrackItems(urls: [URL]) {
+    func loadMainTrackItems() {
+        let urls = [Bundle.main.url(forResource: "01_nebula", withExtension: "mp4")!,
+        Bundle.main.url(forResource: "03_nebula", withExtension: "mp4")!,
+        Bundle.main.url(forResource: "02_blackhole", withExtension: "mp4")!,
+        Bundle.main.url(forResource: "04_quasar", withExtension: "mp4")!]
         for url in urls {
             let trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
             trackItem.videoTransition = VideoTransitionCutoff()
@@ -40,6 +43,21 @@ class TestViewController: AVPlayerViewController {
         }
     }
     
+    func loadOverlayTrackItems() {
+        let url = Bundle.main.url(forResource: "853", withExtension: "mp4")!
+        let overlayItem = VideoTrackItem(resource: AVAssetResource(url: url))
+        self.timeLine.addOverlayItem(overlayItem, at: .zero)
+       
+        self.syncGroup.enter()
+        overlayItem.prepare(progressHandler: nil) { (status, error) in
+            self.syncGroup.leave()
+            if status != .availdable {
+                print("resource unavailable, url: \(overlayItem.resource!.resourceURL?.absoluteString ?? "nil")")
+                return
+            }
+            overlayItem.selectedTimeRange = CMTimeRange(start: .zero, duration: CMTimeMakeWithSeconds(5, preferredTimescale: 600))
+        }
+    }
     
     func loadAudioTrackItems() {
         let url = Bundle.main.url(forResource: "01 Star Gazing", withExtension: "m4a")!

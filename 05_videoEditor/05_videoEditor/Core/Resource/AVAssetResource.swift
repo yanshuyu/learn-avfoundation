@@ -26,13 +26,7 @@ class AVAssetResource: Resource {
         return (self.asset as? AVURLAsset)?.url
     }
     
-    var natureSize: CGSize = CGSize.zero
-    
     var duration: CMTime = CMTime.zero
-    
-    var preferredTransform: CGAffineTransform = .identity
-    
-    var preferredVolum: Float = 1.0
     
     var resourceStatus: ResourceStatus = .unavailable
     
@@ -58,6 +52,19 @@ class AVAssetResource: Resource {
         }
         
         return asset.tracks(withMediaType: mediaType)
+    }
+    
+    func trackInfo(for mediaType: AVMediaType, at trackIndex: Int) -> ResourceTrackInfo? {
+        let mediaTracks = tracks(for: mediaType)
+        guard trackIndex >= 0, trackIndex < mediaTracks.count else {
+            return nil
+        }
+        
+        let track = mediaTracks[trackIndex]
+        return ResourceTrackInfo(timeRange: track.timeRange,
+                                 preferredVolume: track.preferredVolume,
+                                 naturalSize: track.naturalSize,
+                                 preferredTransform: track.preferredTransform)
     }
     
     @discardableResult
@@ -95,7 +102,6 @@ class AVAssetResource: Resource {
     private func resetStatus() {
         self.resourceStatus = .unavailable
         self.resourceError = nil
-        self.natureSize = CGSize.zero
         self.duration = CMTime.zero
     }
     
@@ -103,7 +109,6 @@ class AVAssetResource: Resource {
         if let asset = self.asset {
             self.resourceStatus = .availdable
             self.duration = asset.duration
-            self.natureSize = asset.tracks(withMediaType: .video).first?.naturalSize ?? CGSize.zero
             self.resourceError = nil
         }
     }

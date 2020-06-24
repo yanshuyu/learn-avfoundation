@@ -13,6 +13,7 @@ protocol AudioCompositionTrackProvider: class {
     var numberOfAudioTracks: uint { get }
     @discardableResult
     func audioCompositionTrack(for composition: AVMutableComposition, at trackIndex: Int, preferredTrackID: Int) -> AVMutableCompositionTrack?
+    func trackInfo(for trackIndex: Int) -> ResourceTrackInfo?
 }
 
 
