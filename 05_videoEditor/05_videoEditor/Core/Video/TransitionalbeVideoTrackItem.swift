@@ -11,5 +11,5 @@ import AVFoundation
 
 
 class TransitionableVideoTrackItem: VideoTrackItem, TransitionableVideoProvider {
-    var videoTransition: VideoTransition?
+    var videoTransition: VideoTransition? = VideoTransitionDissolve()
 }

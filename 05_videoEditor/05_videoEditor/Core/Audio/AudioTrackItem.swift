@@ -48,11 +48,12 @@ class AudioTrackItem: TrackItem, AudioProvider {
         return compositionTrack
     }
     
-    func trackInfo(for trackIndex: Int) -> ResourceTrackInfo? {
-        guard let res = self.resource else {
-            return nil
+
+    func trackInfor(for mediaType: AVMediaType, at trackIndex: Int) -> ResourceTrackInfo? {
+        if mediaType == .audio, let res = self.resource {
+            return res.trackInfo(for: .audio, at: trackIndex)
         }
-        return res.trackInfo(for: .audio, at: trackIndex)
+        return nil
     }
     
     //

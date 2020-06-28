@@ -213,7 +213,7 @@ class VECompositionGenerator: CompositionGenerator {
         self.mainVideoTracksInfo.forEach { (trackID, trackSegments) in
             for videoProvider in trackSegments {
                 let layerInst = VEVideoCompositionLayerInstruction(trackID: CMPersistentTrackID(trackID), videoProvider: videoProvider)
-                layerInst.trackInfo = videoProvider.trackInfo(for: 0)
+                layerInst.trackInfo = videoProvider.trackInfor(for: .video, at: 0)
                 compositionLayerInstructions.append(layerInst)
             }
         }
@@ -221,13 +221,19 @@ class VECompositionGenerator: CompositionGenerator {
         self.overlayVideoTracksInfo.forEach { (trackID, trackSegments) in
             for videoProvider in trackSegments {
                 let layerInst = VEVideoCompositionLayerInstruction(trackID: CMPersistentTrackID(trackID), videoProvider: videoProvider)
-                layerInst.trackInfo = videoProvider.trackInfo(for: 0)
+                layerInst.trackInfo = videoProvider.trackInfor(for: .video, at: 0)
                 compositionLayerInstructions.append(layerInst)
             }
         }
         
+        let sortedLayerInsts = compositionLayerInstructions.sortedLayerInstructions()
+        var s = ""
+        sortedLayerInsts.forEach { (inst) in
+            s += "[\(inst.videoProvider.timeRangeInTrack.start.seconds) - \(inst.videoProvider.timeRangeInTrack.end.seconds)] "
+        }
+        print("layer instructions: \(s)")
         
-        let layerInstructionTimeSlices = calcTimeSlicesForCompositionLayerInstructions(compositionLayerInstructions.sortedLayerInstructions())
+        let layerInstructionTimeSlices = calcTimeSlicesForCompositionLayerInstructions(sortedLayerInsts)
         let mainTrackIDs = self.mainVideoTracksInfo.keys.map({ CMPersistentTrackID($0) })
         var compositionInstructions: [VEVideoCompositionInstruction] = []
         
@@ -236,6 +242,7 @@ class VECompositionGenerator: CompositionGenerator {
             let inst = VEVideoCompositionInstruction(timeRange: timeRange, trackIDs: trackIDs)
             inst.mainTrackIDs = mainTrackIDs
             inst.layerInstructios = layerInstructions
+            inst.canvasProvider = self.timeLine.canvasProvider
             compositionInstructions.append(inst)
         }
         

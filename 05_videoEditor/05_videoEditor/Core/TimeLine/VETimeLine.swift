@@ -10,6 +10,8 @@ import Foundation
 import AVFoundation
 
 class VETimeLine: TimeLine {
+    var canvasProvider: CanvasProvider? = BasicVanvas()
+    
     private var mainTracks: [TransitionableVideoProvider] = []
     
     private var overlayTracks: [VideoProvider] = []

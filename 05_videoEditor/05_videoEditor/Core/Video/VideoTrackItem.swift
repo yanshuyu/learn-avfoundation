@@ -13,7 +13,24 @@ import CoreImage
 
 
 class VideoTrackItem: AudioTrackItem, VideoProvider {
-
+    
+    init(resource: Resource, videoConfiguration: VideoConfiguration) {
+        self.videoConfiguration = videoConfiguration
+        super.init(resource: resource)
+    }
+    
+    override convenience init(resource: Resource) {
+        self.init(resource: resource, videoConfiguration: BasicVideoConfiguration())
+    }
+    
+    required init() {
+        self.videoConfiguration =  BasicVideoConfiguration()
+        super.init()
+    }
+    
+    //
+    // VideoProvider
+    //
     var numberOfVideoTracks: uint {
         guard let res = self.resource,
             res.resourceStatus == .availdable else {
@@ -47,17 +64,29 @@ class VideoTrackItem: AudioTrackItem, VideoProvider {
         return compositionTrack
     }
     
-    override func trackInfo(for trackIndex: Int) -> ResourceTrackInfo? {
-        guard let res = self.resource else {
-            return nil
+    override func trackInfor(for mediaType: AVMediaType, at trackIndex: Int) -> ResourceTrackInfo? {
+        if mediaType == .audio {
+            return super.trackInfor(for: .audio, at: trackIndex)
+        
+        } else if mediaType == .video, let res = self.resource {
+            return res.trackInfo(for: .video, at: trackIndex)
         }
-        return res.trackInfo(for: .video, at: trackIndex)
+        return nil
     }
     
+    
     //
-    // MARK:- VideoEffectProvider
+    // MARK: - VideoConfiguration
     //
-    func applyEffect(to frame: CIImage, renderSize: CGSize, atTime: CMTime) -> CIImage {
-        return frame
+    var videoConfiguration: VideoConfiguration
+    
+    //
+    // MARK:- VideoProcessingProvider
+    //
+    func processingFrame(_ frame: CIImage, renderSize: CGSize, atTime: CMTime) -> CIImage {
+        return self.videoConfiguration.applyVideoConfiguration(to: frame,
+                                                               atTime: atTime,
+                                                               inTimeRange: self.timeRangeInTrack,
+                                                               renderSize: renderSize)
     }
 }

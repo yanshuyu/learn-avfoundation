@@ -16,30 +16,81 @@ class TestViewController: AVPlayerViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let canvas = self.timeLine.canvasProvider as? BasicVanvas {
+            canvas.mode = .blurBackground
+            canvas.canvasBlurness = 14
+        }
         loadMainTrackItems()
         //loadOverlayTrackItems()
-        loadAudioTrackItems()
+        //loadAudioTrackItems()
         self.syncGroup.notify(queue: DispatchQueue.main) { [weak self] in
             self?.testComposition()
         }
     }
     
     func loadMainTrackItems() {
-        let urls = [Bundle.main.url(forResource: "01_nebula", withExtension: "mp4")!,
-        Bundle.main.url(forResource: "03_nebula", withExtension: "mp4")!,
-        Bundle.main.url(forResource: "02_blackhole", withExtension: "mp4")!,
-        Bundle.main.url(forResource: "04_quasar", withExtension: "mp4")!]
-        for url in urls {
-            let trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
-            trackItem.videoTransition = VideoTransitionCutoff()
-            self.timeLine.addVideoItem(trackItem)
-            self.syncGroup.enter()
-            trackItem.prepare(progressHandler: nil) {(status, error) in
-                if status != .availdable {
-                    print("resource unavailable, url: \(trackItem.resource!.resourceURL?.absoluteString ?? "nil")")
-                }
-                self.syncGroup.leave()
+        var url: URL
+        var trackItem: TransitionableVideoTrackItem
+        
+        url = Bundle.main.url(forResource: "cute", withExtension: "mp4")!
+        trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
+        trackItem.videoTransition = VideoTransitionPageCurl()
+        trackItem.videoTransition?.duration = CMTime(seconds: 2, preferredTimescale: 600)
+        self.timeLine.addVideoItem(trackItem)
+        self.syncGroup.enter()
+        trackItem.prepare(progressHandler: nil) {(status, error) in
+            if status != .availdable {
+                print("resource unavailable, url: \(trackItem.resource!.resourceURL?.absoluteString ?? "nil")")
             }
+            self.syncGroup.leave()
+        }
+        
+        
+        
+        url = Bundle.main.url(forResource: "03_nebula", withExtension: "mp4")!
+        trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
+        trackItem.videoTransition = VideoTransitionPush()
+        trackItem.videoTransition?.duration = CMTime(seconds: 2, preferredTimescale: 600)
+        self.timeLine.addVideoItem(trackItem)
+        self.syncGroup.enter()
+        trackItem.prepare(progressHandler: nil) {(status, error) in
+            if status != .availdable {
+                print("resource unavailable, url: \(trackItem.resource!.resourceURL?.absoluteString ?? "nil")")
+            }
+            self.syncGroup.leave()
+        }
+        
+
+        
+        url = Bundle.main.url(forResource: "02_blackhole", withExtension: "mp4")!
+        trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
+        trackItem.videoTransition = VideoTransitionDissolve()
+        trackItem.videoTransition?.duration = CMTime(seconds: 2, preferredTimescale: 600)
+        if let videoConfig = trackItem.videoConfiguration as? BasicVideoConfiguration {
+            videoConfig.filter = CIFilter(name: "CIPhotoEffectMono")
+        }
+        self.timeLine.addVideoItem(trackItem)
+        self.syncGroup.enter()
+        trackItem.prepare(progressHandler: nil) {(status, error) in
+            if status != .availdable {
+                print("resource unavailable, url: \(trackItem.resource!.resourceURL?.absoluteString ?? "nil")")
+            }
+            self.syncGroup.leave()
+        }
+        
+        
+        
+        url = Bundle.main.url(forResource: "04_quasar", withExtension: "mp4")!
+        trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
+        trackItem.videoTransition = VideoTransitionSwipe()
+        trackItem.videoTransition?.duration = CMTime(seconds: 2, preferredTimescale: 600)
+        self.timeLine.addVideoItem(trackItem)
+        self.syncGroup.enter()
+        trackItem.prepare(progressHandler: nil) {(status, error) in
+            if status != .availdable {
+                print("resource unavailable, url: \(trackItem.resource!.resourceURL?.absoluteString ?? "nil")")
+            }
+            self.syncGroup.leave()
         }
     }
     

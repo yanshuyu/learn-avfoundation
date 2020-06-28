@@ -28,12 +28,12 @@ class VEVideoCompositor:NSObject, AVVideoCompositing {
                              qos: .userInitiated,
                              attributes: [.concurrent],
                              autoreleaseFrequency: .inherit,
-                             target: DispatchQueue.global(qos: .userInitiated))
+                             target: nil)
     }()
     
     fileprivate lazy var compositionQueue: DispatchQueue = {
         return DispatchQueue(label: "com.videoEditor.sy.videoComposition",
-                             qos: .userInteractive,
+                             qos: .userInitiated,
                              attributes: [],
                              autoreleaseFrequency: .workItem,
                              target: nil)
@@ -61,9 +61,9 @@ class VEVideoCompositor:NSObject, AVVideoCompositing {
     }
     
     fileprivate lazy var ciContext: CIContext = {
-        if let glContext = EAGLContext(api: .openGLES3) {
-            return CIContext(eaglContext: glContext)
-        }
+//        if let glContext = EAGLContext(api: .openGLES3) {
+//            return CIContext(eaglContext: glContext)
+//        }
         return CIContext()
     }()
     

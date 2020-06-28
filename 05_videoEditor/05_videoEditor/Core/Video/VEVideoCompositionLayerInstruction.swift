@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 import CoreImage
 
-class VEVideoCompositionLayerInstruction: VideoEffectProvider {
+class VEVideoCompositionLayerInstruction: VideoProcessingProvider {
     var trackID: CMPersistentTrackID
     
     var videoProvider: VideoProvider
@@ -30,14 +30,13 @@ class VEVideoCompositionLayerInstruction: VideoEffectProvider {
     }
     
     
-    func applyEffect(to frame: CIImage, renderSize: CGSize, atTime: CMTime) -> CIImage {
+    func processingFrame(_ frame: CIImage, renderSize: CGSize, atTime: CMTime) -> CIImage {
         var transformedFrame = frame
         if let trackInfo = self.trackInfo {
             transformedFrame = transformedFrame.transformed(by: trackInfo.preferredTransform)
         }
-        return self.videoProvider.applyEffect(to: transformedFrame, renderSize: renderSize, atTime: atTime)
+        return self.videoProvider.processingFrame(transformedFrame, renderSize: renderSize, atTime: atTime)
     }
-    
     
 }
 

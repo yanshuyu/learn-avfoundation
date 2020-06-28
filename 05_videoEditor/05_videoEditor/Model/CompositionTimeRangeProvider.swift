@@ -19,3 +19,7 @@ extension CompositionTimeRangeProvider {
         return CMTimeRangeMake(start: self.startTimeInTrack, duration: self.durationTimeInTrack)
     }
 }
+
+protocol CompositionTrackInfoProvider: class {
+    func trackInfor(for mediaType: AVMediaType, at trackIndex: Int) -> ResourceTrackInfo?
+}

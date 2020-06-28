@@ -25,6 +25,8 @@ class VEVideoCompositionInstruction: NSObject, AVVideoCompositionInstructionProt
     
     var layerInstructios: [VEVideoCompositionLayerInstruction] = []
     
+    var canvasProvider: CanvasProvider?
+    
     init(timeRange: CMTimeRange, passThroughTrackID: CMPersistentTrackID) {
         self.timeRange = timeRange
         self.passthroughTrackID = passThroughTrackID
@@ -58,6 +60,7 @@ class VEVideoCompositionInstruction: NSObject, AVVideoCompositionInstructionProt
         }
         
         var finalImage: CIImage?
+        var canvasImage: CIImage?
         
         // transition
         if mainLayers.count == 2 {
@@ -77,11 +80,16 @@ class VEVideoCompositionInstruction: NSObject, AVVideoCompositionInstructionProt
             var srcImage = generateSourceImage(from: srcPixelBuffer)
             var dstImage = generateSourceImage(from: dstPixelBuffer)
             
-            srcImage = srcLayer.applyEffect(to: srcImage, renderSize: request.renderContext.size, atTime: request.compositionTime)
-            dstImage = dstLayer.applyEffect(to: dstImage, renderSize: request.renderContext.size, atTime: request.compositionTime)
+            srcImage = srcLayer.processingFrame(srcImage, renderSize: request.renderContext.size, atTime: request.compositionTime)
+            dstImage = dstLayer.processingFrame(dstImage, renderSize: request.renderContext.size, atTime: request.compositionTime)
             
+            canvasImage = self.canvasProvider?.drawCanvas(for: dstImage, atTime: request.compositionTime, renderSize: request.renderContext.size)
+
             if let transition = dstLayer.videoTransition {
-                finalImage = transition.renderTransition(from: srcImage, to: dstImage, tweening: percentageForTime(request.compositionTime, in: self.timeRange))
+                finalImage = transition.renderTransition(from: srcImage,
+                                                         to: dstImage,
+                                                         tweening: percentageForTime(request.compositionTime, in: self.timeRange),
+                                                         renderSize: request.renderContext.size)
             } else {
                 finalImage = dstImage
             }
@@ -90,7 +98,12 @@ class VEVideoCompositionInstruction: NSObject, AVVideoCompositionInstructionProt
             guard let pixelBuffer = request.sourceFrame(byTrackID: mainLayers[0].trackID) else {
                 throw CompositionError.failedToGetSourceFrame
             }
-            finalImage = mainLayers[0].applyEffect(to: generateSourceImage(from: pixelBuffer),
+           
+            let frame = generateSourceImage(from: pixelBuffer)
+            
+            canvasImage = self.canvasProvider?.drawCanvas(for: frame, atTime: request.compositionTime, renderSize: request.renderContext.size)
+            
+            finalImage = mainLayers[0].processingFrame(frame,
                                                    renderSize: request.renderContext.size,
                                                    atTime: request.compositionTime)
 
@@ -100,14 +113,21 @@ class VEVideoCompositionInstruction: NSObject, AVVideoCompositionInstructionProt
         var prevImage = finalImage
         try overlayLayers.forEach({
             if let pixelBuffer = request.sourceFrame(byTrackID: $0.trackID) {
-                let currentlayerImage = $0.applyEffect(to: generateSourceImage(from: pixelBuffer), renderSize: request.renderContext.size, atTime: request.compositionTime)
-                prevImage = prevImage == nil ? currentlayerImage : currentlayerImage.composited(over: prevImage!)
+                var currentlayerImage = $0.processingFrame(generateSourceImage(from: pixelBuffer), renderSize: request.renderContext.size, atTime: request.compositionTime)
+                if let prev = prevImage {
+                    currentlayerImage = currentlayerImage.composited(over: prev)
+                }
+                prevImage = currentlayerImage
             } else {
                 throw CompositionError.failedToGetSourceFrame
             }
         })
         
         finalImage = prevImage
+        
+        if let _ = canvasImage {
+            finalImage = finalImage?.composited(over: canvasImage!)
+        }
         
         return finalImage
     }

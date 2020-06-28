@@ -43,7 +43,12 @@
 		114FFD6424A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6324A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift */; };
 		114FFD6624A0FB04001ADD27 /* VEVideoCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6524A0FB04001ADD27 /* VEVideoCompositor.swift */; };
 		114FFD6824A27FC1001ADD27 /* Dictionary+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6724A27FC1001ADD27 /* Dictionary+extension.swift */; };
+		114FFD6A24A4F145001ADD27 /* VideoConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6924A4F145001ADD27 /* VideoConfiguration.swift */; };
+		114FFD6C24A4F668001ADD27 /* CGAffineTransform+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6B24A4F668001ADD27 /* CGAffineTransform+extension.swift */; };
+		114FFD6E24A4FACC001ADD27 /* CGRect+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6D24A4FACC001ADD27 /* CGRect+extension.swift */; };
 		1160BD29249F6F0D0058872D /* VideoTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1160BD28249F6F0D0058872D /* VideoTransition.swift */; };
+		118F959F24A8E65600CC67D4 /* CiImage+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118F959E24A8E65600CC67D4 /* CiImage+extension.swift */; };
+		118F95A124A8FBD300CC67D4 /* CanvasProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118F95A024A8FBD300CC67D4 /* CanvasProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,7 +90,12 @@
 		114FFD6324A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEVideoCompositionInstruction.swift; sourceTree = "<group>"; };
 		114FFD6524A0FB04001ADD27 /* VEVideoCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEVideoCompositor.swift; sourceTree = "<group>"; };
 		114FFD6724A27FC1001ADD27 /* Dictionary+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+extension.swift"; sourceTree = "<group>"; };
+		114FFD6924A4F145001ADD27 /* VideoConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoConfiguration.swift; sourceTree = "<group>"; };
+		114FFD6B24A4F668001ADD27 /* CGAffineTransform+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGAffineTransform+extension.swift"; sourceTree = "<group>"; };
+		114FFD6D24A4FACC001ADD27 /* CGRect+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+extension.swift"; sourceTree = "<group>"; };
 		1160BD28249F6F0D0058872D /* VideoTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTransition.swift; sourceTree = "<group>"; };
+		118F959E24A8E65600CC67D4 /* CiImage+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CiImage+extension.swift"; sourceTree = "<group>"; };
+		118F95A024A8FBD300CC67D4 /* CanvasProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,10 +149,12 @@
 				111E0BF7247BFD1A0045F07E /* CompositionTimeRangeProvider.swift */,
 				111E0BFB247BFFA30045F07E /* AudioProvider.swift */,
 				111E0BF9247BFE0E0045F07E /* VideoProvider.swift */,
+				118F95A024A8FBD300CC67D4 /* CanvasProvider.swift */,
 				111E0BFD247C033A0045F07E /* TimeLine.swift */,
 				111E0C04247C05B20045F07E /* Resource.swift */,
 				111E0C02247C04D00045F07E /* CompositionGenerator.swift */,
 				1160BD28249F6F0D0058872D /* VideoTransition.swift */,
+				114FFD6924A4F145001ADD27 /* VideoConfiguration.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -164,6 +176,9 @@
 				111E0C222480BE5B0045F07E /* Array+Extension.swift */,
 				114FFD6724A27FC1001ADD27 /* Dictionary+extension.swift */,
 				111E0C2824815FBF0045F07E /* CMTimeRange+Extension.swift */,
+				114FFD6B24A4F668001ADD27 /* CGAffineTransform+extension.swift */,
+				114FFD6D24A4FACC001ADD27 /* CGRect+extension.swift */,
+				118F959E24A8E65600CC67D4 /* CiImage+extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -312,14 +327,19 @@
 				1160BD29249F6F0D0058872D /* VideoTransition.swift in Sources */,
 				111E0C21247D02BE0045F07E /* TestViewController.swift in Sources */,
 				111E0C232480BE5B0045F07E /* Array+Extension.swift in Sources */,
+				114FFD6C24A4F668001ADD27 /* CGAffineTransform+extension.swift in Sources */,
+				114FFD6E24A4FACC001ADD27 /* CGRect+extension.swift in Sources */,
 				111E0C2924815FBF0045F07E /* CMTimeRange+Extension.swift in Sources */,
 				111E0BFC247BFFA30045F07E /* AudioProvider.swift in Sources */,
 				111E0C05247C05B20045F07E /* Resource.swift in Sources */,
+				118F959F24A8E65600CC67D4 /* CiImage+extension.swift in Sources */,
+				114FFD6A24A4F145001ADD27 /* VideoConfiguration.swift in Sources */,
 				114FFD6624A0FB04001ADD27 /* VEVideoCompositor.swift in Sources */,
 				111E0BFA247BFE0E0045F07E /* VideoProvider.swift in Sources */,
 				111E0C0E247C1B160045F07E /* TrackItem.swift in Sources */,
 				111E0C01247C04550045F07E /* VETimeLine.swift in Sources */,
 				111E0BE3247BFB8A0045F07E /* AppDelegate.swift in Sources */,
+				118F95A124A8FBD300CC67D4 /* CanvasProvider.swift in Sources */,
 				111E0C12247CC7F80045F07E /* AudioTrackItem.swift in Sources */,
 				114FFD6824A27FC1001ADD27 /* Dictionary+extension.swift in Sources */,
 				111E0C10247C248E0045F07E /* VideoTrackItem.swift in Sources */,

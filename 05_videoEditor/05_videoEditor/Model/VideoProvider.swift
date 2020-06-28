@@ -14,15 +14,14 @@ protocol VideoCompositionTackProvider: class {
     var numberOfVideoTracks: uint { get }
     @discardableResult
     func videoCompositionTrack(for composition: AVMutableComposition, at trackIndex: Int, preferredTrackID: Int) -> AVMutableCompositionTrack?
-    func trackInfo(for trackIndex: Int) -> ResourceTrackInfo?
 }
 
 
-protocol VideoEffectProvider: class {
-    func applyEffect(to frame: CIImage, renderSize: CGSize, atTime: CMTime) -> CIImage
+protocol VideoProcessingProvider: class {
+    func processingFrame(_ frame: CIImage, renderSize: CGSize, atTime: CMTime) -> CIImage
 }
 
-protocol VideoProvider:VideoCompositionTackProvider, VideoEffectProvider, AudioProvider {
+protocol VideoProvider:VideoCompositionTackProvider, VideoProcessingProvider, AudioProvider {
     
 }
 

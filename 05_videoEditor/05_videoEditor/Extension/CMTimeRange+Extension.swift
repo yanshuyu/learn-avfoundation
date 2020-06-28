@@ -32,15 +32,15 @@ extension CMTimeRange {
         }
         
         var slices: [CMTimeRange] = []
-        let leftRange = self.start < by.start ? self : by
-        let rightRange = self.start > by.start ? self : by
+        let mostLeft = self.start < by.start ? self.start : by.start
+        let mostRight = self.end > by.end ? self.end : by.end
         
-        let leftSlice = CMTimeRange(start: leftRange.start, end: intersection.start)
+        let leftSlice = CMTimeRange(start: mostLeft, end: intersection.start)
         if leftSlice.duration.seconds > 0 {
             slices.append(leftSlice)
         }
         slices.append(intersection)
-        let rightSlice = CMTimeRange(start: intersection.end, end: rightRange.end)
+        let rightSlice = CMTimeRange(start: intersection.end, end: mostRight)
         if rightSlice.duration.seconds > 0 {
             slices.append(rightSlice)
         }

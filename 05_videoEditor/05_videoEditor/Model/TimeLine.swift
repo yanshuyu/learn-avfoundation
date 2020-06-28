@@ -10,6 +10,8 @@ import Foundation
 import AVFoundation
 
 protocol TimeLine {
+    var canvasProvider: CanvasProvider? { get set }
+    
     var isEmpty: Bool { get }
     
     func mainTrackItems() -> [TransitionableVideoProvider]
