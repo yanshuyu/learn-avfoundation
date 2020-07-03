@@ -18,9 +18,24 @@ class VETimeLine: TimeLine {
     
     private var audioTracks: [AudioProvider] = []
     
-    var isEmpty: Bool {
-        return self.mainTracks.count + self.overlayTracks.count + self.audioTracks.count < 1
+    private var stickers: [StickerProvider] = []
+    
+    var videoItemCount: Int {
+        return self.mainTracks.count
     }
+    
+    var overItemCount: Int {
+        self.overlayTracks.count
+    }
+    
+    var audioItemCount: Int {
+        return self.audioTracks.count
+    }
+    
+    var stickerItemCount: Int {
+        return self.stickers.count
+    }
+    
     
     func mainTrackItems() -> [TransitionableVideoProvider] {
         return self.mainTracks
@@ -32,6 +47,11 @@ class VETimeLine: TimeLine {
     
     func audioTrackItems() -> [AudioProvider] {
         return self.audioTracks
+    }
+    
+    
+    func stickerItems() -> [StickerProvider] {
+        return self.stickers
     }
     
     func addVideoItem(_ videoItem: TransitionableVideoProvider) {
@@ -178,7 +198,27 @@ class VETimeLine: TimeLine {
     }
     
     
-
+    
+    func addStickerItem(_ sticker: StickerProvider, at time: CMTime?) {
+        if let _ = time {
+            sticker.startTimeInTrack = time!
+        }
+        self.stickers.append(sticker)
+    }
+    
+    func addStickerItem(_ sticker: StickerProvider) {
+        addStickerItem(sticker, at: nil)
+    }
+    
+    func removeStickerItem(_ sticker: StickerProvider) {
+        if let index = self.stickers.firstIndex(where: {$0 === sticker}) {
+            self.stickers.remove(at: index)
+        }
+    }
+    
+    func removeAllStickerItems() {
+        self.stickers = []
+    }
     
 }
 

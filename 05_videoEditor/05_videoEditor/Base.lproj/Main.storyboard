@@ -1,17 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="qNv-6l-yqe">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ph1-vb-8fz">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--AV Player View Controller-->
-        <scene sceneID="d9u-mt-mMa">
+        <!--Navigation Controller-->
+        <scene sceneID="mvb-7Q-SXf">
             <objects>
-                <avPlayerViewController videoGravity="AVLayerVideoGravityResizeAspect" id="qNv-6l-yqe" customClass="TestViewController" customModule="_5_videoEditor" customModuleProvider="target" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Esf-yK-gT7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ph1-vb-8fz" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="wvl-bd-gQE">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="AHx-bJ-tfc" kind="relationship" relationship="rootViewController" id="3AE-RS-jum"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vlM-w9-Vhk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="957" y="167"/>
+            <point key="canvasLocation" x="-278" y="96"/>
+        </scene>
+        <!--Composition Preview View Controller-->
+        <scene sceneID="Zh4-XA-dSw">
+            <objects>
+                <viewController id="AHx-bJ-tfc" customClass="CompositionPreviewViewController" customModule="_5_videoEditor" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="9cE-rn-7yC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" reversesTitleShadowWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WN0-3i-cBy" userLabel="play button">
+                                <rect key="frame" x="178.5" y="420.5" width="57.5" height="55.5"/>
+                                <state key="normal" image="play.circle" catalog="system">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="40" scale="large" weight="light"/>
+                                </state>
+                                <state key="selected" image="pause.circle" catalog="system">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="40" scale="large" weight="light"/>
+                                </state>
+                                <connections>
+                                    <action selector="onPlayButtonTap:" destination="AHx-bJ-tfc" eventType="touchUpInside" id="dXJ-Oe-1uP"/>
+                                </connections>
+                            </button>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="7md-KT-EPQ">
+                                <rect key="frame" x="95.5" y="826.5" width="219" height="31"/>
+                                <color key="minimumTrackTintColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="maximumTrackTintColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                <connections>
+                                    <action selector="onProgressSliderValueChange:" destination="AHx-bJ-tfc" eventType="valueChanged" id="dUW-M3-Zas"/>
+                                </connections>
+                            </slider>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Djw-uJ-EQy">
+                                <rect key="frame" x="16" y="831" width="71.5" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="71.5" id="dhu-4Y-H82"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nu7-UV-I7T">
+                                <rect key="frame" x="322.5" y="831" width="71.5" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="71.5" id="ssS-ns-DOs"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="BQi-qc-jvE">
+                                <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="WN0-3i-cBy" firstAttribute="centerY" secondItem="9cE-rn-7yC" secondAttribute="centerY" id="4ps-e8-Tyz"/>
+                            <constraint firstItem="BQi-qc-jvE" firstAttribute="centerX" secondItem="9cE-rn-7yC" secondAttribute="centerX" id="6f4-HP-zEG"/>
+                            <constraint firstItem="Nu7-UV-I7T" firstAttribute="firstBaseline" secondItem="Djw-uJ-EQy" secondAttribute="firstBaseline" id="9a4-6e-8d3"/>
+                            <constraint firstItem="7md-KT-EPQ" firstAttribute="leading" secondItem="Djw-uJ-EQy" secondAttribute="trailing" constant="10" id="HhW-bk-kV8"/>
+                            <constraint firstItem="Nu7-UV-I7T" firstAttribute="leading" secondItem="7md-KT-EPQ" secondAttribute="trailing" constant="10" id="XHY-7I-POO"/>
+                            <constraint firstAttribute="trailing" secondItem="Nu7-UV-I7T" secondAttribute="trailing" constant="20" symbolic="YES" id="XZI-Xc-NV7"/>
+                            <constraint firstItem="wd9-i3-qSx" firstAttribute="bottom" secondItem="Djw-uJ-EQy" secondAttribute="bottom" constant="10" id="dHJ-qO-ipX"/>
+                            <constraint firstItem="BQi-qc-jvE" firstAttribute="centerY" secondItem="9cE-rn-7yC" secondAttribute="centerY" id="fgm-VK-3La"/>
+                            <constraint firstItem="Djw-uJ-EQy" firstAttribute="leading" secondItem="wd9-i3-qSx" secondAttribute="leading" constant="16" id="ifm-g3-xsR"/>
+                            <constraint firstItem="WN0-3i-cBy" firstAttribute="centerX" secondItem="9cE-rn-7yC" secondAttribute="centerX" id="laB-ue-bbB"/>
+                            <constraint firstItem="7md-KT-EPQ" firstAttribute="centerY" secondItem="Djw-uJ-EQy" secondAttribute="centerY" id="vau-nr-69a"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="wd9-i3-qSx"/>
+                    </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="6Ga-08-4Ic">
+                        <nil key="title"/>
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="square.and.arrow.up" catalog="system" id="M2o-1a-cod"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="leftTimeLable" destination="Djw-uJ-EQy" id="Hzq-PS-PiY"/>
+                        <outlet property="playButton" destination="WN0-3i-cBy" id="aGY-Ac-iY8"/>
+                        <outlet property="progressSlider" destination="7md-KT-EPQ" id="JKj-TD-sfU"/>
+                        <outlet property="rightTimeLable" destination="Nu7-UV-I7T" id="DoF-IQ-NBY"/>
+                        <outlet property="spinner" destination="BQi-qc-jvE" id="deH-dh-G1r"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lM2-Fb-e0I" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="909" y="96"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="pause.circle" catalog="system" width="128" height="121"/>
+        <image name="play.circle" catalog="system" width="128" height="121"/>
+        <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
+    </resources>
 </document>

@@ -11,22 +11,24 @@ import AVFoundation
 
 class TrackItem: CompositionTimeRangeProvider {
     var startTimeInTrack: CMTime = CMTime.zero
-    var durationTimeInTrack: CMTime  {
-        return self.scaledTimeDuration
+    
+    var durationTimeInTrack: CMTime {
+        return self.selectedTimeRange.duration
     }
     
     var resource: Resource?
+    
+    var selectedTimeRange: CMTimeRange = CMTimeRange.zero {
+        didSet {
+            self.startTimeInTrack = self.selectedTimeRange.start
+        }
+    }
+    
     var isPrepared: Bool {
         guard let res = self.resource else {
             return false
         }
         return res.resourceStatus == .availdable
-    }
-    var selectedTimeRange: CMTimeRange = CMTimeRange.zero
-    var speed: Float = 1.0
-    var volum: Float = 1.0
-    var scaledTimeDuration: CMTime {
-        return CMTimeMultiplyByFloat64(self.selectedTimeRange.duration, multiplier: Float64(1 / self.speed))
     }
     
     required init() {
@@ -43,18 +45,13 @@ class TrackItem: CompositionTimeRangeProvider {
             return nil
         }
         
-        let canceller = self.resource?.load(progressHandler: progressHandler,
-                                            completionHandler: { [weak self] (status, error) in
-                                                guard let strongSelf = self,
-                                                    let res = strongSelf.resource,
-                                                    status == .availdable else {
-                                                        compeletionHandler?(status, error)
-                                                        return
-                                                }
-                                                strongSelf.selectedTimeRange = CMTimeRangeMake(start: CMTime.zero, duration: res.duration)
-                                                compeletionHandler?(status, error)
-                                                
-        })
-        return canceller
+        let compeletion: (ResourceStatus, NSError?)->Void = { status, error in
+            if let _ = self.resource, status == .availdable {
+                self.selectedTimeRange = CMTimeRange(start: .zero, duration: self.resource!.duration)
+            }
+            compeletionHandler?(status, error)
+        }
+        
+        return self.resource?.load(progressHandler: progressHandler, completionHandler: compeletion)
     }
 }

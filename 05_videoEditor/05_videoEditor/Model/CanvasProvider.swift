@@ -26,7 +26,7 @@ class BasicVanvas: CanvasProvider {
     
     var canvasColor: UIColor = .black
     
-    var canvasBlurness: Double = 7
+    var canvasBlurness: Double = 32
     
     func drawCanvas(for frame: CIImage, atTime: CMTime, renderSize: CGSize) -> CIImage {
         if self.mode == .solidColor {

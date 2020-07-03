@@ -14,17 +14,11 @@ import CoreImage
 
 class VideoTrackItem: AudioTrackItem, VideoProvider {
     
-    init(resource: Resource, videoConfiguration: VideoConfiguration) {
-        self.videoConfiguration = videoConfiguration
+    init(resource: Resource, videoConfiguration: VideoConfiguration? = nil) {
         super.init(resource: resource)
     }
     
-    override convenience init(resource: Resource) {
-        self.init(resource: resource, videoConfiguration: BasicVideoConfiguration())
-    }
-    
     required init() {
-        self.videoConfiguration =  BasicVideoConfiguration()
         super.init()
     }
     
@@ -78,7 +72,7 @@ class VideoTrackItem: AudioTrackItem, VideoProvider {
     //
     // MARK: - VideoConfiguration
     //
-    var videoConfiguration: VideoConfiguration
+    var videoConfiguration: VideoConfiguration = BasicVideoConfiguration()
     
     //
     // MARK:- VideoProcessingProvider

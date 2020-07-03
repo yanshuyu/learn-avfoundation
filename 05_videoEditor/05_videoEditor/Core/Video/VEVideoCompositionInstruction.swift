@@ -83,17 +83,22 @@ class VEVideoCompositionInstruction: NSObject, AVVideoCompositionInstructionProt
             srcImage = srcLayer.processingFrame(srcImage, renderSize: request.renderContext.size, atTime: request.compositionTime)
             dstImage = dstLayer.processingFrame(dstImage, renderSize: request.renderContext.size, atTime: request.compositionTime)
             
-            canvasImage = self.canvasProvider?.drawCanvas(for: dstImage, atTime: request.compositionTime, renderSize: request.renderContext.size)
+            //canvasImage = self.canvasProvider?.drawCanvas(for: dstImage, atTime: request.compositionTime, renderSize: request.renderContext.size)
 
             if let transition = dstLayer.videoTransition {
                 finalImage = transition.renderTransition(from: srcImage,
                                                          to: dstImage,
                                                          tweening: percentageForTime(request.compositionTime, in: self.timeRange),
                                                          renderSize: request.renderContext.size)
+               
             } else {
                 finalImage = dstImage
             }
             
+            
+            canvasImage = self.canvasProvider?.drawCanvas(for: finalImage ?? CIImage(color: CIColor(color: .black)),
+                                                          atTime: request.compositionTime,
+                                                          renderSize: request.renderContext.size)
         } else {
             guard let pixelBuffer = request.sourceFrame(byTrackID: mainLayers[0].trackID) else {
                 throw CompositionError.failedToGetSourceFrame

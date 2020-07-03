@@ -11,6 +11,18 @@ import AVFoundation
 
 
 class AudioTrackItem: TrackItem, AudioProvider {
+    override var durationTimeInTrack: CMTime {
+        return self.scaledTimeDuration
+    }
+    
+    var speed: Float = 1.0
+    
+    var volume: Float = 1.0
+        
+    var scaledTimeDuration: CMTime {
+        return CMTimeMultiplyByFloat64(self.selectedTimeRange.duration, multiplier: Float64(1 / self.speed))
+    }
+
     
     //
     // MARK: - AudioCompositionTrackProvider

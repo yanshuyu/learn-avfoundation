@@ -104,7 +104,7 @@ class VEVideoCompositor:NSObject, AVVideoCompositing {
                     asyncVideoCompositionRequest.finish(with: CompositionError.unKnowedError)
                 }
             } catch {
-                asyncVideoCompositionRequest.finish(with: error)
+                asyncVideoCompositionRequest.finishCancelledRequest()
                 print("asyncVideoCompositionRequest failed with error: \(error)")
             }
         }

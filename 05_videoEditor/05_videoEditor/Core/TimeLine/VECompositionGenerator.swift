@@ -22,6 +22,7 @@ class VECompositionGenerator: CompositionGenerator {
     private var composition: AVComposition?
     private var videoComposition: AVVideoComposition?
     private var audioMix: AVAudioMix?
+    private var animationLayer: CALayer?
     
     var renderSize: CGSize {
         didSet {
@@ -51,7 +52,7 @@ class VECompositionGenerator: CompositionGenerator {
     private var overlayAudioTracksInfo: [Int: [AudioProvider]] = [:]
     private var audioTracksInfo: [Int:[AudioProvider]] = [:]
     
-    required init(timeLine: TimeLine, renderSize: CGSize = CGSize(width: 1280, height: 720), frameDuration: CMTime = CMTime(seconds: 1, preferredTimescale: 30)) {
+    required init(timeLine: TimeLine, renderSize: CGSize = CGSize(width: 1280, height: 720), frameDuration: CMTime = CMTime(value: 1, timescale: 30)) {
         self.timeLine = timeLine
         self.renderSize = renderSize
         self.frameDuration = frameDuration
@@ -65,6 +66,7 @@ class VECompositionGenerator: CompositionGenerator {
         buildComposition()
         buildVideoComposition()
         buildAudioMix()
+        buildAnimations()
         
         guard let comp = self.composition else {
             return nil
@@ -73,6 +75,7 @@ class VECompositionGenerator: CompositionGenerator {
         let playerItem = AVPlayerItem(asset: comp)
         playerItem.videoComposition = self.videoComposition
         playerItem.audioMix = self.audioMix
+        playerItem.animationLayer = self.animationLayer
         
         return  playerItem
     }
@@ -195,18 +198,13 @@ class VECompositionGenerator: CompositionGenerator {
         self.composition = comp
     }
     
-    
     private func buildVideoComposition() {
         if self.videoComposition != nil {
             return
         }
         
-        if self.composition == nil {
-            buildComposition()
-        }
-        
         guard self.composition != nil else {
-            return
+            fatalError("Composition is nil!")
         }
         
         var compositionLayerInstructions: [VEVideoCompositionLayerInstruction] = []
@@ -226,13 +224,7 @@ class VECompositionGenerator: CompositionGenerator {
             }
         }
         
-        let sortedLayerInsts = compositionLayerInstructions.sortedLayerInstructions()
-        var s = ""
-        sortedLayerInsts.forEach { (inst) in
-            s += "[\(inst.videoProvider.timeRangeInTrack.start.seconds) - \(inst.videoProvider.timeRangeInTrack.end.seconds)] "
-        }
-        print("layer instructions: \(s)")
-        
+        let sortedLayerInsts = compositionLayerInstructions.sortedLayerInstructions()        
         let layerInstructionTimeSlices = calcTimeSlicesForCompositionLayerInstructions(sortedLayerInsts)
         let mainTrackIDs = self.mainVideoTracksInfo.keys.map({ CMPersistentTrackID($0) })
         var compositionInstructions: [VEVideoCompositionInstruction] = []
@@ -255,7 +247,6 @@ class VECompositionGenerator: CompositionGenerator {
         
         self.videoComposition = videoComposition
     }
-    
     
     private func buildAudioMix() {
         if self.audioMix != nil {
@@ -283,6 +274,19 @@ class VECompositionGenerator: CompositionGenerator {
         self.audioMix = audioMix
     }
     
+    private func buildAnimations() {
+        guard self.composition != nil else {
+            fatalError("Composition is nil!")
+        }
+        
+        let animlayer = CALayer()
+        animlayer.bounds = CGRect(origin: .zero, size: self.renderSize)
+        self.timeLine.stickerItems().forEach { stickerProvider in
+            animlayer.addSublayer(stickerProvider.animationLayer(for: self.renderSize))
+        }
+        self.animationLayer = animlayer
+    }
+    
     
     //
     // MARK: - Helper
@@ -291,6 +295,7 @@ class VECompositionGenerator: CompositionGenerator {
         self.composition = nil
         self.videoComposition = nil
         self.audioMix = nil
+        self.animationLayer = nil
         
         self.tracksIDCounter = TRACKSIDCOUNTERINIT
         self.mainAVTracksIDMapping = [:]
@@ -420,10 +425,7 @@ extension VECompositionGenerator: CustomDebugStringConvertible {
                 str += "-------------Main Tracks---------------\n"
                 self.mainAVTracksIDMapping.forEach { (videoTrackID, audioTrackIDs) in
                     if let videoItems = self.mainVideoTracksInfo[videoTrackID] {
-                        var videoSegments = videoItems
-                        videoSegments.sort { (lhs, rhs) -> Bool in
-                            return lhs.timeRangeInTrack.start.seconds < rhs.timeRangeInTrack.start.seconds
-                        }
+                        let videoSegments = videoItems
                         str += "v:\(videoTrackID) [ ";
                         videoSegments.enumerated().forEach { (offset, segment) in
                             str += "(\(segment.timeRangeInTrack.start.seconds)s,\(segment.timeRangeInTrack.end.seconds)s)"
@@ -436,10 +438,7 @@ extension VECompositionGenerator: CustomDebugStringConvertible {
                     
                     audioTrackIDs.enumerated().forEach { (offset, audioTrackID) in
                         if let audioItems = self.mainAudioTracksInfo[audioTrackID] {
-                            var audioSegments = audioItems
-                            audioSegments.sort { (lhs, rhs) -> Bool in
-                                return lhs.timeRangeInTrack.start.seconds < rhs.timeRangeInTrack.start.seconds
-                            }
+                            let audioSegments = audioItems
                             str += "a:\(audioTrackID) [ ";
                             audioSegments.enumerated().forEach { (offset, segment) in
                                 str += "(\(segment.timeRangeInTrack.start.seconds)s,\(segment.timeRangeInTrack.end.seconds)s)"
@@ -515,8 +514,8 @@ extension VECompositionGenerator: CustomDebugStringConvertible {
                         
                     }
                 }
+                str += "-----------------------------------------\n"
             }
-            str += "-----------------------------------------\n"
         }
         
         if let _ = self.videoComposition {

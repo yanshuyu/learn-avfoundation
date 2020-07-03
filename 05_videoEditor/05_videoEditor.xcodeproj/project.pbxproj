@@ -29,7 +29,6 @@
 		111E0C1D247D01E60045F07E /* bamboo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 111E0C1A247D01D00045F07E /* bamboo.mp4 */; };
 		111E0C1E247D01E60045F07E /* cute.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 111E0C19247D01D00045F07E /* cute.mp4 */; };
 		111E0C1F247D01E60045F07E /* sea.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 111E0C1B247D01D10045F07E /* sea.mp4 */; };
-		111E0C21247D02BE0045F07E /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111E0C20247D02BE0045F07E /* TestViewController.swift */; };
 		111E0C232480BE5B0045F07E /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111E0C222480BE5B0045F07E /* Array+Extension.swift */; };
 		111E0C2924815FBF0045F07E /* CMTimeRange+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111E0C2824815FBF0045F07E /* CMTimeRange+Extension.swift */; };
 		111E0C2F248189640045F07E /* 01_nebula.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 111E0C2A248188DB0045F07E /* 01_nebula.mp4 */; };
@@ -39,6 +38,7 @@
 		111E0C33248189640045F07E /* 05_blackhole.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 111E0C2E248188DC0045F07E /* 05_blackhole.mp4 */; };
 		111E0C362481908E0045F07E /* 01 Star Gazing.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 111E0C3424818E6C0045F07E /* 01 Star Gazing.m4a */; };
 		111E0C372481908E0045F07E /* 02 Keep Going.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 111E0C3524818E6C0045F07E /* 02 Keep Going.m4a */; };
+		113EBBD524ADD45D000E84C9 /* GifStickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113EBBD424ADD45D000E84C9 /* GifStickerItem.swift */; };
 		114FFD6224A0AB15001ADD27 /* VEVideoCompositionLayerInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6124A0AB15001ADD27 /* VEVideoCompositionLayerInstruction.swift */; };
 		114FFD6424A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6324A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift */; };
 		114FFD6624A0FB04001ADD27 /* VEVideoCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6524A0FB04001ADD27 /* VEVideoCompositor.swift */; };
@@ -47,8 +47,22 @@
 		114FFD6C24A4F668001ADD27 /* CGAffineTransform+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6B24A4F668001ADD27 /* CGAffineTransform+extension.swift */; };
 		114FFD6E24A4FACC001ADD27 /* CGRect+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FFD6D24A4FACC001ADD27 /* CGRect+extension.swift */; };
 		1160BD29249F6F0D0058872D /* VideoTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1160BD28249F6F0D0058872D /* VideoTransition.swift */; };
+		1171E30C24ACC8DE003AB482 /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1171E30A24ACC8DE003AB482 /* VideoPlayerView.swift */; };
+		1171E30D24ACC8DE003AB482 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1171E30B24ACC8DE003AB482 /* VideoPlayer.swift */; };
+		1171E31124ACE403003AB482 /* CompositionpreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1171E31024ACE403003AB482 /* CompositionpreviewViewController.swift */; };
+		1171E31324ADB914003AB482 /* StickerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1171E31224ADB914003AB482 /* StickerProvider.swift */; };
+		1171E31824ADBD50003AB482 /* StickerTrackItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1171E31724ADBD50003AB482 /* StickerTrackItem.swift */; };
+		117FBAA724ADEFEC00969DFC /* AVPlayerItem+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 117FBAA624ADEFEC00969DFC /* AVPlayerItem+extension.swift */; };
+		117FBAA924ADFB3E00969DFC /* AnimationFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 117FBAA824ADFB3E00969DFC /* AnimationFactory.swift */; };
+		117FBAAB24AE293F00969DFC /* fire.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 117FBAAA24AE293F00969DFC /* fire.jpeg */; };
 		118F959F24A8E65600CC67D4 /* CiImage+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118F959E24A8E65600CC67D4 /* CiImage+extension.swift */; };
 		118F95A124A8FBD300CC67D4 /* CanvasProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118F95A024A8FBD300CC67D4 /* CanvasProvider.swift */; };
+		11D8A91724AB30E2004C3A14 /* 391912870_CHRISTMAS_TREE_400px.gif in Resources */ = {isa = PBXBuildFile; fileRef = 11D8A91324AB30E1004C3A14 /* 391912870_CHRISTMAS_TREE_400px.gif */; };
+		11D8A91824AB30E2004C3A14 /* 392002770_ROCKET_EMOJI_400px.gif in Resources */ = {isa = PBXBuildFile; fileRef = 11D8A91424AB30E1004C3A14 /* 392002770_ROCKET_EMOJI_400px.gif */; };
+		11D8A91924AB30E2004C3A14 /* 391910250_JACK_O_LANTERN_400px.gif in Resources */ = {isa = PBXBuildFile; fileRef = 11D8A91524AB30E2004C3A14 /* 391910250_JACK_O_LANTERN_400px.gif */; };
+		11D8A91A24AB30E2004C3A14 /* 392001780_PARTY_POPPER_400px.gif in Resources */ = {isa = PBXBuildFile; fileRef = 11D8A91624AB30E2004C3A14 /* 392001780_PARTY_POPPER_400px.gif */; };
+		11D8A91C24AB4D99004C3A14 /* CALayer+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D8A91B24AB4D99004C3A14 /* CALayer+extension.swift */; };
+		11FAAAC424AB2241009033BF /* UIImage+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11FAAAC324AB2241009033BF /* UIImage+extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,7 +90,6 @@
 		111E0C19247D01D00045F07E /* cute.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = cute.mp4; sourceTree = "<group>"; };
 		111E0C1A247D01D00045F07E /* bamboo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = bamboo.mp4; sourceTree = "<group>"; };
 		111E0C1B247D01D10045F07E /* sea.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = sea.mp4; sourceTree = "<group>"; };
-		111E0C20247D02BE0045F07E /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		111E0C222480BE5B0045F07E /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
 		111E0C2824815FBF0045F07E /* CMTimeRange+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CMTimeRange+Extension.swift"; sourceTree = "<group>"; };
 		111E0C2A248188DB0045F07E /* 01_nebula.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 01_nebula.mp4; sourceTree = "<group>"; };
@@ -86,6 +99,7 @@
 		111E0C2E248188DC0045F07E /* 05_blackhole.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 05_blackhole.mp4; sourceTree = "<group>"; };
 		111E0C3424818E6C0045F07E /* 01 Star Gazing.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "01 Star Gazing.m4a"; sourceTree = "<group>"; };
 		111E0C3524818E6C0045F07E /* 02 Keep Going.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "02 Keep Going.m4a"; sourceTree = "<group>"; };
+		113EBBD424ADD45D000E84C9 /* GifStickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifStickerItem.swift; sourceTree = "<group>"; };
 		114FFD6124A0AB15001ADD27 /* VEVideoCompositionLayerInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEVideoCompositionLayerInstruction.swift; sourceTree = "<group>"; };
 		114FFD6324A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEVideoCompositionInstruction.swift; sourceTree = "<group>"; };
 		114FFD6524A0FB04001ADD27 /* VEVideoCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEVideoCompositor.swift; sourceTree = "<group>"; };
@@ -94,8 +108,22 @@
 		114FFD6B24A4F668001ADD27 /* CGAffineTransform+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGAffineTransform+extension.swift"; sourceTree = "<group>"; };
 		114FFD6D24A4FACC001ADD27 /* CGRect+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+extension.swift"; sourceTree = "<group>"; };
 		1160BD28249F6F0D0058872D /* VideoTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTransition.swift; sourceTree = "<group>"; };
+		1171E30A24ACC8DE003AB482 /* VideoPlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		1171E30B24ACC8DE003AB482 /* VideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
+		1171E31024ACE403003AB482 /* CompositionpreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositionpreviewViewController.swift; sourceTree = "<group>"; };
+		1171E31224ADB914003AB482 /* StickerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerProvider.swift; sourceTree = "<group>"; };
+		1171E31724ADBD50003AB482 /* StickerTrackItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerTrackItem.swift; sourceTree = "<group>"; };
+		117FBAA624ADEFEC00969DFC /* AVPlayerItem+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVPlayerItem+extension.swift"; sourceTree = "<group>"; };
+		117FBAA824ADFB3E00969DFC /* AnimationFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationFactory.swift; sourceTree = "<group>"; };
+		117FBAAA24AE293F00969DFC /* fire.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = fire.jpeg; sourceTree = "<group>"; };
 		118F959E24A8E65600CC67D4 /* CiImage+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CiImage+extension.swift"; sourceTree = "<group>"; };
 		118F95A024A8FBD300CC67D4 /* CanvasProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasProvider.swift; sourceTree = "<group>"; };
+		11D8A91324AB30E1004C3A14 /* 391912870_CHRISTMAS_TREE_400px.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 391912870_CHRISTMAS_TREE_400px.gif; sourceTree = "<group>"; };
+		11D8A91424AB30E1004C3A14 /* 392002770_ROCKET_EMOJI_400px.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 392002770_ROCKET_EMOJI_400px.gif; sourceTree = "<group>"; };
+		11D8A91524AB30E2004C3A14 /* 391910250_JACK_O_LANTERN_400px.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 391910250_JACK_O_LANTERN_400px.gif; sourceTree = "<group>"; };
+		11D8A91624AB30E2004C3A14 /* 392001780_PARTY_POPPER_400px.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = 392001780_PARTY_POPPER_400px.gif; sourceTree = "<group>"; };
+		11D8A91B24AB4D99004C3A14 /* CALayer+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+extension.swift"; sourceTree = "<group>"; };
+		11FAAAC324AB2241009033BF /* UIImage+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,12 +157,13 @@
 			isa = PBXGroup;
 			children = (
 				111E0C17247D01BA0045F07E /* Media */,
+				1171E30924ACC8DE003AB482 /* Player */,
 				111E0BF6247BFBC70045F07E /* Model */,
 				111E0BFF247C03AF0045F07E /* Core */,
 				111E0C0A247C18A10045F07E /* Extension */,
 				111E0BE2247BFB8A0045F07E /* AppDelegate.swift */,
 				111E0BE4247BFB8A0045F07E /* SceneDelegate.swift */,
-				111E0C20247D02BE0045F07E /* TestViewController.swift */,
+				1171E31024ACE403003AB482 /* CompositionpreviewViewController.swift */,
 				111E0BE8247BFB8A0045F07E /* Main.storyboard */,
 				111E0BEB247BFB8C0045F07E /* Assets.xcassets */,
 				111E0BED247BFB8C0045F07E /* LaunchScreen.storyboard */,
@@ -149,12 +178,13 @@
 				111E0BF7247BFD1A0045F07E /* CompositionTimeRangeProvider.swift */,
 				111E0BFB247BFFA30045F07E /* AudioProvider.swift */,
 				111E0BF9247BFE0E0045F07E /* VideoProvider.swift */,
+				1171E31224ADB914003AB482 /* StickerProvider.swift */,
 				118F95A024A8FBD300CC67D4 /* CanvasProvider.swift */,
 				111E0BFD247C033A0045F07E /* TimeLine.swift */,
 				111E0C04247C05B20045F07E /* Resource.swift */,
-				111E0C02247C04D00045F07E /* CompositionGenerator.swift */,
 				1160BD28249F6F0D0058872D /* VideoTransition.swift */,
 				114FFD6924A4F145001ADD27 /* VideoConfiguration.swift */,
+				111E0C02247C04D00045F07E /* CompositionGenerator.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -165,6 +195,7 @@
 				111E0C272480F2930045F07E /* TimeLine */,
 				111E0C262480F27E0045F07E /* Audio */,
 				111E0C252480F2600045F07E /* Video */,
+				1171E31424ADBBC5003AB482 /* Sticker */,
 				111E0C242480F24D0045F07E /* Resource */,
 			);
 			path = Core;
@@ -179,6 +210,9 @@
 				114FFD6B24A4F668001ADD27 /* CGAffineTransform+extension.swift */,
 				114FFD6D24A4FACC001ADD27 /* CGRect+extension.swift */,
 				118F959E24A8E65600CC67D4 /* CiImage+extension.swift */,
+				11FAAAC324AB2241009033BF /* UIImage+extension.swift */,
+				11D8A91B24AB4D99004C3A14 /* CALayer+extension.swift */,
+				117FBAA624ADEFEC00969DFC /* AVPlayerItem+extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -186,6 +220,11 @@
 		111E0C17247D01BA0045F07E /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				117FBAAA24AE293F00969DFC /* fire.jpeg */,
+				11D8A91524AB30E2004C3A14 /* 391910250_JACK_O_LANTERN_400px.gif */,
+				11D8A91324AB30E1004C3A14 /* 391912870_CHRISTMAS_TREE_400px.gif */,
+				11D8A91624AB30E2004C3A14 /* 392001780_PARTY_POPPER_400px.gif */,
+				11D8A91424AB30E1004C3A14 /* 392002770_ROCKET_EMOJI_400px.gif */,
 				111E0C2A248188DB0045F07E /* 01_nebula.mp4 */,
 				111E0C2B248188DB0045F07E /* 02_blackhole.mp4 */,
 				111E0C2C248188DB0045F07E /* 03_nebula.mp4 */,
@@ -237,6 +276,25 @@
 				111E0C15247CCC280045F07E /* VECompositionGenerator.swift */,
 			);
 			path = TimeLine;
+			sourceTree = "<group>";
+		};
+		1171E30924ACC8DE003AB482 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				1171E30A24ACC8DE003AB482 /* VideoPlayerView.swift */,
+				1171E30B24ACC8DE003AB482 /* VideoPlayer.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		1171E31424ADBBC5003AB482 /* Sticker */ = {
+			isa = PBXGroup;
+			children = (
+				1171E31724ADBD50003AB482 /* StickerTrackItem.swift */,
+				113EBBD424ADD45D000E84C9 /* GifStickerItem.swift */,
+				117FBAA824ADFB3E00969DFC /* AnimationFactory.swift */,
+			);
+			path = Sticker;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -298,10 +356,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				111E0C362481908E0045F07E /* 01 Star Gazing.m4a in Resources */,
+				117FBAAB24AE293F00969DFC /* fire.jpeg in Resources */,
 				111E0C372481908E0045F07E /* 02 Keep Going.m4a in Resources */,
 				111E0C2F248189640045F07E /* 01_nebula.mp4 in Resources */,
 				111E0C30248189640045F07E /* 02_blackhole.mp4 in Resources */,
 				111E0C31248189640045F07E /* 03_nebula.mp4 in Resources */,
+				11D8A91924AB30E2004C3A14 /* 391910250_JACK_O_LANTERN_400px.gif in Resources */,
 				111E0C32248189640045F07E /* 04_quasar.mp4 in Resources */,
 				111E0C33248189640045F07E /* 05_blackhole.mp4 in Resources */,
 				111E0C1C247D01E60045F07E /* 853.mp4 in Resources */,
@@ -309,7 +369,10 @@
 				111E0C1E247D01E60045F07E /* cute.mp4 in Resources */,
 				111E0C1F247D01E60045F07E /* sea.mp4 in Resources */,
 				111E0BEF247BFB8C0045F07E /* LaunchScreen.storyboard in Resources */,
+				11D8A91724AB30E2004C3A14 /* 391912870_CHRISTMAS_TREE_400px.gif in Resources */,
+				11D8A91A24AB30E2004C3A14 /* 392001780_PARTY_POPPER_400px.gif in Resources */,
 				111E0BEC247BFB8C0045F07E /* Assets.xcassets in Resources */,
+				11D8A91824AB30E2004C3A14 /* 392002770_ROCKET_EMOJI_400px.gif in Resources */,
 				111E0BEA247BFB8A0045F07E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -323,31 +386,40 @@
 			files = (
 				114FFD6224A0AB15001ADD27 /* VEVideoCompositionLayerInstruction.swift in Sources */,
 				111E0BFE247C033A0045F07E /* TimeLine.swift in Sources */,
+				11FAAAC424AB2241009033BF /* UIImage+extension.swift in Sources */,
 				111E0BF8247BFD1A0045F07E /* CompositionTimeRangeProvider.swift in Sources */,
 				1160BD29249F6F0D0058872D /* VideoTransition.swift in Sources */,
-				111E0C21247D02BE0045F07E /* TestViewController.swift in Sources */,
 				111E0C232480BE5B0045F07E /* Array+Extension.swift in Sources */,
 				114FFD6C24A4F668001ADD27 /* CGAffineTransform+extension.swift in Sources */,
 				114FFD6E24A4FACC001ADD27 /* CGRect+extension.swift in Sources */,
+				1171E30C24ACC8DE003AB482 /* VideoPlayerView.swift in Sources */,
 				111E0C2924815FBF0045F07E /* CMTimeRange+Extension.swift in Sources */,
 				111E0BFC247BFFA30045F07E /* AudioProvider.swift in Sources */,
+				11D8A91C24AB4D99004C3A14 /* CALayer+extension.swift in Sources */,
 				111E0C05247C05B20045F07E /* Resource.swift in Sources */,
 				118F959F24A8E65600CC67D4 /* CiImage+extension.swift in Sources */,
 				114FFD6A24A4F145001ADD27 /* VideoConfiguration.swift in Sources */,
+				1171E31324ADB914003AB482 /* StickerProvider.swift in Sources */,
+				1171E30D24ACC8DE003AB482 /* VideoPlayer.swift in Sources */,
+				113EBBD524ADD45D000E84C9 /* GifStickerItem.swift in Sources */,
 				114FFD6624A0FB04001ADD27 /* VEVideoCompositor.swift in Sources */,
 				111E0BFA247BFE0E0045F07E /* VideoProvider.swift in Sources */,
 				111E0C0E247C1B160045F07E /* TrackItem.swift in Sources */,
 				111E0C01247C04550045F07E /* VETimeLine.swift in Sources */,
+				117FBAA724ADEFEC00969DFC /* AVPlayerItem+extension.swift in Sources */,
 				111E0BE3247BFB8A0045F07E /* AppDelegate.swift in Sources */,
 				118F95A124A8FBD300CC67D4 /* CanvasProvider.swift in Sources */,
 				111E0C12247CC7F80045F07E /* AudioTrackItem.swift in Sources */,
+				117FBAA924ADFB3E00969DFC /* AnimationFactory.swift in Sources */,
 				114FFD6824A27FC1001ADD27 /* Dictionary+extension.swift in Sources */,
+				1171E31824ADBD50003AB482 /* StickerTrackItem.swift in Sources */,
 				111E0C10247C248E0045F07E /* VideoTrackItem.swift in Sources */,
 				111E0BE5247BFB8A0045F07E /* SceneDelegate.swift in Sources */,
 				111E0C03247C04D00045F07E /* CompositionGenerator.swift in Sources */,
 				111E0C16247CCC280045F07E /* VECompositionGenerator.swift in Sources */,
 				111E0C14247CCB5C0045F07E /* TransitionalbeVideoTrackItem.swift in Sources */,
 				114FFD6424A0AFB8001ADD27 /* VEVideoCompositionInstruction.swift in Sources */,
+				1171E31124ACE403003AB482 /* CompositionpreviewViewController.swift in Sources */,
 				111E0C09247C0A080045F07E /* AVAssetResource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -499,7 +571,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-5-videoEditor";
+				PRODUCT_BUNDLE_IDENTIFIER = com.personal.sy.videoEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -517,7 +589,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-5-videoEditor";
+				PRODUCT_BUNDLE_IDENTIFIER = com.personal.sy.videoEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
