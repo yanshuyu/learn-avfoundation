@@ -253,11 +253,9 @@ class VECompositionGenerator: CompositionGenerator {
             return
         }
         
-        guard self.mainAudioTracksInfo.count + self.overlayAudioTracksInfo.count + self.audioTracksInfo.count >= 1 else { return }
+        guard self.mainAudioTracksInfo.count + self.overlayAudioTracksInfo.count + self.audioTracksInfo.count > 0 else { return }
         
-        let audioMix = AVMutableAudioMix()
         var audioMixInputParams = [AVMutableAudioMixInputParameters]()
-        
         let audioMixConfigure: (Int, [AudioProvider])->Void = { [weak self] (trackID, audioProviders) in
             guard let strongSelf = self else { return }
             if let audioCompTrack = strongSelf.composition!.track(withTrackID: CMPersistentTrackID(trackID)) {
@@ -271,6 +269,8 @@ class VECompositionGenerator: CompositionGenerator {
         self.overlayAudioTracksInfo.forEach {audioMixConfigure($0, $1)}
         self.audioTracksInfo.forEach { audioMixConfigure($0, $1)}
         
+        let audioMix = AVMutableAudioMix()
+        audioMix.inputParameters = audioMixInputParams
         self.audioMix = audioMix
     }
     

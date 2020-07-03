@@ -71,7 +71,26 @@ class AudioTrackItem: TrackItem, AudioProvider {
     //
     // MARK: - AudioMixerProvider
     //
+    var usingAudioFadeInFadeOut: Bool = true
+    
+    var audioFadeInDuration: CMTime = CMTime(seconds: 1, preferredTimescale: 600)
+    
+    var audioFadeOutDuration: CMTime = CMTime(seconds: 1, preferredTimescale: 600)
+    
     func configrueAudioMix(with parameters: AVMutableAudioMixInputParameters) {
+        if !self.usingAudioFadeInFadeOut {
+            parameters.setVolumeRamp(fromStartVolume: self.volume,
+                                     toEndVolume: self.volume,
+                                     timeRange: self.timeRangeInTrack)
+        } else {
+            parameters.setVolumeRamp(fromStartVolume: 0,
+                                     toEndVolume: self.volume,
+                                     timeRange: CMTimeRange(start: self.startTimeInTrack, duration: self.audioFadeInDuration))
+            parameters.setVolumeRamp(fromStartVolume: self.volume,
+                                     toEndVolume: 0,
+                                     timeRange: CMTimeRange(start: CMTimeSubtract(self.timeRangeInTrack.end, self.audioFadeOutDuration) , duration: audioFadeOutDuration))
+        }
         
+        print("configrueAudioMix [\(self.startTimeInTrack.seconds) - \(self.timeRangeInTrack.end.seconds)] track: \(parameters.trackID), v: \(self.volume)")
     }
 }

@@ -18,11 +18,7 @@ class TrackItem: CompositionTimeRangeProvider {
     
     var resource: Resource?
     
-    var selectedTimeRange: CMTimeRange = CMTimeRange.zero {
-        didSet {
-            self.startTimeInTrack = self.selectedTimeRange.start
-        }
-    }
+    var selectedTimeRange: CMTimeRange = CMTimeRange.zero 
     
     var isPrepared: Bool {
         guard let res = self.resource else {
@@ -47,7 +43,10 @@ class TrackItem: CompositionTimeRangeProvider {
         
         let compeletion: (ResourceStatus, NSError?)->Void = { status, error in
             if let _ = self.resource, status == .availdable {
-                self.selectedTimeRange = CMTimeRange(start: .zero, duration: self.resource!.duration)
+                if self.selectedTimeRange == CMTimeRange.zero {
+                    self.selectedTimeRange = CMTimeRange(start: .zero, duration: self.resource!.duration)
+                    
+                }
             }
             compeletionHandler?(status, error)
         }

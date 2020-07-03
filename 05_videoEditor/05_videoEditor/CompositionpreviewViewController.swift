@@ -179,67 +179,69 @@ extension CompositionPreviewViewController {
     private func loadTestComposition(_ compeletion: @escaping ()->Void) {
         loadMainTrackItems()
         loadStickers()
+        loadAudios()
         self.syncGroup.notify(queue: DispatchQueue.main) {
             compeletion()
         }
     }
     
     fileprivate func loadMainTrackItems() {
-        var url: URL
-        var trackItem: TransitionableVideoTrackItem
-        
-        url = Bundle.main.url(forResource: "cute", withExtension: "mp4")!
-        trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
-        trackItem.videoTransition = VideoTransitionEmpty()
-        self.timeLine.addVideoItem(trackItem)
+        let url_1 = Bundle.main.url(forResource: "cute", withExtension: "mp4")!
+        let trackItem_1 = TransitionableVideoTrackItem(resource: AVAssetResource(url: url_1))
+        trackItem_1.videoTransition = VideoTransitionEmpty()
+        trackItem_1.volume = 0.5
+        self.timeLine.addVideoItem(trackItem_1)
         self.syncGroup.enter()
-        trackItem.prepare(progressHandler: nil) {(status, error) in
+        trackItem_1.prepare(progressHandler: nil) {(status, error) in
             if status != .availdable {
-                print("resource unavailable, url: \(trackItem.resource!.resourceURL?.absoluteString ?? "nil")")
+                print("resource unavailable, url: \(trackItem_1.resource!.resourceURL?.absoluteString ?? "nil")")
             }
             self.syncGroup.leave()
         }
         
         
-        url = Bundle.main.url(forResource: "02_blackhole", withExtension: "mp4")!
-        trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
-        trackItem.videoTransition = VideoTransitionDissolve()
-        trackItem.videoTransition?.duration = CMTime(seconds: 1, preferredTimescale: 600)
-        if let videoConfig = trackItem.videoConfiguration as? BasicVideoConfiguration {
+        let url_2 = Bundle.main.url(forResource: "02_blackhole", withExtension: "mp4")!
+        let trackItem_2 = TransitionableVideoTrackItem(resource: AVAssetResource(url: url_2))
+        trackItem_2.videoTransition = VideoTransitionDissolve()
+        trackItem_2.videoTransition?.duration = CMTime(seconds: 1, preferredTimescale: 600)
+        trackItem_2.volume = 0.8
+        if let videoConfig = trackItem_2.videoConfiguration as? BasicVideoConfiguration {
             videoConfig.filter = CIFilter(name: "CIPhotoEffectMono")
         }
-        self.timeLine.addVideoItem(trackItem)
+        self.timeLine.addVideoItem(trackItem_2)
         self.syncGroup.enter()
-        trackItem.prepare(progressHandler: nil) {(status, error) in
+        trackItem_2.prepare(progressHandler: nil) {(status, error) in
             if status != .availdable {
-                print("resource unavailable, url: \(trackItem.resource!.resourceURL?.absoluteString ?? "nil")")
+                print("resource unavailable, url: \(trackItem_2.resource!.resourceURL?.absoluteString ?? "nil")")
             }
             self.syncGroup.leave()
         }
         
-        url = Bundle.main.url(forResource: "03_nebula", withExtension: "mp4")!
-        trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
-        trackItem.videoTransition = VideoTransitionPush()
-        trackItem.videoTransition?.duration = CMTime(seconds: 1, preferredTimescale: 600)
-        self.timeLine.addVideoItem(trackItem)
+        let url_3 = Bundle.main.url(forResource: "03_nebula", withExtension: "mp4")!
+        let trackItem_3 = TransitionableVideoTrackItem(resource: AVAssetResource(url: url_3))
+        trackItem_3.videoTransition = VideoTransitionPush()
+        trackItem_3.videoTransition?.duration = CMTime(seconds: 1, preferredTimescale: 600)
+        trackItem_3.volume = 0.7
+        self.timeLine.addVideoItem(trackItem_3)
         self.syncGroup.enter()
-        trackItem.prepare(progressHandler: nil) {(status, error) in
+        trackItem_3.prepare(progressHandler: nil) {(status, error) in
             if status != .availdable {
-                print("resource unavailable, url: \(trackItem.resource!.resourceURL?.absoluteString ?? "nil")")
+                print("resource unavailable, url: \(trackItem_3.resource!.resourceURL?.absoluteString ?? "nil")")
             }
+
             self.syncGroup.leave()
         }
         
         
-        url = Bundle.main.url(forResource: "05_blackhole", withExtension: "mp4")!
-        trackItem = TransitionableVideoTrackItem(resource: AVAssetResource(url: url))
-        trackItem.videoTransition = VideoTransitionSwipe()
-        trackItem.videoTransition?.duration = CMTime(seconds: 1, preferredTimescale: 600)
-        self.timeLine.addVideoItem(trackItem)
+        let url_4 = Bundle.main.url(forResource: "05_blackhole", withExtension: "mp4")!
+        let trackItem_4 = TransitionableVideoTrackItem(resource: AVAssetResource(url: url_4))
+        trackItem_4.videoTransition = VideoTransitionSwipe()
+        trackItem_4.videoTransition?.duration = CMTime(seconds: 1, preferredTimescale: 600)
+        self.timeLine.addVideoItem(trackItem_4)
         self.syncGroup.enter()
-        trackItem.prepare(progressHandler: nil) {(status, error) in
+        trackItem_4.prepare(progressHandler: nil) {(status, error) in
             if status != .availdable {
-                print("resource unavailable, url: \(trackItem.resource!.resourceURL?.absoluteString ?? "nil")")
+                print("resource unavailable, url: \(trackItem_4.resource!.resourceURL?.absoluteString ?? "nil")")
             }
             self.syncGroup.leave()
         }
@@ -255,7 +257,7 @@ extension CompositionPreviewViewController {
 //        self.timeLine.addStickerItem(image)
     }
     
-    func loadOverlayTrackItems() {
+    fileprivate func loadOverlayTrackItems() {
         let url = Bundle.main.url(forResource: "853", withExtension: "mp4")!
         let overlayItem = VideoTrackItem(resource: AVAssetResource(url: url))
         self.timeLine.addOverlayItem(overlayItem, at: .zero)
@@ -268,6 +270,22 @@ extension CompositionPreviewViewController {
                 return
             }
             overlayItem.selectedTimeRange = CMTimeRange(start: .zero, duration: CMTimeMakeWithSeconds(5, preferredTimescale: 600))
+        }
+    }
+    
+    
+    fileprivate func loadAudios() {
+        let url = Bundle.main.url(forResource: "02 Keep Going", withExtension: "m4a")!
+        let music = AudioTrackItem(resource: AVAssetResource(url: url))
+        music.selectedTimeRange = CMTimeRange(start: .zero, duration: CMTime(seconds: 16, preferredTimescale: 600))
+        self.timeLine.addAudioItem(music, at: CMTime(seconds: 18, preferredTimescale: 600))
+        music.volume = 0.1
+        self.syncGroup.enter()
+        music.prepare(progressHandler: nil) { (status, error) in
+            self.syncGroup.leave()
+            if status == .unavailable {
+                print("failed to load music, error: \(error!)")
+            }
         }
     }
 }

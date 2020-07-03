@@ -17,6 +17,9 @@ protocol AudioCompositionTrackProvider: CompositionTrackInfoProvider {
 
 
 protocol AudioMixerProvider {
+    var usingAudioFadeInFadeOut: Bool { get set }
+    var audioFadeInDuration: CMTime { get set }
+    var audioFadeOutDuration: CMTime { get set }
     func configrueAudioMix(with parameters: AVMutableAudioMixInputParameters)
 }
 

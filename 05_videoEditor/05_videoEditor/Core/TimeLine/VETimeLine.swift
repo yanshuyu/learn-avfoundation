@@ -190,6 +190,21 @@ class VETimeLine: TimeLine {
                 }
             }
         }
+        
+        // update audio fadein fadeout duration sync with video transition
+        self.mainTracks.enumerated().forEach { (index, _) in
+            var prevVideoItem: TransitionableVideoProvider?
+            var videoItem = self.mainTracks[index]
+            
+            if index > 0 {
+                prevVideoItem = self.mainTracks[index - 1]
+            }
+            
+            if let transitionDuration = videoItem.videoTransition?.duration {
+                videoItem.audioFadeInDuration = transitionDuration
+                prevVideoItem?.audioFadeOutDuration = transitionDuration
+            }
+        }
     }
     
     func performBatchUpdate(_ updateBlock: () -> Void) {
