@@ -5,9 +5,9 @@
 
 
 ## AVPlayer Video player
-![](readMe/Xnip2021-03-06_00-47-07.png)
-![](readMe/Xnip2021-03-06_00-49-56.png)
-![](readMe/Xnip2021-03-06_00-50-53.png)
+![](readMe/Xnip2021-03-09_23-30-28.png)
+![](readMe/Xnip2021-03-09_23-30-38.png)
+![](readMe/WechatIMG33.png)
 
 ### Features
 - Video Play/Pause/Scrubing
@@ -19,7 +19,6 @@
 ## AVCaptureSession Camera
 ![](readMe/IMG_2036.jpeg)
 ![](readMe/IMG_2040.PNG)
-![](readMe/IMG_2041.PNG)
 
 ### Features
 - Photo/Video/Live Photo Capturing/Recordig
