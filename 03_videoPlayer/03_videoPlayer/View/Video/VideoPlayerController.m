@@ -113,8 +113,8 @@
                       @"tracks",
                       @"availableMediaCharacteristicsWithMediaSelectionOptions"];
     self.asset = [AVAsset assetWithURL:self.url];
-    //self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset automaticallyLoadedAssetKeys:keys];
-    self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset];
+    self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset automaticallyLoadedAssetKeys:keys];
+    //self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset];
     [self addVideoRequestTimer];
     
     self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
@@ -324,9 +324,13 @@
         float duration = CMTimeGetSeconds(self.playerItem.duration);
         float length = duration * percent;
         CMTime t = CMTimeMakeWithSeconds(length, NSEC_PER_SEC);
-        [self.player cancelPendingPrerolls];
-        [self.player seekToTime:t];
+        [self doScrubbingToTime: t];
     }
+}
+
+- (void)doScrubbingToTime:(CMTime)time {
+    [self.player cancelPendingPrerolls];
+    [self.player seekToTime: time];
 }
 
 - (void)doEndedScrub:(float)percent {
@@ -359,8 +363,17 @@
 }
 
 - (void)doToggleChapters {
-    [self.delegate videoPlayerController:self
-                   doRequestShowChapters:@[]];
+    NSArray<NSLocale*>* available_loc = [self.asset availableChapterLocales];
+    NSMutableArray<VideoChapterItem*>* chapterItems = [NSMutableArray new];
+    if (available_loc.count > 0) {
+        NSArray<AVTimedMetadataGroup*>* chapterGroups = [self.asset chapterMetadataGroupsWithTitleLocale: available_loc.firstObject containingItemsWithCommonKeys:@[AVMetadataCommonKeyTitle]];
+        for (AVTimedMetadataGroup* chapter  in chapterGroups) {
+            AVMetadataItem* title = chapter.items.firstObject;
+            [chapterItems addObject:[[VideoChapterItem alloc] initWithCMTime:chapter.timeRange.start title:title.stringValue]];
+        }
+    }
+    
+    [self.delegate videoPlayerController:self doRequestShowChapters:chapterItems];
 }
     
 

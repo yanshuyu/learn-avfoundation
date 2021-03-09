@@ -156,9 +156,10 @@
 
 - (void)doSetupSessionWithCompletionHandle:(void(^)(void))completionHandler {
     dispatch_async(self.sessionQueue, ^{
-        NSArray* devicesType = @[AVCaptureDeviceTypeBuiltInDualCamera,
+        NSArray* devicesType = @[AVCaptureDeviceTypeBuiltInTripleCamera,
+                                 AVCaptureDeviceTypeBuiltInDualCamera,
                                  AVCaptureDeviceTypeBuiltInWideAngleCamera,
-                                 AVCaptureDeviceTypeBuiltInTrueDepthCamera];
+                                 AVCaptureDeviceTypeBuiltInTelephotoCamera];
         self.discoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:devicesType
                                                                                        mediaType:AVMediaTypeVideo
                                                                                         position:AVCaptureDevicePositionUnspecified];
@@ -889,7 +890,7 @@
 
 
 //
-// MARK: - capture photo/video
+//
 //
 - (void)capturePhoto {
     dispatch_async(self.sessionQueue, ^{

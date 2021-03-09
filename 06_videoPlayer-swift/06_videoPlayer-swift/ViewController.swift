@@ -14,26 +14,26 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.addSubview(self.player.view)
-        self.player.view.frame = self.view.bounds
-        self.player.delegate = self
-        self.player.replace(withContentOfURL: self.testURL!)
-        self.player.videoGravity = .resizeAspectFill
-        
-        if let subTitleSelGrp = self.player.mediaSelectionGroupForMediaCharacteristic(.legible) {
-            print("sub title selection options: \(subTitleSelGrp.options)")
-        }
-        
-        self.player.play()
+//        self.view.addSubview(self.player.view)
+//        self.player.view.frame = self.view.bounds
+//        self.player.delegate = self
+//        self.player.replace(withContentOfURL: self.testURL!)
+//        self.player.videoGravity = .resizeAspectFill
+//
+//        if let subTitleSelGrp = self.player.mediaSelectionGroupForMediaCharacteristic(.legible) {
+//            print("sub title selection options: \(subTitleSelGrp.options)")
+//        }
+//
+//        self.player.play()
     }
     
     override func viewDidLayoutSubviews() {
         self.player.view.frame = self.view.bounds
     }
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return [.landscapeLeft, .landscapeRight]
-    }
+//    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+//        return [.landscapeLeft, .landscapeRight]
+//    }
 }
 
 

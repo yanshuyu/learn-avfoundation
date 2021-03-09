@@ -49,6 +49,7 @@ typedef enum : NSUInteger {
     [self setupView];
     
     self.allCameraRollItems = [[CameraRollManager shareInstance] fetchCameraRollItems];
+    NSLog(@"fetch photos: %@", self.allCameraRollItems);
     self.rollItemSegmentContrl.selectedSegmentIndex = 0;
     self.layoutSegmentContrl.selectedSegmentIndex = 0;
     [self handleRollItemSegmentControlValueChange:self.rollItemSegmentContrl];
@@ -80,7 +81,7 @@ typedef enum : NSUInteger {
     
     UIVisualEffectView* segmentBlurOverlayView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
     segmentBlurOverlayView.frame = self.rollItemSegmentContrl.frame;
-    [self.view insertSubview:segmentBlurOverlayView belowSubview:self.rollItemSegmentContrl];
+    //[self.view insertSubview:segmentBlurOverlayView belowSubview:self.rollItemSegmentContrl];
     segmentBlurOverlayView.layer.cornerRadius = 4;
     segmentBlurOverlayView.layer.masksToBounds = TRUE;
     self.blurEffectView = segmentBlurOverlayView;
@@ -146,8 +147,9 @@ typedef enum : NSUInteger {
         if ( key == CameraRollChangeTypeInsert) {
             NSLog(@"%@, insert roll items: %@", CameraRollManagerChangeNoticification, notification.userInfo[@"insertRollItems"]);
             self.allCameraRollItems = [[CameraRollManager shareInstance] fetchCameraRollItems];
-            [self handleRollItemSegmentControlValueChange:self.rollItemSegmentContrl];
+            
             dispatch_async(dispatch_get_main_queue(), ^{
+                [self handleRollItemSegmentControlValueChange:self.rollItemSegmentContrl];
                 [self.collectionView performBatchUpdates:^{
                     [self handleRollItemSegmentControlValueChange:self.rollItemSegmentContrl];
                 } completion:Nil];

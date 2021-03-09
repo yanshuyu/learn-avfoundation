@@ -33,7 +33,7 @@
     [super viewDidLoad];
     self.tableViewMode = TableViewModeNone;
     self.subtitleOptions = [NSMutableArray array];
-    self.chapterOptions = [NSArray array];
+    self.chapterOptions = [NSMutableArray array];
     
     self.navigationController.navigationBar.hidden = TRUE;
     self.videoView.backgroundColor = [UIColor blackColor];
@@ -121,7 +121,8 @@
     if (self.tableViewMode == TableViewModeSubTitles) {
         newCell.textLabel.text = self.subtitleOptions[indexPath.row];
     } else if (self.tableViewMode == TableViewModeChapters) {
-        
+        VideoChapterItem* chapterItem = (VideoChapterItem*)self.chapterOptions[indexPath.row];
+        newCell.textLabel.text = [NSString stringWithFormat:@"%.2f - %@", CMTimeGetSeconds(chapterItem.time), chapterItem.title];
     }
     
     return newCell;
@@ -142,6 +143,10 @@
         NSString* selectedTitle = self.subtitleOptions[indexPath.row];
         [self.videoController selectSubtitle:selectedTitle];
         self.lastSelectedSubTitle = selectedTitle;
+    } else if (self.tableViewMode == TableViewModeChapters) {
+        VideoChapterItem* chapterItem = self.chapterOptions[indexPath.row];
+        [self.videoController doScrubbingToTime:chapterItem.time];
+        [tableView deselectRowAtIndexPath:indexPath animated:false];
     }
 }
 

@@ -1,0 +1,381 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		119BF03C242A0A1000E464DD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119BF03B242A0A1000E464DD /* AppDelegate.swift */; };
+		119BF03E242A0A1000E464DD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119BF03D242A0A1000E464DD /* SceneDelegate.swift */; };
+		119BF040242A0A1000E464DD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119BF03F242A0A1000E464DD /* ViewController.swift */; };
+		119BF043242A0A1000E464DD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 119BF041242A0A1000E464DD /* Main.storyboard */; };
+		119BF045242A0A1400E464DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 119BF044242A0A1400E464DD /* Assets.xcassets */; };
+		119BF048242A0A1400E464DD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 119BF046242A0A1400E464DD /* LaunchScreen.storyboard */; };
+		119BF051242A0A9D00E464DD /* MSAudioWaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119BF050242A0A9D00E464DD /* MSAudioWaveformView.swift */; };
+		119BF053242A0B9300E464DD /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119BF052242A0B9300E464DD /* Common.swift */; };
+		119BF056242B1FC200E464DD /* Albert Vishi & Skylar Grey - Love The Way You Lie (Remix).mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 119BF055242B1FC200E464DD /* Albert Vishi & Skylar Grey - Love The Way You Lie (Remix).mp3 */; };
+		119BF058242B52EE00E464DD /* New York in 4K.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 119BF057242B52EE00E464DD /* New York in 4K.mp3 */; };
+		119BF05A242BA7B500E464DD /* MSVideoFramsThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119BF059242BA7B500E464DD /* MSVideoFramsThumbnailView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		119BF038242A0A1000E464DD /* 08_MediaSamplerVisualizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 08_MediaSamplerVisualizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		119BF03B242A0A1000E464DD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		119BF03D242A0A1000E464DD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		119BF03F242A0A1000E464DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		119BF042242A0A1000E464DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		119BF044242A0A1400E464DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		119BF047242A0A1400E464DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		119BF049242A0A1400E464DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		119BF050242A0A9D00E464DD /* MSAudioWaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSAudioWaveformView.swift; sourceTree = "<group>"; };
+		119BF052242A0B9300E464DD /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		119BF055242B1FC200E464DD /* Albert Vishi & Skylar Grey - Love The Way You Lie (Remix).mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Albert Vishi & Skylar Grey - Love The Way You Lie (Remix).mp3"; sourceTree = "<group>"; };
+		119BF057242B52EE00E464DD /* New York in 4K.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "New York in 4K.mp3"; sourceTree = "<group>"; };
+		119BF059242BA7B500E464DD /* MSVideoFramsThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSVideoFramsThumbnailView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		119BF035242A0A1000E464DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		119BF02F242A0A1000E464DD = {
+			isa = PBXGroup;
+			children = (
+				119BF03A242A0A1000E464DD /* 08_MediaSamplerVisualizer */,
+				119BF039242A0A1000E464DD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		119BF039242A0A1000E464DD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				119BF038242A0A1000E464DD /* 08_MediaSamplerVisualizer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		119BF03A242A0A1000E464DD /* 08_MediaSamplerVisualizer */ = {
+			isa = PBXGroup;
+			children = (
+				119BF054242B1FB500E464DD /* media */,
+				119BF04F242A0A5400E464DD /* class */,
+				119BF03B242A0A1000E464DD /* AppDelegate.swift */,
+				119BF03D242A0A1000E464DD /* SceneDelegate.swift */,
+				119BF03F242A0A1000E464DD /* ViewController.swift */,
+				119BF041242A0A1000E464DD /* Main.storyboard */,
+				119BF044242A0A1400E464DD /* Assets.xcassets */,
+				119BF046242A0A1400E464DD /* LaunchScreen.storyboard */,
+				119BF049242A0A1400E464DD /* Info.plist */,
+			);
+			path = 08_MediaSamplerVisualizer;
+			sourceTree = "<group>";
+		};
+		119BF04F242A0A5400E464DD /* class */ = {
+			isa = PBXGroup;
+			children = (
+				119BF052242A0B9300E464DD /* Common.swift */,
+				119BF050242A0A9D00E464DD /* MSAudioWaveformView.swift */,
+				119BF059242BA7B500E464DD /* MSVideoFramsThumbnailView.swift */,
+			);
+			path = class;
+			sourceTree = "<group>";
+		};
+		119BF054242B1FB500E464DD /* media */ = {
+			isa = PBXGroup;
+			children = (
+				119BF055242B1FC200E464DD /* Albert Vishi & Skylar Grey - Love The Way You Lie (Remix).mp3 */,
+				119BF057242B52EE00E464DD /* New York in 4K.mp3 */,
+			);
+			path = media;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		119BF037242A0A1000E464DD /* 08_MediaSamplerVisualizer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 119BF04C242A0A1400E464DD /* Build configuration list for PBXNativeTarget "08_MediaSamplerVisualizer" */;
+			buildPhases = (
+				119BF034242A0A1000E464DD /* Sources */,
+				119BF035242A0A1000E464DD /* Frameworks */,
+				119BF036242A0A1000E464DD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = 08_MediaSamplerVisualizer;
+			productName = 08_MediaSamplerVisualizer;
+			productReference = 119BF038242A0A1000E464DD /* 08_MediaSamplerVisualizer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		119BF030242A0A1000E464DD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1130;
+				LastUpgradeCheck = 1130;
+				ORGANIZATIONNAME = sy;
+				TargetAttributes = {
+					119BF037242A0A1000E464DD = {
+						CreatedOnToolsVersion = 11.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 119BF033242A0A1000E464DD /* Build configuration list for PBXProject "08_MediaSamplerVisualizer" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 119BF02F242A0A1000E464DD;
+			productRefGroup = 119BF039242A0A1000E464DD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				119BF037242A0A1000E464DD /* 08_MediaSamplerVisualizer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		119BF036242A0A1000E464DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				119BF048242A0A1400E464DD /* LaunchScreen.storyboard in Resources */,
+				119BF056242B1FC200E464DD /* Albert Vishi & Skylar Grey - Love The Way You Lie (Remix).mp3 in Resources */,
+				119BF045242A0A1400E464DD /* Assets.xcassets in Resources */,
+				119BF058242B52EE00E464DD /* New York in 4K.mp3 in Resources */,
+				119BF043242A0A1000E464DD /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		119BF034242A0A1000E464DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				119BF051242A0A9D00E464DD /* MSAudioWaveformView.swift in Sources */,
+				119BF05A242BA7B500E464DD /* MSVideoFramsThumbnailView.swift in Sources */,
+				119BF040242A0A1000E464DD /* ViewController.swift in Sources */,
+				119BF03C242A0A1000E464DD /* AppDelegate.swift in Sources */,
+				119BF03E242A0A1000E464DD /* SceneDelegate.swift in Sources */,
+				119BF053242A0B9300E464DD /* Common.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		119BF041242A0A1000E464DD /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				119BF042242A0A1000E464DD /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		119BF046242A0A1400E464DD /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				119BF047242A0A1400E464DD /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		119BF04A242A0A1400E464DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		119BF04B242A0A1400E464DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		119BF04D242A0A1400E464DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7Q4QUU55W5;
+				INFOPLIST_FILE = 08_MediaSamplerVisualizer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-8-MediaSamplerVisualizer";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		119BF04E242A0A1400E464DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7Q4QUU55W5;
+				INFOPLIST_FILE = 08_MediaSamplerVisualizer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.personal.sy.-8-MediaSamplerVisualizer";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		119BF033242A0A1000E464DD /* Build configuration list for PBXProject "08_MediaSamplerVisualizer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				119BF04A242A0A1400E464DD /* Debug */,
+				119BF04B242A0A1400E464DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		119BF04C242A0A1400E464DD /* Build configuration list for PBXNativeTarget "08_MediaSamplerVisualizer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				119BF04D242A0A1400E464DD /* Debug */,
+				119BF04E242A0A1400E464DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 119BF030242A0A1000E464DD /* Project object */;
+}

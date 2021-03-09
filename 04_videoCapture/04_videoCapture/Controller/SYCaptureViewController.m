@@ -780,12 +780,12 @@ FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL *)url
 }
 
 - (CIImage *)captureController:(CaptureController *)controller ExpectedProcessingVideoFrame:(nonnull CIImage *)frame {
-//    CIFilter* filter = [CIFilter filterWithName:@"CIComicEffect"];
-//    CIImage* processImage = Nil;
-//    if (filter) {
-//        [filter setValue:frame forKey:kCIInputImageKey];
-//        processImage = filter.outputImage;
-//    }
+    CIFilter* filter = [CIFilter filterWithName:@"CIColorInvert"];
+    CIImage* processImage = Nil;
+    if (filter) {
+        [filter setValue:frame forKey:kCIInputImageKey];
+        processImage = filter.outputImage;
+    }
 //
 //    processImage = processImage == Nil ? frame : processImage;
 //    dispatch_async(dispatch_get_main_queue(), ^{
@@ -794,7 +794,7 @@ FinishRealTimeFilterVideoRecordSessionWithOutputURL:(NSURL *)url
 //
  //   return processImage;
     dispatch_async(dispatch_get_main_queue(), ^{
-       [self.glPreviewView renderCIImage:frame];
+       [self.glPreviewView renderCIImage:processImage];
     });
 
     

@@ -16,6 +16,7 @@
 - (void)doBeginScrub:(float)percent;
 - (void)doScrubbingToPercent:(float)percent;
 - (void)doEndedScrub:(float)percent;
+- (void)doScrubbingToTime:(CMTime)time;
 - (void)doChangeVideoGravity:(AVLayerVideoGravity)gravity;
 - (void)doChangeVideoSpeed:(float)speed;
 - (void)doChangeVideoVolum:(float)volum;
